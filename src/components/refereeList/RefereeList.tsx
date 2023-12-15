@@ -164,7 +164,7 @@ export default function RefereeLists() {
               />
               <label htmlFor="otros">Other</label>
               <br />
-              <input type="submit" value="Registrar Entrenador" />
+              <input type="submit" value="Registrar Arbitro" />
             </form>
           </div>
         </>

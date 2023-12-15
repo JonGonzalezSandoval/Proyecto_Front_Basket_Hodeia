@@ -1,9 +1,15 @@
 import React, { useState, ChangeEvent, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import './myCalendar.css' 
 
 const MyCalendar: React.FC = () => {
   const [date, setDate] = useState<Date>(new Date());
+  const [events, setEvents] = useState<Date[]>([
+    new Date(2023, 11, 5), // Sample events on specific dates
+    new Date(2023, 11, 10),
+    new Date(2023, 11, 15),
+  ]);
 
   const formatDate = (date: Date): string => {
     // Format date as 'yyyy-mm-dd'
@@ -20,6 +26,13 @@ const MyCalendar: React.FC = () => {
       // Handle array of dates if needed
     } else {
       setDate(newDate);
+    }
+  };
+
+  const tileContent: any = ({ date, view }:any) => {
+    if (view === 'month') {
+      const hasEvent = events.find((eventDate) => eventDate.getTime() === date.getTime());
+      return hasEvent ? <span className="event-dot" /> : null;
     }
   };
 

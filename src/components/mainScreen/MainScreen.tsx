@@ -11,8 +11,8 @@ interface TLeague {
 
 export default function MainScreen(){
     const [selectedLeague, setSelectedLeague] = useState<string|null>(null)
-    // const []
     const [allLeagues, setAllLeagues] = useState<TLeague[] | null>(null)
+    const [chosendate, setChosenDate] = useState(null)
 
 
 
@@ -38,6 +38,9 @@ export default function MainScreen(){
                 ))}
             </select>
             <MyCalendar />
+            <div>
+
+            </div>
         </>
         :
         <span>

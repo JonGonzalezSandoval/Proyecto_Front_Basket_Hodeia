@@ -8,9 +8,10 @@ import Login from "./components/login/Login";
 import Register from "./components/register/Register";
 import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
+import CoachLists from "./components/coachList/CoachList";
+import RefereeLists from "./components/refereeList/RefereeList";
 
 function App() {
-
   // useEffect(() => {
   //   fetch(`http://localhost:3000/users/all`)
   //     .then((res) => res.json())
@@ -20,15 +21,17 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <Header/>
+        <Header />
         <Routes>
           <Route path="/" element={<MainScreen />} />
           <Route path="/introScreen" element={<IntroScreen />} />
           <Route path="/refereeMatch" element={<RefereeScreenManagement />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/coach" element={<CoachLists />} />
+          <Route path="/referee" element={<RefereeLists />} />
         </Routes>
-        <Footer/>
+        <Footer />
       </BrowserRouter>
     </>
   );

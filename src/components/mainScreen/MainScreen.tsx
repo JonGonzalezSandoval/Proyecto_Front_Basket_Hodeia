@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import MyCalendar from "../calendar/MyCalendar";
+import UserContext from "../../context/UserContext";
+import { useNavigate } from "react-router-dom";
 
 interface TLeague {
   ligaid: string;
@@ -27,6 +29,8 @@ export default function MainScreen() {
   const [allLeagues, setAllLeagues] = useState<TLeague[] | null>(null);
   const [date, setDate] = useState<Date>(new Date());
   const [partidosEnTemporada, setPartidosEnTemporada] = useState<string[]>([]);
+  const { setLoginUser } = useContext(UserContext);
+  const navigate = useNavigate();
 
   function handleSelectedLeagueSeasonOnDate(): void {
     fetch(`http://localhost:3000/matches/season/${selectedLeague}/1`)
@@ -46,6 +50,29 @@ export default function MainScreen() {
   };
 
   useEffect(() => {
+
+    
+      if (localStorage.getItem("SavedToken") !== null) {
+        fetch("http://localhost:3000/api/auth/profile", {
+          // headers: { Authorization: localStorage.getItem("SavedToken") },
+        })
+          .then((res) => {
+            if (res.status === 401) {
+              setLoginUser(null);
+              navigate("/login");
+              return;
+            }
+            return res.json();
+          })
+          .then((res) => {
+            setLoginUser(res);
+          });
+      } else {
+        navigate("/login");
+      }
+    
+
+
     fetch("http://localhost:3000/ligas/all")
       .then((res) => res.json())
       .then((res) => {

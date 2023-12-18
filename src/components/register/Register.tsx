@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface TRegisterUser {
   nombre: string;
@@ -22,6 +23,8 @@ export default function Register() {
   const [validPassword, setValidPassword] = useState<Boolean | null>(null);
   const [validEmail, setValidEmail] = useState<Boolean | null>(null);
   const [equalPass, setEqualPass] = useState<Boolean | null>(null);
+
+  const navigate = useNavigate();
 
   const [newUser, setNewUser] = useState<TRegisterUser>({
     nombre: "",
@@ -48,6 +51,34 @@ export default function Register() {
     if (!validEmail || !validPassword) {
       console.log("Debes introducir todos los datos válidos");
     } else if (newUser.nombre === "") {
+      const data = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...newUser }),
+      };
+
+      fetch("http://localhost:3000/users/newUser", data)
+      .then((res) => {
+        if (res.status == 202) {
+          return res.text();
+        }
+        if (res.status == 401) throw new Error("Unauthorized");
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((error) => {
+        if (error.message === "Unauthorized") {
+          console.log("Not logged");
+        } else {
+          console.log("Other error handling: " + error);
+          // Handle other errors here
+        }
+      });
+
+      navigate('/login')
     }
   }
 

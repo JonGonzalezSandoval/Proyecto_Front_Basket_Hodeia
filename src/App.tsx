@@ -9,8 +9,16 @@ import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
 import CoachLists from "./components/coachList/CoachList";
 import RefereeLists from "./components/refereeList/RefereeList";
+import UserContext from "./context/UserContext";
+import { useState } from "react";
+
+interface Tuser {
+  email: string;
+  password: string;
+}
 
 function App() {
+  const [loginUser, setLoginUser] = useState<Tuser | null>(null)
   // useEffect(() => {
   //   fetch(`http://localhost:3000/users/all`)
   //     .then((res) => res.json())
@@ -18,7 +26,7 @@ function App() {
   // }, []);
 
   return (
-    <>
+    <UserContext.Provider value={{loginUser, setLoginUser}}>
       <BrowserRouter>
         <Header />
         <Routes>
@@ -32,7 +40,7 @@ function App() {
         </Routes>
         <Footer />
       </BrowserRouter>
-    </>
+    </UserContext.Provider>
   );
 }
 

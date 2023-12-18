@@ -113,7 +113,7 @@ export default function RefereeScreenManagement() {
 
   const handleLocalEvent = () => {
     if (selectedLocalCheckboxes.length === 5) {
-        setLocalFieldPlayers(selectedLocalCheckboxes);
+      setLocalFieldPlayers(selectedLocalCheckboxes);
       // Add your custom logic or function call here
     }
   };
@@ -142,7 +142,7 @@ export default function RefereeScreenManagement() {
 
   const handleAwayEvent = () => {
     if (selectedAwayCheckboxes.length === 5) {
-      setAwayFieldPlayers(selectedAwayCheckboxes)
+      setAwayFieldPlayers(selectedAwayCheckboxes);
       // Add your custom logic or function call here
     }
   };
@@ -178,31 +178,69 @@ export default function RefereeScreenManagement() {
       });
   }
 
-  function handlePointScored(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+  function handlePointScored(
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) {
     const { name, value } = e.currentTarget;
-    console.log(`ID : ${name} , valor : ${value}`)
-
+    console.log(`ID : ${name} , valor : ${value}`);
   }
 
-  function handleChangePlayer() {
+  const [changeLocal, setChangeLocal] = useState<string | null>(null);
 
-    const timeout = setTimeout(() => {
-      console.log("segundoClick")
-    }, 1000)
-    setHoldTimeout(timeout);
+  function handleChangeLocalPlayer(player: TPlayer) {
+    if (localFieldPlayers !== null && changeLocal !== null) {
+      const newArray: TPlayer[] = localFieldPlayers.map((playerOnTheField) =>
+        playerOnTheField.jugadorid === changeLocal ? player : playerOnTheField
+      );
+
+      setLocalFieldPlayers(newArray);
+      setChangeLocal(null);
+    }
   }
 
+  function handlePressStartLocal(player: TPlayer) {
+    setChangeLocal(player.jugadorid);
+    console.log(changeLocal);
+  }
+  const [changeAway, setChangeAway] = useState<string | null>(null);
 
+  function handleChangeAwayPlayer(player: TPlayer) {
+    if (awayFieldPlayers !== null && changeAway !== null) {
+      const newArray: TPlayer[] = awayFieldPlayers.map((playerOnTheField) =>
+        playerOnTheField.jugadorid === changeAway ? player : playerOnTheField
+      );
+
+      setAwayFieldPlayers(newArray);
+      setChangeAway(null);
+    }
+  }
+
+  function handlePressStartAway(player: TPlayer) {
+    setChangeAway(player.jugadorid);
+    console.log(changeAway);
+
+    // // Set a timeout for one second
+    // setTimeout(() => {
+    // console.log(pressStartTime)
+
+    //   // Check if the user is still pressing after one second
+    //   if (pressStartTime) {
+    //     handleChangePlayer();
+    //     // Perform your action here
+    //   }
+    // }, 1000);
+  }
+
+  // const handlePressEnd = () => {
+  //   // Clear the press start time on press release
+  //   setPressStartTime(null);
+  // };
 
   function handleFinish() {}
 
   useEffect(() => {
     getPlayers();
   }, []);
-
-  console.log(localTeam);
-  console.log(awayTeam);
-  console.log(localTeamPlayers);
 
   return (
     <>
@@ -239,20 +277,75 @@ export default function RefereeScreenManagement() {
                 ))}
               </div>
               <div>
+                {changeLocal != null ? (
+                  <div>
+                    {awayTeamPlayers.map((player) => (
+                      <div key={player.jugadorid}>
+                        <input
+                          type="checkbox"
+                          id={`local-change-checkbox-${player.jugadorid}`}
+                          onChange={() => handleChangeLocalPlayer(player)}
+                        />
+                        <label
+                          htmlFor={`local-change-checkbox-${player.jugadorid}`}
+                        >
+                          <div key={player.jugadorid}>
+                            <span>
+                              {player.dorsal}
+                              {player.nombre}
+                            </span>
+                          </div>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <></>
+                )}
                 {localFieldPlayers != null ? (
                   <>
                     {localFieldPlayers.map((player) => (
                       <div key={player.jugadorid}>
                         <ul>
-                          <li>{player.dorsal}</li>
-                          <li>
-                            <button onClick={(e) => handlePointScored(e)} value="1" name={player.jugadorid}>1</button>
+                          <li
+                            onClick={() => handlePressStartLocal(player)}
+                            // onMouseUp={handlePressEnd}
+                            onTouchStart={() => handlePressStartLocal(player)}
+                            // onTouchEnd={handlePressEnd}
+                            style={{
+                              padding: "10px",
+                              border: "1px solid #ccc",
+                              cursor: "pointer",
+                            }}
+                          >
+                            {player.dorsal}
                           </li>
                           <li>
-                            <button onClick={handlePointScored} value="2" name={player.jugadorid}>2</button>
+                            <button
+                              onClick={(e) => handlePointScored(e)}
+                              value="1"
+                              name={player.jugadorid}
+                            >
+                              1
+                            </button>
                           </li>
                           <li>
-                            <button onClick={handlePointScored} value="3" name={player.jugadorid}>3</button>
+                            <button
+                              onClick={handlePointScored}
+                              value="2"
+                              name={player.jugadorid}
+                            >
+                              2
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              onClick={handlePointScored}
+                              value="3"
+                              name={player.jugadorid}
+                            >
+                              3
+                            </button>
                           </li>
                           <li>
                             <button>{player.faltasPartido}</button>
@@ -290,20 +383,75 @@ export default function RefereeScreenManagement() {
                 ))}
               </div>
               <div>
+                {changeAway != null ? (
+                  <div>
+                    {awayTeamPlayers.map((player) => (
+                      <div key={player.jugadorid}>
+                        <input
+                          type="checkbox"
+                          id={`away-change-checkbox-${player.jugadorid}`}
+                          onChange={() => handleChangeAwayPlayer(player)}
+                        />
+                        <label
+                          htmlFor={`away-change-checkbox-${player.jugadorid}`}
+                        >
+                          <div key={player.jugadorid}>
+                            <span>
+                              {player.dorsal}
+                              {player.nombre}
+                            </span>
+                          </div>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <></>
+                )}
                 {awayFieldPlayers != null ? (
                   <>
                     {awayFieldPlayers.map((player) => (
                       <div key={player.jugadorid}>
                         <ul>
-                          <li>{player.dorsal}</li>
-                          <li>
-                            <button onClick={(e) => handlePointScored(e)} value="1" name={player.jugadorid}>1</button>
+                          <li
+                            onClick={() => handlePressStartAway(player)}
+                            // onMouseUp={handlePressEnd}
+                            onTouchStart={() => handlePressStartAway(player)}
+                            // onTouchEnd={handlePressEnd}
+                            style={{
+                              padding: "10px",
+                              border: "1px solid #ccc",
+                              cursor: "pointer",
+                            }}
+                          >
+                            {player.dorsal}
                           </li>
                           <li>
-                            <button onClick={handlePointScored} value="2" name={player.jugadorid}>2</button>
+                            <button
+                              onClick={(e) => handlePointScored(e)}
+                              value="1"
+                              name={player.jugadorid}
+                            >
+                              1
+                            </button>
                           </li>
                           <li>
-                            <button onClick={handlePointScored} value="3" name={player.jugadorid}>3</button>
+                            <button
+                              onClick={handlePointScored}
+                              value="2"
+                              name={player.jugadorid}
+                            >
+                              2
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              onClick={handlePointScored}
+                              value="3"
+                              name={player.jugadorid}
+                            >
+                              3
+                            </button>
                           </li>
                           <li>
                             <button>{player.faltasPartido}</button>
@@ -327,9 +475,9 @@ export default function RefereeScreenManagement() {
           )}
         </>
       ) : (
-          <div>
-            <span>Loading a Match...</span>
-          </div>
+        <div>
+          <span>Loading a Match...</span>
+        </div>
       )}
     </>
   );

@@ -17,59 +17,6 @@ interface TTeams {
   id: string;
 }
 
-const listaJugadoresLocal: TPlayer[] = [
-  {
-    jugadorid: "primero",
-    nombre: "Venice",
-    apellido: "Lobato",
-    dorsal: 1,
-    puntosPartido: 0,
-    faltasPartido: 0,
-  },
-  {
-    jugadorid: "Segundo",
-    nombre: "Aitor",
-    apellido: "Meandros",
-    dorsal: 3,
-    puntosPartido: 0,
-    faltasPartido: 0,
-  },
-  {
-    jugadorid: "tercero",
-    nombre: "Leon",
-    apellido: "Ramirez",
-    dorsal: 7,
-    puntosPartido: 0,
-    faltasPartido: 0,
-  },
-];
-
-const listaJugadoresAway: TPlayer[] = [
-  {
-    jugadorid: "Agua",
-    nombre: "SonDeLuz",
-    apellido: "El Audaz",
-    dorsal: 1,
-    puntosPartido: 0,
-    faltasPartido: 0,
-  },
-  {
-    jugadorid: "Fuego",
-    nombre: "Vasher",
-    apellido: "Pacifico",
-    dorsal: 2,
-    puntosPartido: 0,
-    faltasPartido: 0,
-  },
-  {
-    jugadorid: "Tierra",
-    nombre: "Waxillum",
-    apellido: "Ladrian",
-    dorsal: 16,
-    puntosPartido: 0,
-    faltasPartido: 0,
-  },
-];
 
 export default function RefereeScreenManagement() {
   const { matchID } = useParams();
@@ -80,13 +27,13 @@ export default function RefereeScreenManagement() {
   const [awayTeam, setAwayTeam] = useState<TTeams | null>(null);
 
   const [localTeamPlayers, setLocalTeamPlayers] = useState<TPlayer[] | null>(
-    listaJugadoresLocal
+    null
   );
   const [localFieldPlayers, setLocalFieldPlayers] = useState<TPlayer[] | null>(
     null
   );
   const [awayTeamPlayers, setAwayTeamPlayers] = useState<TPlayer[] | null>(
-    listaJugadoresAway
+    null
   );
   const [awayFieldPlayers, setAwayFieldPlayers] = useState<TPlayer[] | null>(
     null

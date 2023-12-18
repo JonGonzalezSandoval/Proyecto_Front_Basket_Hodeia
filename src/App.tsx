@@ -24,7 +24,7 @@ function App() {
         <Routes>
           <Route path="/" element={<MainScreen />} />
           <Route path="/introScreen" element={<IntroScreen />} />
-          <Route path="/refereeMatch" element={<RefereeScreenManagement />} />
+          <Route path="/refereeMatch/:matchID" element={<RefereeScreenManagement />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/coach" element={<CoachLists />} />

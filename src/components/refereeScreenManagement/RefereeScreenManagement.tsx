@@ -1,42 +1,44 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MatchTimer from "../matchTimer/MatchTimer";
 import { useParams } from "react-router-dom";
 
 interface TPlayer {
-  id: string;
+  jugadorid: string;
   nombre: string;
   apellido: string;
-  dorsal: string;
+  dorsal: number;
   puntosPartido: number;
   faltasPartido: number;
 }
 
-interface TProp {
-  matchID: string;
+interface TTeams {
+  nombre: string;
+  logo: string | null;
+  id: string;
 }
 
 const listaJugadoresLocal: TPlayer[] = [
   {
-    id: "primero",
+    jugadorid: "primero",
     nombre: "Venice",
     apellido: "Lobato",
-    dorsal: "1",
+    dorsal: 1,
     puntosPartido: 0,
     faltasPartido: 0,
   },
   {
-    id: "Segundo",
+    jugadorid: "Segundo",
     nombre: "Aitor",
     apellido: "Meandros",
-    dorsal: "3",
+    dorsal: 3,
     puntosPartido: 0,
     faltasPartido: 0,
   },
   {
-    id: "tercero",
+    jugadorid: "tercero",
     nombre: "Leon",
     apellido: "Ramirez",
-    dorsal: "7",
+    dorsal: 7,
     puntosPartido: 0,
     faltasPartido: 0,
   },
@@ -44,34 +46,39 @@ const listaJugadoresLocal: TPlayer[] = [
 
 const listaJugadoresAway: TPlayer[] = [
   {
-    id: "Agua",
+    jugadorid: "Agua",
     nombre: "SonDeLuz",
     apellido: "El Audaz",
-    dorsal: "1",
+    dorsal: 1,
     puntosPartido: 0,
     faltasPartido: 0,
   },
   {
-    id: "Fuego",
+    jugadorid: "Fuego",
     nombre: "Vasher",
     apellido: "Pacifico",
-    dorsal: "2",
+    dorsal: 2,
     puntosPartido: 0,
     faltasPartido: 0,
   },
   {
-    id: "Tierra",
+    jugadorid: "Tierra",
     nombre: "Waxillum",
     apellido: "Ladrian",
-    dorsal: "16",
+    dorsal: 16,
     puntosPartido: 0,
     faltasPartido: 0,
   },
 ];
 
 export default function RefereeScreenManagement() {
-  const [timer, setTimer] = useState();
   const { matchID } = useParams();
+
+  const [timer, setTimer] = useState();
+
+  const [localTeam, setLocalTeam] = useState<TTeams | null>(null);
+  const [awayTeam, setAwayTeam] = useState<TTeams | null>(null);
+
   const [localTeamPlayers, setLocalTeamPlayers] = useState<TPlayer[] | null>(
     listaJugadoresLocal
   );
@@ -85,83 +92,244 @@ export default function RefereeScreenManagement() {
     null
   );
 
+  const [selectedLocalCheckboxes, setSelectedLocalCheckboxes] = useState<
+    TPlayer[]
+  >([]);
+
+  const [holdTimeout, setHoldTimeout] = useState<number | null>(null);
+
+  const handleLocalCheckboxChange = (checkboxValue: TPlayer) => {
+    // Toggle the checkbox value in the selectedLocalCheckboxes array
+    setSelectedLocalCheckboxes((prevSelected) => {
+      if (prevSelected.includes(checkboxValue)) {
+        return prevSelected.filter((value) => value !== checkboxValue);
+      } else {
+        return [...prevSelected, checkboxValue];
+      }
+    });
+  };
+
+  // Trigger an event when 5 checkboxes are selected
+
+  const handleLocalEvent = () => {
+    if (selectedLocalCheckboxes.length === 5) {
+        setLocalFieldPlayers(selectedLocalCheckboxes);
+      // Add your custom logic or function call here
+    }
+  };
+
+  useEffect(() => {
+    handleLocalEvent();
+    console.log(selectedLocalCheckboxes);
+  }, [selectedLocalCheckboxes, setSelectedLocalCheckboxes]);
+
+  const [selectedAwayCheckboxes, setSelectedAwayCheckboxes] = useState<
+    TPlayer[]
+  >([]);
+
+  const handleAwayCheckboxChange = (checkboxValue: TPlayer) => {
+    // Toggle the checkbox value in the selectedAwayCheckboxes array
+    setSelectedAwayCheckboxes((prevSelected) => {
+      if (prevSelected.includes(checkboxValue)) {
+        return prevSelected.filter((value) => value !== checkboxValue);
+      } else {
+        return [...prevSelected, checkboxValue];
+      }
+    });
+  };
+
+  // Trigger an event when 5 checkboxes are selected
+
+  const handleAwayEvent = () => {
+    if (selectedAwayCheckboxes.length === 5) {
+      setAwayFieldPlayers(selectedAwayCheckboxes)
+      // Add your custom logic or function call here
+    }
+  };
+
+  useEffect(() => {
+    handleAwayEvent();
+    console.log(selectedAwayCheckboxes);
+  }, [selectedAwayCheckboxes, setSelectedAwayCheckboxes]);
+
   function getPlayers() {
-    fetch(`${matchID}`)
+    fetch(`http://localhost:3000/matches/teamsplayersdate/${matchID}`)
       .then((res) => res.json())
-      .then((res) => console.log(res));
+      .then((res) => {
+        console.log(res);
+
+        setLocalTeam({
+          nombre: res.localTeamDetails.localid.nombre,
+          logo: res.localTeamDetails.localid.equipoLogo,
+          id: res.localTeamDetails.localid.equipoid,
+        });
+        setAwayTeam({
+          nombre: res.visitorTeamDetails.visitanteid.nombre,
+          logo: res.visitorTeamDetails.visitanteid.equipoLogo,
+          id: res.visitorTeamDetails.visitanteid.equipoid,
+        });
+
+        // const localPlayers = res.localid.player.map(jugador => {
+        //   return {...jugador, }
+        // })
+
+        setLocalTeamPlayers(res.localTeamDetails.localid.players);
+        setAwayTeamPlayers(res.visitorTeamDetails.visitanteid.players);
+      });
   }
 
-  function handlePointScored() {}
+  function handlePointScored(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    const { name, value } = e.currentTarget;
+    console.log(`ID : ${name} , valor : ${value}`)
 
-  function handleChangePlayer() {}
+  }
+
+  function handleChangePlayer() {
+
+    const timeout = setTimeout(() => {
+      console.log("segundoClick")
+    }, 1000)
+    setHoldTimeout(timeout);
+  }
+
+
 
   function handleFinish() {}
 
+  useEffect(() => {
+    getPlayers();
+  }, []);
+
+  console.log(localTeam);
+  console.log(awayTeam);
+  console.log(localTeamPlayers);
+
   return (
     <>
-      <MatchTimer />
-      {localTeamPlayers !== null && awayTeamPlayers !== null ? (
+      {localTeam !== null && awayTeam !== null ? (
         <>
+          <MatchTimer />
           <div>
-            {localTeamPlayers.map((player) => (
-              <div>
-                <ul>
-                  <li>{player.dorsal}</li>
-                  <li>{player.nombre}</li>
-                  <li>{player.puntosPartido}</li>
-                </ul>
-              </div>
-            ))}
+            <span>{localTeam.nombre}</span>
           </div>
           <div>
-            {localFieldPlayers != null ? (
-              <>
-                {localFieldPlayers.map((player) => (
-                  <div>
-                    <ul>
-                      <li>{player.dorsal}</li>
-                      <li>1</li>
-                      <li>2</li>
-                      <li>3</li>
-                      <li>{player.faltasPartido}</li>
-                    </ul>
+            <span>{awayTeam.nombre}</span>
+          </div>
+          {localTeamPlayers !== null && awayTeamPlayers !== null ? (
+            <>
+              <div>
+                {localTeamPlayers.map((player) => (
+                  <div key={player.jugadorid}>
+                    <input
+                      type="checkbox"
+                      id={`checkbox-${player.jugadorid}`}
+                      checked={selectedLocalCheckboxes.includes(player)}
+                      onChange={() => handleLocalCheckboxChange(player)}
+                    />
+                    <label htmlFor={`checkbox-${player.jugadorid}`}>
+                      <div>
+                        <ul>
+                          <li>{player.dorsal}</li>
+                          <li>{player.nombre}</li>
+                          <li>{player.puntosPartido}</li>
+                        </ul>
+                      </div>
+                    </label>
                   </div>
                 ))}
-              </>
-            ) : (
-              <>
-                <span>Selecciona los jugadores iniciales</span>
-                <div>
-                  <form action="">
-                    <select name="inicioLocal" id="">
-                      {localTeamPlayers.map((player) => (
-                        <option
-                          value={player.id}
-                        >{`${player.dorsal} - ${player.dorsal}`}</option>
-                      ))}
-                    </select>
-                    <input type="submit" value="Mandar seleccionados"/>
-                  </form>
-                </div>
-              </>
-            )}
-          </div>
-          <div>
-            {awayTeamPlayers.map((player) => (
-              <div>
-                <ul>
-                  <li>{player.dorsal}</li>
-                  <li>{player.nombre}</li>
-                  <li>{player.puntosPartido}</li>
-                </ul>
               </div>
-            ))}
-          </div>
+              <div>
+                {localFieldPlayers != null ? (
+                  <>
+                    {localFieldPlayers.map((player) => (
+                      <div key={player.jugadorid}>
+                        <ul>
+                          <li>{player.dorsal}</li>
+                          <li>
+                            <button onClick={(e) => handlePointScored(e)} value="1" name={player.jugadorid}>1</button>
+                          </li>
+                          <li>
+                            <button onClick={handlePointScored} value="2" name={player.jugadorid}>2</button>
+                          </li>
+                          <li>
+                            <button onClick={handlePointScored} value="3" name={player.jugadorid}>3</button>
+                          </li>
+                          <li>
+                            <button>{player.faltasPartido}</button>
+                          </li>
+                        </ul>
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <>
+                    <span>Selecciona los jugadores iniciales</span>
+                    <div></div>
+                  </>
+                )}
+              </div>
+              <div>
+                {awayTeamPlayers.map((player) => (
+                  <div key={player.jugadorid}>
+                    <input
+                      type="checkbox"
+                      id={`away-checkbox-${player.jugadorid}`}
+                      checked={selectedAwayCheckboxes.includes(player)}
+                      onChange={() => handleAwayCheckboxChange(player)}
+                    />
+                    <label htmlFor={`away-checkbox-${player.jugadorid}`}>
+                      <div key={player.jugadorid}>
+                        <ul>
+                          <li>{player.dorsal}</li>
+                          <li>{player.nombre}</li>
+                          <li>{player.puntosPartido}</li>
+                        </ul>
+                      </div>
+                    </label>
+                  </div>
+                ))}
+              </div>
+              <div>
+                {awayFieldPlayers != null ? (
+                  <>
+                    {awayFieldPlayers.map((player) => (
+                      <div key={player.jugadorid}>
+                        <ul>
+                          <li>{player.dorsal}</li>
+                          <li>
+                            <button onClick={(e) => handlePointScored(e)} value="1" name={player.jugadorid}>1</button>
+                          </li>
+                          <li>
+                            <button onClick={handlePointScored} value="2" name={player.jugadorid}>2</button>
+                          </li>
+                          <li>
+                            <button onClick={handlePointScored} value="3" name={player.jugadorid}>3</button>
+                          </li>
+                          <li>
+                            <button>{player.faltasPartido}</button>
+                          </li>
+                        </ul>
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <>
+                    <span>Selecciona los jugadores iniciales</span>
+                    <div></div>
+                  </>
+                )}
+              </div>
+            </>
+          ) : (
+            <div>
+              <span>Loading Player Info...</span>
+            </div>
+          )}
         </>
       ) : (
-        <div>
-          <span>Loading Match...</span>
-        </div>
+          <div>
+            <span>Loading a Match...</span>
+          </div>
       )}
     </>
   );

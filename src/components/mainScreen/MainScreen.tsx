@@ -70,7 +70,19 @@ export default function MainScreen() {
         ))}
       </select>
       <MyCalendar setterFecha={setDate} fecha={date} fechasPartidos={[""]}/>
-      <div></div>
+      <div>
+          <div>
+            <div>Estado: </div>
+            <div>
+              <div>Equipo 1</div>
+              <div> 17 </div>
+            </div>
+            <div>
+              <div>Equipo 2</div>
+              <div>25</div>
+            </div>
+          </div>
+      </div>
     </>
   ) : (
     <span>Loading Data</span>

@@ -45,18 +45,10 @@ function App() {
         <Route path="/test" element={<Test></Test>}/>
         </Routes>
         {/* <Footer></Footer> */}
-       
+      
       </Container>
     
       </BrowserRouter>
-      {/* <BrowserRouter>
-        <Header />
-        <Routes>
-          <Route path="/" element={<MainScreen />} />
-          <Route path="/refereeMatch/:matchID" element={<RefereeScreenManagement />} />
-        </Routes>
-        <Footer />
-      </BrowserRouter> */}
     </UserContext.Provider>
   );
 }

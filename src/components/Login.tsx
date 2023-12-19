@@ -38,7 +38,6 @@ function Login() {
         localStorage.removeItem("SavedToken");
         localStorage.setItem("SavedToken", "Bearer " + res);
         fetch("http://192.168.1.129:3000/auth/profile", {
-            // NO SE CÓMO TIPAR EL HEADER PARA QUE NO DE PROBLEMAS
             headers: { Authorization: localStorage.getItem("SavedToken") || ""},
         })
           .then((res) => res.json())

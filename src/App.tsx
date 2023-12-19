@@ -3,7 +3,6 @@ import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "react-calendar/dist/Calendar.css";
 import MainScreen from "./components/mainScreen/MainScreen";
-import IntroScreen from "./components/introScreen/IntroScreen";
 import RefereeScreenManagement from "./components/refereeScreenManagement/RefereeScreenManagement";
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -37,7 +36,7 @@ function App() {
         <Route path="/admin-coach-referee" element={<CoachReferee></CoachReferee>} />
         <Route path="/login" element={<Login></Login>}></Route>
         <Route path="/register" element={<Register></Register>} />
-        {/* <Route path="/home" element={<MainScreen></MainScreen>} /> */}
+        <Route path="/home" element={<MainScreen></MainScreen>} />
         <Route path="/admin-league" element={<LeagueList></LeagueList>}/>
         <Route path="/admin-team" element={<TeamList></TeamList>}/>
         <Route path="/coach-player" element={<PlayersList></PlayersList>}/>

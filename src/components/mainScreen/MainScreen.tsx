@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import Calendar from "react-calendar";
-import MyCalendar from "../calendar/MyCalendar";
+import MyCalendar from "../MyCalendar";
 import UserContext from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 
@@ -36,7 +35,7 @@ export default function MainScreen() {
   const navigate = useNavigate();
 
   function handleSelectedLeagueSeasonOnDate(): void {
-    fetch(`http://localhost:3000/matches/season/${selectedLeague}/1`)
+    fetch(`http://192.168.1.129:3000/matches/season/${selectedLeague}/1`)
       .then((res) => res.json())
       .then((res) => {
         console.log(res);
@@ -57,7 +56,7 @@ export default function MainScreen() {
   // mathDate:string
   function matchesOfTheDay() {
     fetch(
-      `http://localhost:3000/matches/byLD/bdb6b2cb-a058-42f4-b5be-199b36a8819c/2023-12-14`
+      `http://192.168.1.129:3000/matches/byLD/bdb6b2cb-a058-42f4-b5be-199b36a8819c/2023-12-14`
     )
       .then((res) => res.json())
       .then((res) => {
@@ -85,7 +84,7 @@ export default function MainScreen() {
     //   navigate("/login");
     // }
 
-    fetch("http://localhost:3000/ligas/all")
+    fetch("http://192.168.1.129:3000/ligas/all")
       .then((res) => res.json())
       .then((res) => {
         setAllLeagues(res);

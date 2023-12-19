@@ -36,6 +36,7 @@ export default function MainScreen() {
     fetch(`http://localhost:3000/matches/season/${selectedLeague}/1`)
       .then((res) => res.json())
       .then((res) => {
+        console.log(res)
         setPartidosEnTemporada([]);
       });
   }
@@ -54,7 +55,7 @@ export default function MainScreen() {
     
       if (localStorage.getItem("SavedToken") !== null) {
         fetch("http://localhost:3000/api/auth/profile", {
-          // headers: { Authorization: localStorage.getItem("SavedToken") },
+          headers: { Authorization: localStorage.getItem("SavedToken") || "" }
         })
           .then((res) => {
             if (res.status === 401) {

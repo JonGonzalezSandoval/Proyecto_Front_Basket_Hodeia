@@ -19,11 +19,6 @@ interface Tuser {
 
 function App() {
   const [loginUser, setLoginUser] = useState<Tuser | null>(null)
-  // useEffect(() => {
-  //   fetch(`http://localhost:3000/users/all`)
-  //     .then((res) => res.json())
-  //     .then((res) => console.log(res));
-  // }, []);
 
   return (
     <UserContext.Provider value={{loginUser, setLoginUser}}>

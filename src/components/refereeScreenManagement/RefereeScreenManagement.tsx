@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 
 interface TPlayer {
   jugadorid: string;
+  equipoid: string;
   nombre: string;
   apellido: string;
   dorsal: number;
@@ -16,7 +17,6 @@ interface TTeams {
   logo: string | null;
   id: string;
 }
-
 
 export default function RefereeScreenManagement() {
   const { matchID } = useParams();
@@ -116,20 +116,25 @@ export default function RefereeScreenManagement() {
           id: res.visitorTeamDetails.visitanteid.equipoid,
         });
 
-        // const localPlayers = res.localid.player.map(jugador => {
-        //   return {...jugador, }
-        // })
+        const localPlayers = res.localTeamDetails.localid.players.map(
+          (jugador: any) => {
+            const { faltas, genero, puntuacion, ...result } = jugador;
+            return { ...result, puntosPartido: 0, faltasPartido: 0 };
+          }
+        );
 
-        setLocalTeamPlayers(res.localTeamDetails.localid.players);
-        setAwayTeamPlayers(res.visitorTeamDetails.visitanteid.players);
+        const awayPlayers = res.visitorTeamDetails.visitanteid.players.map(
+          (jugador: any) => {
+            const { faltas, genero, puntuacion, ...result } = jugador;
+            return { ...result, puntosPartido: 0, faltasPartido: 0 };
+          }
+        );
+
+        console.log(localPlayers);
+
+        setLocalTeamPlayers(localPlayers);
+        setAwayTeamPlayers(awayPlayers);
       });
-  }
-
-  function handlePointScored(
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) {
-    const { name, value } = e.currentTarget;
-    console.log(`ID : ${name} , valor : ${value}`);
   }
 
   const [changeLocal, setChangeLocal] = useState<string | null>(null);
@@ -164,7 +169,6 @@ export default function RefereeScreenManagement() {
 
   function handlePressStartAway(player: TPlayer) {
     setChangeAway(player.jugadorid);
-    console.log(changeAway);
 
     // // Set a timeout for one second
     // setTimeout(() => {
@@ -182,6 +186,112 @@ export default function RefereeScreenManagement() {
   //   // Clear the press start time on press release
   //   setPressStartTime(null);
   // };
+
+  function handlePointScored(
+    player: TPlayer, points: number
+  ) {
+    const data = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        jugadorid: player.jugadorid,
+        puntos: points,
+        partidoid: matchID,
+      }),
+    };
+    fetch("http://localhost:3000/scores/new", data)
+      .then((res) => res.json())
+      .then((res) => {
+        console.log(res);
+        let arrayDeJugadores: TPlayer[] = [];
+        let local = true;
+        if (localTeamPlayers !== null && player.equipoid === localTeam?.id) {
+          arrayDeJugadores = localTeamPlayers;
+        } else if (awayTeamPlayers !== null) {
+          arrayDeJugadores = awayTeamPlayers;
+          local = false;
+        }
+
+        const indiceJugadorAActualizar = arrayDeJugadores.findIndex(
+          (jugador) => jugador.jugadorid === player.jugadorid
+        );
+
+        if (indiceJugadorAActualizar !== -1) {
+          const nuevoArrayDeJugadores = [...arrayDeJugadores];
+          nuevoArrayDeJugadores[indiceJugadorAActualizar].puntosPartido += points;
+
+          local?setLocalTeamPlayers(nuevoArrayDeJugadores):setAwayTeamPlayers(nuevoArrayDeJugadores);
+        } else {
+          console.log(
+            `Jugador con jugadorid ${player.jugadorid} no encontrado`
+          );
+        }
+      })
+      .then( res => {
+        if(localTeamPlayers != null){
+          console.log(localTeamPlayers);
+        }
+      })
+      .catch((error) => {});
+  }
+
+  function handleFault(player: TPlayer) {
+    const data = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ jugadorid: player.jugadorid, partidoid: matchID }),
+    };
+    fetch("http://localhost:3000/fouls/new", data)
+      .then((res) => res.json())
+      .then((res) => {
+        console.log(res)
+        let arrayDeJugadores: TPlayer[] = [];
+        let arrayDeJugadoresPista: TPlayer[] = [];
+        let local = true;
+        if (localTeamPlayers !== null && localFieldPlayers !== null && player.equipoid === localTeam?.id) {
+          arrayDeJugadores = localTeamPlayers;
+          arrayDeJugadoresPista = localFieldPlayers;
+        } else if (awayTeamPlayers !== null && awayFieldPlayers !== null) {
+          arrayDeJugadores = awayTeamPlayers;
+          arrayDeJugadoresPista = awayFieldPlayers;
+          local = false;
+        }
+
+        const indiceJugadorAActualizar = arrayDeJugadores.findIndex(
+          (jugador) => jugador.jugadorid === player.jugadorid
+        );
+        const indiceJugadorCampoAActualizar = arrayDeJugadoresPista.findIndex(
+          (jugador) => jugador.jugadorid === player.jugadorid
+        );
+
+        if (indiceJugadorAActualizar !== -1 && indiceJugadorCampoAActualizar !== -1) {
+          const nuevoArrayDeJugadores = [...arrayDeJugadores];
+          nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido += 1;
+
+          const nuevoArrayDeJugadoresPista = [...arrayDeJugadoresPista];
+          nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar].faltasPartido += 1;
+
+
+
+          local?setLocalTeamPlayers(nuevoArrayDeJugadores):setAwayTeamPlayers(nuevoArrayDeJugadores);
+          local?setLocalFieldPlayers(nuevoArrayDeJugadoresPista):setAwayFieldPlayers(nuevoArrayDeJugadoresPista);
+        } else {
+          console.log(
+            `Jugador con jugadorid ${player.jugadorid} no encontrado`
+          );
+        }
+      })
+      .then( res => {
+        if(localTeamPlayers != null){
+          console.log(awayTeamPlayers);
+        }
+      })
+      .catch((error) => {});
+  }
 
   function handleFinish() {}
 
@@ -269,33 +379,29 @@ export default function RefereeScreenManagement() {
                           </li>
                           <li>
                             <button
-                              onClick={(e) => handlePointScored(e)}
-                              value="1"
-                              name={player.jugadorid}
+                              onClick={() => handlePointScored(player, 1)}
                             >
                               1
                             </button>
                           </li>
                           <li>
                             <button
-                              onClick={handlePointScored}
-                              value="2"
-                              name={player.jugadorid}
+                              onClick={() => handlePointScored(player, 2)}
                             >
                               2
                             </button>
                           </li>
                           <li>
                             <button
-                              onClick={handlePointScored}
-                              value="3"
-                              name={player.jugadorid}
+                              onClick={() => handlePointScored(player, 3)}
                             >
                               3
                             </button>
                           </li>
                           <li>
-                            <button>{player.faltasPartido}</button>
+                            <button onClick={() => handleFault(player)}>
+                              F {player.faltasPartido}
+                            </button>
                           </li>
                         </ul>
                       </div>
@@ -375,33 +481,28 @@ export default function RefereeScreenManagement() {
                           </li>
                           <li>
                             <button
-                              onClick={(e) => handlePointScored(e)}
-                              value="1"
-                              name={player.jugadorid}
+                              onClick={() => handlePointScored(player, 1)}
                             >
                               1
                             </button>
                           </li>
                           <li>
                             <button
-                              onClick={handlePointScored}
-                              value="2"
-                              name={player.jugadorid}
+                              onClick={() => handlePointScored(player, 2)}
                             >
                               2
                             </button>
                           </li>
                           <li>
                             <button
-                              onClick={handlePointScored}
-                              value="3"
-                              name={player.jugadorid}
+                              onClick={() => handlePointScored(player, 3)}
                             >
                               3
                             </button>
                           </li>
                           <li>
-                            <button>{player.faltasPartido}</button>
+                          <button onClick={() => handleFault(player)}>
+                              F {player.faltasPartido}</button>
                           </li>
                         </ul>
                       </div>

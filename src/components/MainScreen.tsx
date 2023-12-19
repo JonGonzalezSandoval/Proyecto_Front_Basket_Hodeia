@@ -130,7 +130,7 @@ export default function MainScreen() {
       </select>
       <MyCalendar setterFecha={setDate} fecha={date} fechasPartidos={[""]} />
       <div>
-        {partidosDia !== null ? <>
+        {partidosDia !== null ? <>  
           {partidosDia.map(partido => (
             <div>
               <p>{partido.fecha}</p>

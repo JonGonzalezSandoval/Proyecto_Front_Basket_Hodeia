@@ -16,15 +16,12 @@ function Login() {
   function handleClick(e:React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
 
-    let email = user.email;
-    let password = user.password;
-
     let data = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ user }),
     };
 
     fetch("http://192.168.1.129:3000/auth/login", data)
@@ -35,6 +32,7 @@ function Login() {
         if (res.status == 401) throw new Error("Unauthorized");
       })
       .then((res) => {
+        console.log(res)
         localStorage.removeItem("SavedToken");
         localStorage.setItem("SavedToken", "Bearer " + res);
         fetch("http://192.168.1.129:3000/auth/profile", {

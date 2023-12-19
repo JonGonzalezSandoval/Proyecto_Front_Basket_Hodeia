@@ -26,7 +26,6 @@ function Login() {
       body: JSON.stringify({ user }),
     };
 
-    console.log(data.body)
     fetch("http://localhost:3000/auth/login", data)
       .then((res) => {
         if (res.status < 400) {
@@ -38,11 +37,7 @@ function Login() {
       .then((res) => {
         console.log(res)
         localStorage.removeItem("SavedToken");
-        localStorage.setItem("SavedToken", "Bearer " + res.access_token);
-        localStorage.removeItem("Rol");
-        localStorage.setItem("Rol", res.rol);
-
-        // navigate("/home")
+        localStorage.setItem("SavedToken", "Bearer " + res);
         fetch("http://localhost:3000/auth/profile", {
             headers: { Authorization: localStorage.getItem("SavedToken") || ""},
         })

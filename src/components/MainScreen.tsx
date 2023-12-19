@@ -56,7 +56,8 @@ export default function MainScreen() {
   // mathDate:string
   function matchesOfTheDay() {
     fetch(
-      `http://localhost:3000/matches/byLD/${selectedLeague}/${formatDate(new Date())}`
+      // `http://localhost:3000/matches/byLD/${selectedLeague}/${formatDate(new Date())}`
+      `http://localhost:3000/matches/byLD/bdb6b2cb-a058-42f4-b5be-199b36a8819c/2023-12-14`
     )
       .then((res) => res.json())
       .then(async (res) => {

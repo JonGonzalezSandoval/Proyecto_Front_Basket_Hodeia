@@ -2,8 +2,8 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "react-calendar/dist/Calendar.css";
-import MainScreen from "./components/mainScreen/MainScreen";
-import RefereeScreenManagement from "./components/refereeScreenManagement/RefereeScreenManagement";
+import MainScreen from "./components/MainScreen";
+import RefereeScreenManagement from "./components/RefereeScreenManagement";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Header from "./components/Header";

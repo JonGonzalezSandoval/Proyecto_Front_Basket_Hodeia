@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import MyCalendar from "../MyCalendar";
-import UserContext from "../../context/UserContext";
+import MyCalendar from "./MyCalendar";
+import UserContext from "./../context/UserContext";
 import { useNavigate } from "react-router-dom";
 
 interface TLeague {

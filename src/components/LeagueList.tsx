@@ -1,9 +1,26 @@
+import { useEffect, useState } from "react";
 import { Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
 
-export default function LeagueList() {
-  // function findLeagues(){
+interface TLiga {
+  id: string;
+  nombre: string;
+  genero: string;
+}
 
-  // }
+export default function LeagueList() {
+  const [ligas, setLigas] = useState<TLiga[] | null>(null);
+  
+  function getLigas(): void {
+    
+
+    fetch("http://localhost:3000/ligas/all")
+      .then((res) => res.json())
+      .then((res) => setLigas(res));
+    }
+
+    useEffect(() => {
+      getLigas();
+    }, []);
 
   return (
     <>
@@ -48,6 +65,8 @@ export default function LeagueList() {
       </Card>
       <br></br>
 
+      {ligas &&
+        ligas.map((liga) => (
       <Card>
         <Row className="no-gutters">
           <Col xs={2} className="mt-3 mb-3 ms-3">
@@ -64,18 +83,19 @@ export default function LeagueList() {
             <Card.Body>
               <Row>
                 <Col className="mt-3">
-                  <Card.Title>Liga Los Patos Amarillos</Card.Title>
+                  <Card.Title>{liga.nombre}</Card.Title>
                 </Col>
               </Row>
               <Row>
                 <Col>
-                  <Card.Text>Género: Masculino</Card.Text>
+                  <Card.Text>Género: {liga.genero}</Card.Text>
                 </Col>
               </Row>
             </Card.Body>
           </Col>
         </Row>
       </Card>
+         ))}
     </>
   );
 }

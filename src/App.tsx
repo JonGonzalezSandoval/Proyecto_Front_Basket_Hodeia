@@ -18,10 +18,10 @@ interface Tuser {
 }
 
 function App() {
-  const [loginUser, setLoginUser] = useState<Tuser | null>(null)
+  // const [loginUser, setLoginUser] = useState<Tuser | null>(null)
 
   return (
-    <UserContext.Provider value={{loginUser, setLoginUser}}>
+    <UserContext.Provider value={{}}>
       <BrowserRouter>
         <Header />
         <Routes>

@@ -11,17 +11,19 @@ interface TLeague {
 }
 
 interface TPartido {
-    
-arbitroid: string;
-equipo_ganador: string | null;
-equipo_perdedor : string | null;
-fecha : string;
-fechatemporada : number;
-ligaid: string;
-localid: string;
-partidoid: string; 
-puntuacion_equipo_local:number;
-puntuacion_equipo_visitante: number;
+  arbitroid: string;
+  equipo_ganador: string | null;
+  equipo_perdedor: string | null;
+  fecha: string;
+  fechatemporada: number;
+  ligaid: string;
+  localid: string;
+  nombrelocal: string;
+  visitanteid: string;
+  nombrevisitante: string;
+  partidoid: string;
+  puntuacion_equipo_local: number;
+  puntuacion_equipo_visitante: number;
 }
 
 export default function MainScreen() {
@@ -29,6 +31,7 @@ export default function MainScreen() {
   const [allLeagues, setAllLeagues] = useState<TLeague[] | null>(null);
   const [date, setDate] = useState<Date>(new Date());
   const [partidosEnTemporada, setPartidosEnTemporada] = useState<string[]>([]);
+  const [partidosDia, setPartidosDia] = useState<TPartido[] | null>(null);
   const { setLoginUser } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -36,9 +39,10 @@ export default function MainScreen() {
     fetch(`http://localhost:3000/matches/season/${selectedLeague}/1`)
       .then((res) => res.json())
       .then((res) => {
-        console.log(res)
+        console.log(res);
         setPartidosEnTemporada([]);
-      });
+      })
+      .then((res) => matchesOfTheDay());
   }
 
   const formatDate = (date: Date): string => {
@@ -50,43 +54,49 @@ export default function MainScreen() {
     return `${year}-${month}-${day}`;
   };
 
+  // mathDate:string
+  function matchesOfTheDay() {
+    fetch(
+      `http://localhost:3000/matches/byLD/bdb6b2cb-a058-42f4-b5be-199b36a8819c/2023-12-14`
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        setPartidosDia(res);
+      });
+  }
+
   useEffect(() => {
-
-    
-      if (localStorage.getItem("SavedToken") !== null) {
-        fetch("http://localhost:3000/api/auth/profile", {
-          headers: { Authorization: localStorage.getItem("SavedToken") || "" }
-        })
-          .then((res) => {
-            if (res.status === 401) {
-              setLoginUser(null);
-              navigate("/login");
-              return;
-            }
-            return res.json();
-          })
-          .then((res) => {
-            setLoginUser(res);
-          });
-      } else {
-        navigate("/login");
-      }
-    
-
+    // if (localStorage.getItem("SavedToken") !== null) {
+    //   fetch("http://localhost:3000/api/auth/profile", {
+    //     headers: { Authorization: localStorage.getItem("SavedToken") || "" }
+    //   })
+    //     .then((res) => {
+    //       if (res.status === 401) {
+    //         setLoginUser(null);
+    //         navigate("/login");
+    //         return;
+    //       }
+    //       return res.json();
+    //     })
+    //     .then((res) => {
+    //       setLoginUser(res);
+    //     });
+    // } else {
+    //   navigate("/login");
+    // }
 
     fetch("http://localhost:3000/ligas/all")
       .then((res) => res.json())
       .then((res) => {
-        setAllLeagues(res)
-        setSelectedLeague(res[0].ligaid)
-    });
+        setAllLeagues(res);
+        setSelectedLeague(res[0].ligaid);
+      });
   }, []);
 
   useEffect(() => {
-    console.log("Fecha " + date + " Liga " + selectedLeague)
-    if(selectedLeague != null)
-        handleSelectedLeagueSeasonOnDate()
-  },[date, setDate, selectedLeague, setSelectedLeague])
+    console.log("Fecha " + date + " Liga " + selectedLeague);
+    if (selectedLeague != null) handleSelectedLeagueSeasonOnDate();
+  }, [date, setDate, selectedLeague, setSelectedLeague]);
 
   return allLeagues != null ? (
     <>
@@ -97,19 +107,35 @@ export default function MainScreen() {
           </option>
         ))}
       </select>
-      <MyCalendar setterFecha={setDate} fecha={date} fechasPartidos={[""]}/>
+      <MyCalendar setterFecha={setDate} fecha={date} fechasPartidos={[""]} />
       <div>
+        {partidosDia !== null ? <>
+          {partidosDia.map(partido => (
+            <div>
+              <p>{partido.fecha}</p>
+              <p>{partido.localid}</p>
+              <p>{partido.visitanteid}</p>
+            </div>
+          //   <Card style={{ width: "18rem" }}>
+          //   <ListGroup variant="flush">
+          //     <ListGroup.Item></ListGroup.Item>
+          //     <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
+          //     <ListGroup.Item>Vestibulum at eros</ListGroup.Item>
+          //   </ListGroup>
+          // </Card>
+          ))}
+        </> : <></>}
+        <div>
+          <div>Estado: </div>
           <div>
-            <div>Estado: </div>
-            <div>
-              <div>Equipo 1</div>
-              <div> 17 </div>
-            </div>
-            <div>
-              <div>Equipo 2</div>
-              <div>25</div>
-            </div>
+            <div>Equipo 1</div>
+            <div> 17 </div>
           </div>
+          <div>
+            <div>Equipo 2</div>
+            <div>25</div>
+          </div>
+        </div>
       </div>
     </>
   ) : (

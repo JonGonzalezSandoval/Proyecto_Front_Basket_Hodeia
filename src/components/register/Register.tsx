@@ -37,7 +37,6 @@ export default function Register() {
   });
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    e.preventDefault();
     console.log(e.target.name + ": " + e.target.value);
 
     setNewUser({
@@ -50,7 +49,7 @@ export default function Register() {
     e.preventDefault();
     if (!validEmail || !validPassword) {
       console.log("Debes introducir todos los datos válidos");
-    } else if (newUser.nombre === "") {
+    } else {
       const data = {
         method: "POST",
         headers: {
@@ -59,7 +58,7 @@ export default function Register() {
         body: JSON.stringify({ ...newUser }),
       };
 
-      fetch("http://localhost:3000/users/newUser", data)
+      fetch("http://localhost:3000/users/register", data)
       .then((res) => {
         if (res.status == 202) {
           return res.text();

@@ -36,18 +36,18 @@ export default function Login() {
         if (res.status == 401) throw new Error("Unauthorized");
       })
       .then((res) => {
-        localStorage.removeItem("SavedToken");
-        localStorage.setItem("SavedToken", "Bearer " + res);
-        fetch("http://localhost:3000/auth/profile", {
-            // NO SE CÓMO TIPAR EL HEADER PARA QUE NO DE PROBLEMAS
-        //   headers: { Authorization: localStorage.getItem("SavedToken") }, 
-        })
-          .then((res) => res.json())
-          .then((res) => {
-            console.log(res);
-            setLoginUser(res);
-            navigate("/");
-          });
+        console.log(res)
+        // localStorage.removeItem("SavedToken");
+        // localStorage.setItem("SavedToken", "Bearer " + res);
+        // fetch("http://localhost:3000/auth/profile", {
+        //   headers: { Authorization: localStorage.getItem("SavedToken") || ""},
+        // })
+        //   .then((res) => res.json())
+        //   .then((res) => {
+        //     console.log(res);
+        //     setLoginUser(res);
+        //     navigate("/");
+        //   });
       })
       .catch((error) => {
         if (error.message === "Unauthorized") {

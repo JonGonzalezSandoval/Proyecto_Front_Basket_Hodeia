@@ -40,7 +40,7 @@ function App() {
         <Route path="/admin-league" element={<LeagueList></LeagueList>}/>
         <Route path="/admin-team" element={<TeamList></TeamList>}/>
         <Route path="/coach-player" element={<PlayersList></PlayersList>}/>
-        {/* <Route path="/manager/:matchID" element={<RefereeScreenManagement></RefereeScreenManagement>}/> */}
+        <Route path="/manager/:matchID" element={<RefereeScreenManagement></RefereeScreenManagement>}/>
         <Route path="/scoreboard" element={<Scoreboard></Scoreboard>}/>
         <Route path="/test" element={<Test></Test>}/>
         </Routes>

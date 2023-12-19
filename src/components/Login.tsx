@@ -9,12 +9,14 @@ import UserContext from "../context/UserContext";
 function Login() {
   const [user, setUser] = useState({ email: "", password: "" });
 
-  const { setLoginUser } = useContext(UserContext);
+  // const { setLoginUser } = useContext(UserContext);
 
   const navigate = useNavigate();
 
   function handleClick(e:React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
+
+    
 
     let data = {
       method: "POST",
@@ -24,24 +26,29 @@ function Login() {
       body: JSON.stringify({ user }),
     };
 
-    fetch("http://192.168.1.129:3000/auth/login", data)
+    console.log(data.body)
+    fetch("http://localhost:3000/auth/login", data)
       .then((res) => {
-        if (res.status == 202) {
-          return res.text();
+        if (res.status < 400) {
+          console.log(res)
+          return res.json();
         }
         if (res.status == 401) throw new Error("Unauthorized");
       })
       .then((res) => {
         console.log(res)
         localStorage.removeItem("SavedToken");
-        localStorage.setItem("SavedToken", "Bearer " + res);
-        fetch("http://192.168.1.129:3000/auth/profile", {
+        localStorage.setItem("SavedToken", "Bearer " + res.access_token);
+        localStorage.removeItem("Rol");
+        localStorage.setItem("Rol", res.rol);
+
+        // navigate("/home")
+        fetch("http://localhost:3000/auth/profile", {
             headers: { Authorization: localStorage.getItem("SavedToken") || ""},
         })
           .then((res) => res.json())
           .then((res) => {
             console.log(res);
-            setLoginUser(res);
             navigate("/home");
           });
       })
@@ -56,11 +63,12 @@ function Login() {
   }
 
   function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
-    let userTemp = { ...user };
-    //MIRAR MAÑANA EN CLASE, NO SE CÓMO TIPAR ESTO
-    // userTemp[e.target.name] = e.target.value;
+    let userTemp:any = { ...user };
+    userTemp[e.target.name]  = e.target.value;
     setUser(userTemp);
   }
+
+
   return (
     <Container>
       <div className="login-container">
@@ -88,7 +96,7 @@ function Login() {
                     Introduce tu email
                   </Form.Label>
                   <Col sm="12">
-                    <Form.Control  onChange={handleInput} type="text" placeholder="email@example.com" />
+                    <Form.Control  onChange={handleInput} type="text" placeholder="email@example.com" name="email"/>
                   </Col>
                 </Form.Group>
 
@@ -101,7 +109,7 @@ function Login() {
                     Introduce tu contraseña
                   </Form.Label>
                   <Col sm="12">
-                    <Form.Control  onChange={handleInput} type="password" placeholder="Contraseña" />
+                    <Form.Control  onChange={handleInput} type="password" placeholder="Contraseña" name="password"/>
                   </Col>
                 </Form.Group>
 
@@ -109,6 +117,7 @@ function Login() {
                   <Button
                     className="primary-color-faded mb-3 button-bold"
                     type="submit"
+                    onClick={handleClick}
                   >
                     Iniciar sesión
                   </Button>
@@ -120,7 +129,7 @@ function Login() {
                     style={{ marginTop: "10px", marginBottom: "10px" }}
                   >
                     <div>
-                      <Form.Label onClick={(handleClick)} className="label-bold-margin">
+                      <Form.Label className="label-bold-margin">
                         ¿Todavía no te has registrado?
                       </Form.Label>
                     </div>

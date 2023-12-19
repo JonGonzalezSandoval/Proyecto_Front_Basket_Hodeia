@@ -78,7 +78,7 @@ export default function Test() {
   }
 
   function getCoaches(): void {
-    fetch("http://192.168.1.129:3000/users/role/entrenador")
+    fetch("http://localhost:3000/users/role/entrenador")
       .then((res) => res.json())
       .then((res) => setCoaches(res));
   }

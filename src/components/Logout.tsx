@@ -10,6 +10,7 @@ export default function Logout() {
   function handleLogout() {
     setLoginUser(null);
     localStorage.removeItem("SavedToken");
+    localStorage.removeItem("Rol");
     navigate("/");
   }
 

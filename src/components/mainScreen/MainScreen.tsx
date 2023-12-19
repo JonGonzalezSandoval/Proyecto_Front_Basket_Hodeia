@@ -60,10 +60,31 @@ export default function MainScreen() {
       `http://localhost:3000/matches/byLD/bdb6b2cb-a058-42f4-b5be-199b36a8819c/2023-12-14`
     )
       .then((res) => res.json())
-      .then((res) => {
-        setPartidosDia(res);
+      .then(async (res) => {
+        console.log(res);
+        const matchesParsed = await Promise.all(
+          res.map(async (partido: any) => {
+            let local: string = "";
+            let visitante: string = "";
+            await Promise.all([
+              fetch(`http://localhost:3000/teams/id/${partido.localid}`)
+                .then((response) => response.json())
+                .then((response) => (local = response.nombre)),
+  
+              fetch(`http://localhost:3000/teams/id/${partido.visitanteid}`)
+                .then((response) => response.json())
+                .then((response) => (visitante = response.nombre))
+            ]);
+  
+            return { ...partido, nombrelocal: local, nombrevisitante: visitante };
+          })
+        );
+  
+        setPartidosDia(matchesParsed);
+        console.log(partidosDia); // Move this line here
       });
   }
+  
 
   useEffect(() => {
     // if (localStorage.getItem("SavedToken") !== null) {
@@ -113,8 +134,10 @@ export default function MainScreen() {
           {partidosDia.map(partido => (
             <div>
               <p>{partido.fecha}</p>
-              <p>{partido.localid}</p>
-              <p>{partido.visitanteid}</p>
+              <p>{partido.nombrelocal}</p>
+              <p>{partido.nombrevisitante}</p>
+              <p></p>
+              <p></p>
             </div>
           //   <Card style={{ width: "18rem" }}>
           //   <ListGroup variant="flush">

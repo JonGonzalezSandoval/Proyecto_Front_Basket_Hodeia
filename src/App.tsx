@@ -35,7 +35,7 @@ function App() {
         <Route path="/admin-coach-referee" element={<CoachReferee></CoachReferee>} />
         <Route path="/login" element={<Login></Login>}></Route>
         <Route path="/register" element={<Register></Register>} />
-        {/* <Route path="/home" element={<MainScreen></MainScreen>} /> */}
+        <Route path="/home" element={<MainScreen></MainScreen>} />
         {/* <Route path="/admin-league" element={<LeagueList></LeagueList>}/>
         <Route path="/admin-team" element={<TeamList></TeamList>}/>
         <Route path="/coach-player" element={<PlayersList></PlayersList>}/> */}

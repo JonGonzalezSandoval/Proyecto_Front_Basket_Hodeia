@@ -50,7 +50,7 @@ export default function Register() {
     e.preventDefault();
     if (!validEmail || !validPassword) {
       console.log("Debes introducir todos los datos válidos");
-    } else if (newUser.nombre === "") {
+    } else{
       const data = {
         method: "POST",
         headers: {
@@ -59,15 +59,16 @@ export default function Register() {
         body: JSON.stringify({ ...newUser }),
       };
 
-      fetch("http://192.168.1.129:3000/users/newUser", data)
+      fetch("http://localhost:3000/users/register", data)
       .then((res) => {
-        if (res.status == 202) {
-          return res.text();
+        if (res.status < 400) {
+          return res.json();
         }
-        if (res.status == 401) throw new Error("Unauthorized");
+        throw new Error(res.statusText);
       })
       .then((res) => {
         console.log(res);
+        navigate('/login')
       })
       .catch((error) => {
         if (error.message === "Unauthorized") {
@@ -76,9 +77,9 @@ export default function Register() {
           console.log("Other error handling: " + error);
           // Handle other errors here
         }
-      });
+      })
 
-      navigate('/login')
+      
     }
   }
 
@@ -111,6 +112,7 @@ export default function Register() {
                 required
                 type="text"
                 placeholder="Introduce tu nombre"
+                name="nombre"
               />
 
               <Form.Label className="register-input-label">Apellido</Form.Label>

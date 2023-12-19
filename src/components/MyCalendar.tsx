@@ -2,6 +2,8 @@ import React, { useState, ChangeEvent, useEffect, Dispatch, SetStateAction } fro
 import { Badge, Col, Container, Row } from "react-bootstrap";
 import "../custom-styles.css";
 import Calendar from "react-calendar";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBasketballBall } from "@fortawesome/free-solid-svg-icons";
 
 interface MyCalendarProps {
   setterFecha: Dispatch<SetStateAction<Date>>;
@@ -30,7 +32,7 @@ const MyCalendar:React.FC<MyCalendarProps> = ({setterFecha, fecha}) => {
   const tileContent: any = ({ date, view }:any) => {
     if (view === 'month') {
       const hasEvent = events.find((eventDate) => eventDate.getTime() === date.getTime());
-      return hasEvent ? <span className="event-dot" /> : null;
+      return hasEvent ? <FontAwesomeIcon icon={faBasketballBall} className="event-icon" /> : null;
     }
   };
 
@@ -47,7 +49,7 @@ const MyCalendar:React.FC<MyCalendarProps> = ({setterFecha, fecha}) => {
     <Container className="my-calendar" style={{ justifyContent: "center", marginTop: "3vw" }}>
       <Row>
         <Col>
-          <Calendar onChange={onChange as any} value={fecha} />
+          <Calendar onChange={onChange as any} value={fecha} tileContent={tileContent}/>
         </Col>
         <Col>
           <h5>

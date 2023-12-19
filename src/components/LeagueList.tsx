@@ -9,18 +9,16 @@ interface TLiga {
 
 export default function LeagueList() {
   const [ligas, setLigas] = useState<TLiga[] | null>(null);
-  
-  function getLigas(): void {
-    
 
+  function getLigas(): void {
     fetch("http://localhost:3000/ligas/all")
       .then((res) => res.json())
       .then((res) => setLigas(res));
-    }
+  }
 
-    useEffect(() => {
-      getLigas();
-    }, []);
+  useEffect(() => {
+    getLigas();
+  }, []);
 
   return (
     <>
@@ -67,35 +65,35 @@ export default function LeagueList() {
 
       {ligas &&
         ligas.map((liga) => (
-      <Card>
-        <Row className="no-gutters">
-          <Col xs={2} className="mt-3 mb-3 ms-3">
-            <Card.Img
-              style={{
-                height: "100%",
-                width: "100px",
-              }}
-              src="https://i.ibb.co/Ph194np/basket-ball.png"
-              alt="basketball"
-            />
-          </Col>
-          <Col xs={8}>
-            <Card.Body>
-              <Row>
-                <Col className="mt-3">
-                  <Card.Title>{liga.nombre}</Card.Title>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Card.Text>Género: {liga.genero}</Card.Text>
-                </Col>
-              </Row>
-            </Card.Body>
-          </Col>
-        </Row>
-      </Card>
-         ))}
+          <Card>
+            <Row className="no-gutters">
+              <Col xs={2} className="mt-3 mb-3 ms-3">
+                <Card.Img
+                  style={{
+                    height: "100%",
+                    width: "100px",
+                  }}
+                  src="https://i.ibb.co/Ph194np/basket-ball.png"
+                  alt="basketball"
+                />
+              </Col>
+              <Col xs={8}>
+                <Card.Body>
+                  <Row>
+                    <Col className="mt-3">
+                      <Card.Title>{liga.nombre}</Card.Title>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      <Card.Text>Género: {liga.genero}</Card.Text>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Col>
+            </Row>
+          </Card>
+        ))}
     </>
   );
 }

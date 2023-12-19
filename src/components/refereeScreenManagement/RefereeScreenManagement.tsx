@@ -169,7 +169,6 @@ export default function RefereeScreenManagement() {
 
   function handlePressStartAway(player: TPlayer) {
     setChangeAway(player.jugadorid);
-    console.log(changeAway);
 
     // // Set a timeout for one second
     // setTimeout(() => {
@@ -251,23 +250,35 @@ export default function RefereeScreenManagement() {
       .then((res) => {
         console.log(res)
         let arrayDeJugadores: TPlayer[] = [];
+        let arrayDeJugadoresPista: TPlayer[] = [];
         let local = true;
-        if (localTeamPlayers !== null && player.equipoid === localTeam?.id) {
+        if (localTeamPlayers !== null && localFieldPlayers !== null && player.equipoid === localTeam?.id) {
           arrayDeJugadores = localTeamPlayers;
-        } else if (awayTeamPlayers !== null) {
+          arrayDeJugadoresPista = localFieldPlayers;
+        } else if (awayTeamPlayers !== null && awayFieldPlayers !== null) {
           arrayDeJugadores = awayTeamPlayers;
+          arrayDeJugadoresPista = awayFieldPlayers;
           local = false;
         }
 
         const indiceJugadorAActualizar = arrayDeJugadores.findIndex(
           (jugador) => jugador.jugadorid === player.jugadorid
         );
+        const indiceJugadorCampoAActualizar = arrayDeJugadoresPista.findIndex(
+          (jugador) => jugador.jugadorid === player.jugadorid
+        );
 
-        if (indiceJugadorAActualizar !== -1) {
+        if (indiceJugadorAActualizar !== -1 && indiceJugadorCampoAActualizar !== -1) {
           const nuevoArrayDeJugadores = [...arrayDeJugadores];
           nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido += 1;
 
+          const nuevoArrayDeJugadoresPista = [...arrayDeJugadoresPista];
+          nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar].faltasPartido += 1;
+
+
+
           local?setLocalTeamPlayers(nuevoArrayDeJugadores):setAwayTeamPlayers(nuevoArrayDeJugadores);
+          local?setLocalFieldPlayers(nuevoArrayDeJugadoresPista):setAwayFieldPlayers(nuevoArrayDeJugadoresPista);
         } else {
           console.log(
             `Jugador con jugadorid ${player.jugadorid} no encontrado`

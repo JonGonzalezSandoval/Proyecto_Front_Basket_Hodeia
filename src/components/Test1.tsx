@@ -1,21 +1,11 @@
 import { useEffect, useState, useContext } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  // faPersonDress,
-  // faPerson,
-  // faUserSecret,
-  faCircleCheck,
-  faCircleXmark,
-} from "@fortawesome/free-solid-svg-icons";
 import {
   Badge,
-  Button,
   Card,
   Col,
-  Form,
-  InputGroup,
   ListGroup,
   Row,
+  Image
 } from "react-bootstrap";
 
 import MyCalendar from "./MyCalendar";
@@ -37,33 +27,15 @@ interface TPartido {
   ligaid: string;
   localid: string;
   nombrelocal: string;
+  logoLocal: string;
   visitanteid: string;
   nombrevisitante: string;
+  logoVisitante: string;
   partidoid: string;
   puntuacion_equipo_local: number;
   puntuacion_equipo_visitante: number;
 }
 
-interface TCoach {
-  usuarioid: string;
-  nombre: string;
-  apellidos: string;
-  email: string;
-  genero: string;
-  usuarioImg: null | string;
-  isActive: boolean;
-}
-
-interface TRegisterCoach {
-  nombre: string;
-  apellidos: string;
-  email: string;
-  genero: string;
-  password: string;
-  // usuarioImg: string;
-  rol: string;
-  isActive: boolean;
-}
 const EMAIL_REGEX: RegExp = /^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+[A-Za-z]+$/;
 
 export default function Test() {
@@ -172,6 +144,14 @@ export default function Test() {
           <Row>
             {/* Equipo Local */}
             <Col>
+            <ListGroup>
+            <Image
+              src={`http://localhost:3000/${partido.logoLocal}`} // Asegúrate de que esta URL sea correcta
+              alt="team-logo"
+              fluid // Esta propiedad hace que la imagen sea responsive
+              style={{ maxWidth: '100px', margin: '10px' }} // Ajusta el estilo según sea necesario
+            />
+            </ListGroup>
               <ListGroup variant="flush">
                 <div className="d-flex justify-content-center align-items-center" style={{ height: "100%" }}>
                   <p>{partido.nombrelocal}</p>

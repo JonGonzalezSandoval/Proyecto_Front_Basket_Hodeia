@@ -1,7 +1,23 @@
 import { useContext, useEffect, useState } from "react";
 import MyCalendar from "./MyCalendar";
 import UserContext from "./../context/UserContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link} from "react-router-dom";
+import {
+  Badge,
+  Card,
+  Col,
+  ListGroup,
+  Row,
+  Spinner,
+ 
+} from "react-bootstrap";
+import Form from "react-bootstrap/Form";
+
+
+// SPINNER PARA JON:
+{
+  /* <Spinner animation="border" className="spinner" /> */
+}
 
 interface TLeague {
   ligaid: string;
@@ -107,8 +123,8 @@ export default function MainScreen() {
               fetch(`http://localhost:3000/teams/id/${partido.visitanteid}`)
                 .then((response) => response.json())
                 .then((response) => {
-                  visitante = response.nombre
-                  logoVisitante = response.equipoLogo
+                  visitante = response.nombre;
+                  logoVisitante = response.equipoLogo;
                 }),
             ]);
 
@@ -117,7 +133,7 @@ export default function MainScreen() {
               nombrelocal: local,
               logoLocal: logoLocal,
               nombrevisitante: visitante,
-              logoVisitante: logoVisitante
+              logoVisitante: logoVisitante,
             };
           })
         );
@@ -163,47 +179,117 @@ export default function MainScreen() {
 
   return allLeagues != null ? (
     <>
-      <select name="" id="" onChange={(e) => setSelectedLeague(e.target.value)}>
+      <Form.Select
+        aria-label="Selecciona una liga"
+        onChange={(e) => setSelectedLeague(e.target.value)}
+        className="small-select"
+        style={{ marginTop: "5vh" }}
+      >
+        <option disabled selected value="">
+          Selecciona una liga
+        </option>
         {allLeagues.map((league) => (
           <option key={league.ligaid} value={league.ligaid}>
             {league.nombre}
           </option>
         ))}
-      </select>
+      </Form.Select>
+
       <MyCalendar
         setterFecha={setDate}
         fecha={date}
         fechasPartidos={fechasPartidosParaCalendario}
       />
-      <div>
-        {partidosDia !== null ? (
-          <>
-            {partidosDia.map((partido) => (
-              <div>
-                <p>{partido.fecha}</p>
-                <p>{partido.nombrelocal}</p>
-                <img src={`http://localhost:3000/${partido.logoLocal}`} alt="" />
-                <p>{partido.nombrevisitante}</p>
-                <img src={`http://localhost:3000/${partido.logoVisitante}`} alt="" />
 
-                <p></p>
-                <p></p>
-              </div>
-              //   <Card style={{ width: "18rem" }}>
-              //   <ListGroup variant="flush">
-              //     <ListGroup.Item></ListGroup.Item>
-              //     <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
-              //     <ListGroup.Item>Vestibulum at eros</ListGroup.Item>
-              //   </ListGroup>
-              // </Card>
+      <div>
+        <Row
+          className="justify-content-center mt-4"
+          style={{ height: "150px" }}
+        >
+          {partidosDia &&
+            partidosDia.map((partido, index) => (
+              <Card
+                key={index}
+                style={{
+                  width: "80%",
+                  marginBottom: "3vh",
+                  marginTop: "5vh",
+                  boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)",
+                }}
+              >
+                <Row>
+                  {/* Equipo Local */}
+                  <Col className="d-flex flex-column justify-content-center align-items-center">
+                    <ListGroup className="align-items-center">
+                      <Card.Img
+                        src={`http://localhost:3000/${partido.logoLocal}`} // Asegúrate de que esta URL sea correcta
+                        alt="team-logo"
+                        style={{
+                          maxWidth: "100px",
+                          margin: "10px",
+                          borderRadius: "50px",
+                        }} // Ajusta el estilo según sea necesario
+                      />
+                    </ListGroup>
+                    <p>{partido.nombrelocal}</p>
+                  </Col>
+                  {/* Separador */}
+                  <Col
+                    className="d-flex flex-column justify-content-center align-items-center"
+                    style={{ width: "15%", maxWidth: "15%" }}
+                  >
+                    <h5>
+                      <Badge
+                        style={{ boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)" }}
+                        bg="danger"
+                      >
+                        VS
+                      </Badge>
+                    </h5>
+                  </Col>
+
+                  {/* Equipo Visitante */}
+                  <Col className="d-flex flex-column justify-content-center align-items-center">
+                    <ListGroup variant="flush" className="align-items-center justify-content-center">
+                      <Card.Img
+                        src={`http://localhost:3000/${partido.logoVisitante}`} 
+                        alt="team-logo"
+                        style={{
+                          maxWidth: "100px",
+                          margin: "10px",
+
+                          borderRadius: "50px",
+                        }} // Ajusta el estilo según sea necesario
+                      />
+                      <p>{partido.nombrevisitante}</p>
+                    </ListGroup>
+                  </Col>
+                 
+                  <Col
+                    className="d-flex justify-content-center align-items-center"
+                    style={{ minHeight: "0px" }}
+                  >
+                    <Link to="/manager/:matchID">
+                      {" "}
+                  
+                      <Card.Img
+                        src="https://i.ibb.co/Cb1jVks/silbato.png"
+                        alt="team-logo"
+                        style={{
+                          maxWidth: "50px",
+                          margin: "10px",
+                          borderRadius: "50px",
+                        }}
+                      />
+                    </Link>
+                  </Col>
+                </Row>
+              </Card>
             ))}
-          </>
-        ) : (
-          <></>
-        )}
+        </Row>
       </div>
     </>
   ) : (
-    <span>Loading Data</span>
+    <Spinner animation="border" className="spinner" />
   );
 }

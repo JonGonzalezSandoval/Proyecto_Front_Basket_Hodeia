@@ -6,7 +6,7 @@ const RefereeScreen: React.FC = () => {
   const [partidoId, setPartidoId] = useState('');
   const [scoreJugadorId, setScoreJugadorId] = useState('');
   const [scorePartidoId, setScorePartidoId] = useState('');
-  const [scorePoints, setScorePoints] = useState('');
+  const [puntos, setPuntos] = useState('');
   const [foulJugadorId, setFoulJugadorId] = useState('');
   const [foulPartidoId, setFoulPartidoId] = useState('');
   //const [matchRoomId, setMatchRoomId] = useState('');
@@ -32,15 +32,15 @@ const RefereeScreen: React.FC = () => {
     e.preventDefault();
     
     // Emit points scored data to the server
-    socket.emit('scoreUpdate', {
+    socket.emit('scoreUpdateTeams', {    //or formerly scoreUpdate
       jugadorId: scoreJugadorId,
       partidoId: scorePartidoId,
-      points: parseInt(scorePoints, 10),
+      puntos: parseInt(puntos),
     });
 
     setScoreJugadorId('');
     setScorePartidoId('');
-    setScorePoints('');
+    setPuntos('');
   };
 
   const handleFoulSubmission = (e: React.FormEvent) => {
@@ -102,9 +102,9 @@ const RefereeScreen: React.FC = () => {
         <label>
           Points (1, 2, or 3):
           <input
-            type="number"
-            value={scorePoints}
-            onChange={(e) => setScorePoints(e.target.value)}
+            type="text"
+            value={puntos}
+            onChange={(e) => setPuntos(e.target.value)}
           />
         </label>
         <button type="submit">Submit Points</button>

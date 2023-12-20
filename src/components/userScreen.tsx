@@ -9,8 +9,8 @@ const GameViewer = () => {
   const [gameData, setGameData] = useState(null);
   const [foulUpdates, setFoulUpdates] = useState<any[]>([]);
   const [scoreUpdates, setScoreUpdates] = useState<any[]>([]);
-  const [localScore, setLocalScore] = useState('');
-  const [visitanteScore, setVisitanteScore] = useState('');
+  const [localScore, setLocalScore] = useState(0);
+  const [visitanteScore, setVisitanteScore] = useState(0); 
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -38,6 +38,18 @@ const GameViewer = () => {
       //I need to write a function to handle the logic for adding points to different teams. 
     });
 
+    socket.on('scoreUpdateTeams', (data) => {
+      console.log(data); 
+
+      setLocalScore((prevUpdates) => prevUpdates + data.puntos);    //así que hay que separar los datos que llegan desde el back y solo coger puntos, no?
+      console.log(data);
+      console.log(localScore);
+
+      setVisitanteScore((prevUpdates) => prevUpdates + data.puntos);
+      console.log(data);
+      console.log(visitanteScore);
+    })
+
     socket.connect();
     return () => {
       socket.off('connect');
@@ -46,14 +58,12 @@ const GameViewer = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Send the partidoid to server to create room
     socket.emit('joinMatchRoom', partidoId);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPartidoId(e.target.value); // Update partidoid state as the user types
+    setPartidoId(e.target.value);
   };
-
 
   return (
     <div>
@@ -92,7 +102,7 @@ const GameViewer = () => {
           <p>{visitanteScore}</p>
           <p>Score Local</p>
           <p>{localScore}</p>
-          </li>
+          </li> 
         ))}
       </ul>
 {/*       <div>

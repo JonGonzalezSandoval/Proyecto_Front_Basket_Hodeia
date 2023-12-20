@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 interface TTeams {
   equipoid: string;
@@ -15,6 +16,7 @@ interface TTeams {
 
 export default function TeamList() {
   const [teams, setTeams] = useState<TTeams[] | null>(null);
+
 
   function getTeams(): void {
     fetch("http://localhost:3000/teams/all")
@@ -155,7 +157,7 @@ export default function TeamList() {
                     width: "150px",
                     borderRadius: "50%",
                   }}
-                  src={team.equipoLogo}
+                  src={`http://localhost:3000/${team.equipoLogo}`}
                   alt="team-logo"
                 />
               </Col>

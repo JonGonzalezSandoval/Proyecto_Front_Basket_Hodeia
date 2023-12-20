@@ -27,12 +27,18 @@ interface TPartido {
   puntuacion_equipo_visitante: number;
 }
 
+interface TUser{
+
+}
+
 export default function MainScreen() {
+  const [ user, setUser ] = useState<any | null>(null);
   const [selectedLeague, setSelectedLeague] = useState<string | null>(null);
   const [allLeagues, setAllLeagues] = useState<TLeague[] | null>(null);
   const [date, setDate] = useState<Date>(new Date());
-  const [partidosEnTemporada, setPartidosEnTemporada] = useState<string[]>([]);
+  const [partidosEnTemporada, setPartidosEnTemporada] = useState<TPartido[]>([]);
   const [partidosDia, setPartidosDia] = useState<TPartido[] | null>(null);
+  const [fechasPartidosParaCalendario, setFechasPartidosParaCalendario] = useState<Date[]>([new Date(2020,0,11)])
 
   const navigate = useNavigate();
 
@@ -41,13 +47,27 @@ export default function MainScreen() {
       .then((res) => res.json())
       .then((res) => {
         console.log(res);
-        setPartidosEnTemporada([]);
+        setPartidosEnTemporada(res);
       })
-      .then(() => matchesOfTheDay());
+      .then(() => {
+        matchesOfTheDay()
+        fechasPartidos()
+      });
   }
 
-  const createDatesForCalendar = (fechaParseo: string) => {
+  function fechasPartidos(){
+    const listaFechas = partidosEnTemporada.map( (partido: TPartido) => {
+      return createDatesForCalendar(partido.fecha)
+    })
 
+    setFechasPartidosParaCalendario(listaFechas)
+
+  }
+
+  const createDatesForCalendar = (fechaParseo: string): Date => {
+    const [anio, mes, dia] = fechaParseo.split('-').map(Number);
+
+    return new Date(anio, (mes - 1), dia)
   }
 
   const formatDate = (dateParam: Date): string => {
@@ -62,6 +82,7 @@ export default function MainScreen() {
   // mathDate:string
   function matchesOfTheDay() {
     console.log(formatDate(date))
+    //componente carga true
     fetch(
       `http://localhost:3000/matches/byLD/${selectedLeague}/${formatDate(date)}`
     )
@@ -107,24 +128,25 @@ export default function MainScreen() {
   }
 
   useEffect(() => {
-    // if (localStorage.getItem("SavedToken") !== null) {
-    //   fetch("http://localhost:3000/api/auth/profile", {
-    //     headers: { Authorization: localStorage.getItem("SavedToken") || "" }
-    //   })
-    //     .then((res) => {
-    //       if (res.status === 401) {
-    //         setLoginUser(null);
-    //         navigate("/login");
-    //         return;
-    //       }
-    //       return res.json();
-    //     })
-    //     .then((res) => {
-    //       setLoginUser(res);
-    //     });
-    // } else {
-    //   navigate("/login");
-    // }
+    if (localStorage.getItem("SavedToken") !== null) {
+      fetch("http://localhost:3000/auth/profile", {
+        headers: { Authorization: localStorage.getItem("SavedToken") || ""},
+      })
+        .then((res) => {
+          if (res.status >= 400) {
+            setUser(null);
+            navigate("/login");
+            console.log(res.statusText)
+            return;
+          }
+          return res.json();
+        })
+        .then((res) => {
+          setUser(res);
+        });
+    } else {
+      navigate("/login");
+    }
 
     fetch("http://localhost:3000/ligas/all")
       .then((res) => res.json())
@@ -151,11 +173,7 @@ export default function MainScreen() {
       <MyCalendar
         setterFecha={setDate}
         fecha={date}
-        fechasPartidos={[
-          new Date(2023, 11, 5), 
-          new Date(2023, 11, 10),
-          new Date(2023, 11, 15),
-        ]}
+        fechasPartidos={fechasPartidosParaCalendario}
       />
       <div>
         {partidosDia !== null ? (

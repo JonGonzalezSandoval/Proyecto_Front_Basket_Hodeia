@@ -25,7 +25,6 @@ interface Tuser {
 }
 
 function App() {
-  const [loginUser, setLoginUser] = useState<Tuser | null>(null);
 
   return (
     <UserContext.Provider value={{}}>
@@ -34,11 +33,11 @@ function App() {
       <Container fluid>
       <Routes>
         <Route path="/" element={<PreLogin></PreLogin>} />
-        <Route path="/admin-coach-referee" element={<CoachReferee></CoachReferee>} />
         <Route path="/login" element={<Login></Login>}></Route>
         <Route path="/logout" element={<Logout></Logout>}></Route>
         <Route path="/register" element={<Register></Register>} />
         <Route path="/home" element={<MainScreen></MainScreen>} />
+        <Route path="/admin-coach-referee" element={<CoachReferee></CoachReferee>} />
         <Route path="/admin-league" element={<LeagueList></LeagueList>}/>
         <Route path="/admin-team" element={<TeamList></TeamList>}/>
         <Route path="/coach-player" element={<PlayersList></PlayersList>}/>

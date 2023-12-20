@@ -8,6 +8,7 @@ import {
   faCircleXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 interface TCoach {
   usuarioid: string;
@@ -32,6 +33,7 @@ interface TRegisterCoach {
 const EMAIL_REGEX: RegExp = /^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+[A-Za-z]+$/;
 
 export default function CoachLists() {
+  const [ user, setUser ] = useState<any | null>(null);
   const [coaches, setCoaches] = useState<TCoach[] | null>(null);
   const [validEmail, setValidEmail] = useState<Boolean | null>(null);
   const [newCoach, setNewCoach] = useState<TRegisterCoach>({
@@ -40,10 +42,11 @@ export default function CoachLists() {
     email: "",
     genero: "",
     password: "Passw0rd!",
-    // usuarioImg: string,
     rol: "d8d4b514-800a-4827-a92b-e4f3770ef76b",
     isActive: false,
   });
+
+  const navigate = useNavigate();
 
   function handleRegister(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -59,7 +62,7 @@ export default function CoachLists() {
     if (e.target.name == "email") {
       setValidEmail(EMAIL_REGEX.test(e.target.value));
     }
-
+    
     console.log(e.target.name + ": " + e.target.value);
 
     setNewCoach({
@@ -69,6 +72,26 @@ export default function CoachLists() {
   }
 
   function getCoaches(): void {
+    if (localStorage.getItem("SavedToken") !== null) {
+      fetch("http://localhost:3000/auth/profile", {
+        headers: { Authorization: localStorage.getItem("SavedToken") || ""},
+      })
+        .then((res) => {
+          if (res.status >= 400) {
+            setUser(null);
+            navigate("/login");
+            console.log(res.statusText)
+            return;
+          }
+          return res.json();
+        })
+        .then((res) => {
+          setUser(res);
+        });
+    } else {
+      navigate("/login");
+    }
+
     fetch("http://localhost:3000/users/role/entrenador")
       .then((res) => res.json())
       .then((res) => setCoaches(res));

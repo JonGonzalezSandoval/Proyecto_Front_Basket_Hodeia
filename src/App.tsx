@@ -17,6 +17,7 @@ import TeamList from './components/TeamList';
 import PlayersList from './components/PlayersList';
 import Scoreboard from './components/Scoreboard';
 import Test from './components/Test';
+import Logout from './components/Logout';
 
 interface Tuser {
   email: string;
@@ -35,6 +36,7 @@ function App() {
         <Route path="/" element={<PreLogin></PreLogin>} />
         <Route path="/admin-coach-referee" element={<CoachReferee></CoachReferee>} />
         <Route path="/login" element={<Login></Login>}></Route>
+        <Route path="/logout" element={<Logout></Logout>}></Route>
         <Route path="/register" element={<Register></Register>} />
         <Route path="/home" element={<MainScreen></MainScreen>} />
         <Route path="/admin-league" element={<LeagueList></LeagueList>}/>

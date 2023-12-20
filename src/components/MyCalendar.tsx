@@ -8,20 +8,17 @@ import { faBasketballBall } from "@fortawesome/free-solid-svg-icons";
 interface MyCalendarProps {
   setterFecha: Dispatch<SetStateAction<Date>>;
   fecha: Date;
-  fechasPartidos: string[];
+  fechasPartidos: Date[];
 }
 
-const MyCalendar:React.FC<MyCalendarProps> = ({setterFecha, fecha}) => {
+const MyCalendar:React.FC<MyCalendarProps> = ({setterFecha, fecha, fechasPartidos}) => {
   const [events, setEvents] = useState<Date[]>([
-    new Date(2023, 11, 5), // Sample events on specific dates
-    new Date(2023, 11, 10),
-    new Date(2023, 11, 15),
+    ...fechasPartidos
   ]);
 
 
 
   const onChange = (newDate: Date | Date[]) => {
-    // Assuming the calendar allows selecting multiple dates
     if (Array.isArray(newDate)) {
       // Handle array of dates if needed
     } else {

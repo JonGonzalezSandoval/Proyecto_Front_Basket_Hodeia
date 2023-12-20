@@ -1,22 +1,17 @@
-import { useContext, useState } from "react";
+import {  useState } from "react";
 import { Button, Card, Container } from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import { Link, useNavigate } from "react-router-dom";
-import UserContext from "../context/UserContext";
 
 function Login() {
   const [user, setUser] = useState({ email: "", password: "" });
-
-  // const { setLoginUser } = useContext(UserContext);
 
   const navigate = useNavigate();
 
   function handleClick(e:React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
-
-    
 
     let data = {
       method: "POST",
@@ -37,8 +32,10 @@ function Login() {
       .then((res) => {
         console.log(res)
         localStorage.removeItem("SavedToken");
-        localStorage.setItem("SavedToken", "Bearer " + res);
-        fetch("http://localhost:3000/auth/profile", {
+        localStorage.setItem("SavedToken", "Bearer " + res.access_token);
+        localStorage.removeItem("Rol");
+        localStorage.setItem("Rol", res.rol);
+        fetch("http://localhost:3000/profile", {
             headers: { Authorization: localStorage.getItem("SavedToken") || ""},
         })
           .then((res) => res.json())

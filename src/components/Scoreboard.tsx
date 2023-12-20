@@ -3,8 +3,11 @@
 import { useEffect, useState } from "react";
 import { Badge, Col, Container, Row } from "react-bootstrap";
 import PlayerStatistics from "./PlayersStatistics";
+import io from 'socket.io-client';
 import { useNavigate } from "react-router";
 <link href="https://fonts.googleapis.com/css2?family=Graduate&display=swap" rel="stylesheet"></link>
+
+const socket = io('http://localhost:3001');
 
 export default function Scoreboard() {
     const [time, setTime] = useState(70000);

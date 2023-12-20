@@ -53,8 +53,8 @@ function App() {
               <Route path="/test1" element={<Test1></Test1>} />
             </Routes>
           </Container>
-          <Footer></Footer>
         </div>
+          <Footer></Footer>
       </BrowserRouter>
     </UserContext.Provider>
   );

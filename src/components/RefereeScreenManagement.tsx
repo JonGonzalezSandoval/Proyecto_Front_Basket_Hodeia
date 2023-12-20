@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import MatchTimer from "./MatchTimer";
+import io from 'socket.io-client';
 import { useNavigate, useParams } from "react-router-dom";
 
 interface TPlayer {
@@ -17,6 +18,7 @@ interface TTeams {
   logo: string | null;
   id: string;
 }
+const socket = io('http://localhost:3001');
 
 export default function RefereeScreenManagement() {
   const { matchID } = useParams();

@@ -272,8 +272,8 @@ export default function MainScreen() {
                     className="d-flex justify-content-center align-items-center"
                     style={{ minHeight: "0px" }}
                   >
-                    <Link to="/manager/:matchID">
-                      {" "}
+                    <Link to={`/manager/${partido.partidoid}`}>
+               
                   
                       <Card.Img
                         src="https://i.ibb.co/Cb1jVks/silbato.png"

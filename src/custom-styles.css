@@ -51,7 +51,10 @@
 .primary-color-faded {
   background-color: #FF6900;
   filter: saturate(80%);
-
+}
+.primary-color-three {
+  background-color: #FF6900;
+  filter: saturate(60%);
 }
 
 .primary-color-faded-extra {
@@ -387,7 +390,7 @@ abbr[title] {
   border-color: #121212;
 }
 
-.container-referee {
+.border-black {
   border: 2px solid #121212;
   border-radius: '20px';
 }

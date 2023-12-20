@@ -129,6 +129,7 @@ export default function MainScreen() {
         ))}
       </select>
       <MyCalendar setterFecha={setDate} fecha={date} fechasPartidos={[""]} />
+      
       <div>
         {partidosDia !== null ? <>  
           {partidosDia.map(partido => (
@@ -139,6 +140,8 @@ export default function MainScreen() {
               <p></p>
               <p></p>
             </div>
+
+
           //   <Card style={{ width: "18rem" }}>
           //   <ListGroup variant="flush">
           //     <ListGroup.Item></ListGroup.Item>

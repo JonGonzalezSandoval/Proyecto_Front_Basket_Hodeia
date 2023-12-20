@@ -18,6 +18,7 @@ import PlayersList from "./components/PlayersList";
 import Scoreboard from "./components/Scoreboard";
 import Test from "./components/Test";
 import Footer from "./components/Footer";
+import Test1 from "./components/Test1";
 
 interface Tuser {
   email: string;
@@ -53,7 +54,8 @@ function App() {
                 element={<RefereeScreenManagement></RefereeScreenManagement>}
               />
               <Route path="/scoreboard" element={<Scoreboard></Scoreboard>} />
-              <Route path="/test" element={<Test></Test>} />
+              <Route path="/test" element={<Test></Test>} />ç
+              <Route path="/test1" element={<Test1></Test1>}></Route>
             </Routes>
           </div>
 

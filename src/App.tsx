@@ -8,6 +8,7 @@ import GameViewer from './components/userScreen'
 import SocketTest from './components/socketTest'
 import BasketballMatchChart from './components/Charts/BasketballMatchChart'
 
+
 function App() {
 
   useEffect(()=> {
@@ -25,7 +26,7 @@ function App() {
         <Route path= '/user' element={<GameViewer/>}/>
         <Route path= '/createRoom' element={<CreateRoomForm/>}/>
         <Route path= '/socketTest' element={<SocketTest/>}/>
-        <Route path='/matchChart' element={<BasketballMatchChart/>}/>
+        <Route path='/matchChart/:matchID' element={<BasketballMatchChart/>}/>
       </Routes>
     </BrowserRouter>
     </>

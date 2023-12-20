@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
+import { useParams } from 'react-router-dom';
 
 interface TeamDetails {
   name: string;
   score: number;
 }
 //const [matchID, setMatchID] = useState("")
-const BasketballMatchChart: React.FC<{ matchID: string }> = ({ matchID }) => {
+const BasketballMatchChart: React.FC = () => {
+
+  const {matchID} = useParams();
+
   const [teamDetails, setTeamDetails] = useState<TeamDetails[] >([]);
   
 

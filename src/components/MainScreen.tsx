@@ -18,8 +18,10 @@ interface TPartido {
   ligaid: string;
   localid: string;
   nombrelocal: string;
+  logoLocal: string;
   visitanteid: string;
   nombrevisitante: string;
+  logoVisitante: string;
   partidoid: string;
   puntuacion_equipo_local: number;
   puntuacion_equipo_visitante: number;
@@ -31,7 +33,7 @@ export default function MainScreen() {
   const [date, setDate] = useState<Date>(new Date());
   const [partidosEnTemporada, setPartidosEnTemporada] = useState<string[]>([]);
   const [partidosDia, setPartidosDia] = useState<TPartido[] | null>(null);
-  const { setLoginUser } = useContext(UserContext);
+
   const navigate = useNavigate();
 
   function handleSelectedLeagueSeasonOnDate(): void {
@@ -41,7 +43,7 @@ export default function MainScreen() {
         console.log(res);
         setPartidosEnTemporada([]);
       })
-      .then((res) => matchesOfTheDay());
+      .then(() => matchesOfTheDay());
   }
 
   const formatDate = (dateParam: Date): string => {
@@ -55,9 +57,9 @@ export default function MainScreen() {
 
   // mathDate:string
   function matchesOfTheDay() {
+    console.log(formatDate(date))
     fetch(
-      // `http://localhost:3000/matches/byLD/${selectedLeague}/${formatDate(new Date())}`
-      `http://localhost:3000/matches/byLD/bdb6b2cb-a058-42f4-b5be-199b36a8819c/2023-12-14`
+      `http://localhost:3000/matches/byLD/${selectedLeague}/${formatDate(date)}`
     )
       .then((res) => res.json())
       .then(async (res) => {
@@ -65,26 +67,40 @@ export default function MainScreen() {
         const matchesParsed = await Promise.all(
           res.map(async (partido: any) => {
             let local: string = "";
+            let logoLocal: string = "";
             let visitante: string = "";
+            let logoVisitante: string = "";
+
             await Promise.all([
               fetch(`http://localhost:3000/teams/id/${partido.localid}`)
                 .then((response) => response.json())
-                .then((response) => (local = response.nombre)),
-  
+                .then((response) => {
+                  local = response.nombre;
+                  logoLocal = response.equipoLogo;
+                }),
+
               fetch(`http://localhost:3000/teams/id/${partido.visitanteid}`)
                 .then((response) => response.json())
-                .then((response) => (visitante = response.nombre))
+                .then((response) => {
+                  visitante = response.nombre
+                  logoVisitante = response.equipoLogo
+                }),
             ]);
-  
-            return { ...partido, nombrelocal: local, nombrevisitante: visitante };
+
+            return {
+              ...partido,
+              nombrelocal: local,
+              logoLocal: logoLocal,
+              nombrevisitante: visitante,
+              logoVisitante: logoVisitante
+            };
           })
         );
-  
+
         setPartidosDia(matchesParsed);
         console.log(partidosDia); // Move this line here
       });
   }
-  
 
   useEffect(() => {
     // if (localStorage.getItem("SavedToken") !== null) {
@@ -128,29 +144,41 @@ export default function MainScreen() {
           </option>
         ))}
       </select>
-      <MyCalendar setterFecha={setDate} fecha={date} fechasPartidos={[""]} />
-      
+      <MyCalendar
+        setterFecha={setDate}
+        fecha={date}
+        fechasPartidos={[
+          new Date(2023, 11, 5), 
+          new Date(2023, 11, 10),
+          new Date(2023, 11, 15),
+        ]}
+      />
       <div>
-        {partidosDia !== null ? <>  
-          {partidosDia.map(partido => (
-            <div>
-              <p>{partido.fecha}</p>
-              <p>{partido.nombrelocal}</p>
-              <p>{partido.nombrevisitante}</p>
-              <p></p>
-              <p></p>
-            </div>
+        {partidosDia !== null ? (
+          <>
+            {partidosDia.map((partido) => (
+              <div>
+                <p>{partido.fecha}</p>
+                <p>{partido.nombrelocal}</p>
+                <img src={`http://localhost:3000/${partido.logoLocal}`} alt="" />
+                <p>{partido.nombrevisitante}</p>
+                <img src={`http://localhost:3000/${partido.logoVisitante}`} alt="" />
 
-
-          //   <Card style={{ width: "18rem" }}>
-          //   <ListGroup variant="flush">
-          //     <ListGroup.Item></ListGroup.Item>
-          //     <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
-          //     <ListGroup.Item>Vestibulum at eros</ListGroup.Item>
-          //   </ListGroup>
-          // </Card>
-          ))}
-        </> : <></>}
+                <p></p>
+                <p></p>
+              </div>
+              //   <Card style={{ width: "18rem" }}>
+              //   <ListGroup variant="flush">
+              //     <ListGroup.Item></ListGroup.Item>
+              //     <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
+              //     <ListGroup.Item>Vestibulum at eros</ListGroup.Item>
+              //   </ListGroup>
+              // </Card>
+            ))}
+          </>
+        ) : (
+          <></>
+        )}
       </div>
     </>
   ) : (

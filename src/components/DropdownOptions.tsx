@@ -31,7 +31,7 @@ function ButtonCustomExample() {
           <Dropdown.Item eventKey="6" className="white-nav-link"><Link to={"/coach-player"} style={{ textDecoration: 'none', color: 'inherit' }}>Gestionar equipo</Link></Dropdown.Item>
           <Dropdown.Divider />
 
-          <Dropdown.Item eventKey="7" className="white-nav-link"><Link to={"/"} style={{ textDecoration: 'none', color: 'inherit' }}>Cerrar sesión</Link></Dropdown.Item>
+          <Dropdown.Item eventKey="7" className="white-nav-link"><Link to={"/logout"} style={{ textDecoration: 'none', color: 'inherit' }}>Cerrar sesión</Link></Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     </>

@@ -36,20 +36,24 @@ export default function PreLogin() {
             fluid
           />
 
-          <Button
-            className="primary-color-faded mb-3 button-bold my-2 text-center"
-            style={{ width: "350px", fontSize: "1rem" }}
-            type="submit"
-          >
-            <Link to="/login">Iniciar sesión</Link>
-          </Button>
+          <Link to="/login" style={{ textDecoration: "none" }}>
+            <Button
+              className="primary-color-faded mb-3 button-bold my-2 text-center"
+              style={{ width: "350px", fontSize: "1rem" }}
+              type="submit"
+            >
+              Iniciar sesión
+            </Button>
+          </Link>
 
-          <Button
-            className="secondary-color mb-3 button-bold-smaller my-2 text-center"
-            style={{ width: "350px", fontSize: "1rem" }}
-          >
-            <Link to="/register">Regístrate aquí</Link>
-          </Button>
+          <Link to="/register" style={{ textDecoration: "none" }}>
+            <Button
+              className="secondary-color mb-3 button-bold-smaller my-2 text-center"
+              style={{ width: "350px", fontSize: "1rem" }}
+            >
+              Regístrate aquí
+            </Button>
+          </Link>
         </Col>
       </Row>
 
@@ -98,36 +102,44 @@ export default function PreLogin() {
             />
 
             {/* Botones para dispositivos móviles */}
-            <Button
-              className="primary-color-faded mb-3 button-bold my-2 text-center d-block d-md-none"
-              style={{ fontSize: "1rem" }}
-              type="submit"
-            >
-              <Link to="/login">Iniciar sesión</Link>
-            </Button>
+            <Link to="/login" style={{ textDecoration: "none" }}>
+              <Button
+                className="primary-color-faded mb-3 button-bold my-2 text-center d-block d-md-none"
+                style={{ fontSize: "1rem" }}
+                type="submit"
+              >
+                Iniciar sesión
+              </Button>
+            </Link>
 
-            <Button
-              className="secondary-color mb-3 button-bold-smaller my-2 text-center d-block d-md-none"
-              style={{ fontSize: "1rem" }}
-            >
-              <Link to="/register">Regístrate aquí</Link>
-            </Button>
+            <Link to="/register" style={{ textDecoration: "none" }}>
+              <Button
+                className="secondary-color mb-3 button-bold-smaller my-2 text-center d-block d-md-none"
+                style={{ fontSize: "1rem" }}
+              >
+                Regístrate aquí
+              </Button>
+            </Link>
 
             {/* Botones para dispositivos tablet */}
-            <Button
-              className="primary-color-faded mb-3 button-bold my-2 text-center d-none d-lg-block d-xl-none"
-              style={{ fontSize: "2rem", width: "300px" }}
-              type="submit"
-            >
-              <Link to="/login">Iniciar sesión</Link>
-            </Button>
+            <Link to="/login" style={{ textDecoration: "none" }}>
+              <Button
+                className="primary-color-faded mb-3 button-bold my-2 text-center d-none d-lg-block d-xl-none"
+                style={{ fontSize: "2rem", width: "300px" }}
+                type="submit"
+              >
+                Iniciar sesión
+              </Button>
+            </Link>
 
-            <Button
-              className="secondary-color mb-3 button-bold-smaller my-2 text-center d-none d-lg-block d-xl-none"
-              style={{ fontSize: "2rem", width: "300px" }}
-            >
-              <Link to="/register">Regístrate aquí</Link>
-            </Button>
+            <Link to="/register" style={{ textDecoration: "none" }}>
+              <Button
+                className="secondary-color mb-3 button-bold-smaller my-2 text-center d-none d-lg-block d-xl-none"
+                style={{ fontSize: "2rem", width: "300px" }}
+              >
+                Regístrate aquí
+              </Button>
+            </Link>
           </Card.Body>
         </Card>
       </Row>

@@ -18,8 +18,10 @@ interface TPartido {
   ligaid: string;
   localid: string;
   nombrelocal: string;
+  logoLocal: string;
   visitanteid: string;
   nombrevisitante: string;
+  logoVisitante: string;
   partidoid: string;
   puntuacion_equipo_local: number;
   puntuacion_equipo_visitante: number;
@@ -65,21 +67,32 @@ export default function MainScreen() {
         const matchesParsed = await Promise.all(
           res.map(async (partido: any) => {
             let local: string = "";
+            let logoLocal: string = "";
             let visitante: string = "";
+            let logoVisitante: string = "";
+
             await Promise.all([
               fetch(`http://localhost:3000/teams/id/${partido.localid}`)
                 .then((response) => response.json())
-                .then((response) => (local = response.nombre)),
+                .then((response) => {
+                  local = response.nombre;
+                  logoLocal = response.equipoLogo;
+                }),
 
               fetch(`http://localhost:3000/teams/id/${partido.visitanteid}`)
                 .then((response) => response.json())
-                .then((response) => (visitante = response.nombre)),
+                .then((response) => {
+                  visitante = response.nombre
+                  logoVisitante = response.equipoLogo
+                }),
             ]);
 
             return {
               ...partido,
               nombrelocal: local,
+              logoLocal: logoLocal,
               nombrevisitante: visitante,
+              logoVisitante: logoVisitante
             };
           })
         );
@@ -147,7 +160,10 @@ export default function MainScreen() {
               <div>
                 <p>{partido.fecha}</p>
                 <p>{partido.nombrelocal}</p>
+                <img src={`http://localhost:3000/${partido.logoLocal}`} alt="" />
                 <p>{partido.nombrevisitante}</p>
+                <img src={`http://localhost:3000/${partido.logoVisitante}`} alt="" />
+
                 <p></p>
                 <p></p>
               </div>

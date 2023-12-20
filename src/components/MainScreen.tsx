@@ -9,7 +9,6 @@ import {
   ListGroup,
   Row,
   Spinner,
- 
 } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 
@@ -177,6 +176,10 @@ export default function MainScreen() {
     if (selectedLeague != null) handleSelectedLeagueSeasonOnDate();
   }, [date, setDate, selectedLeague, setSelectedLeague]);
 
+
+
+  console.log(user)
+  
   return allLeagues != null ? (
     <>
       <Form.Select

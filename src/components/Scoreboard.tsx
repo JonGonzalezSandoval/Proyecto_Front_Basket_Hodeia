@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Badge, Col, Container, Row } from "react-bootstrap";
 import PlayerStatistics from "./PlayersStatistics";
+import { useNavigate } from "react-router";
 <link href="https://fonts.googleapis.com/css2?family=Graduate&display=swap" rel="stylesheet"></link>
 
 export default function Scoreboard() {
@@ -13,6 +14,10 @@ export default function Scoreboard() {
 
     const [faltasLocal] = useState(Math.floor(((Math.random() * 15))))
     const [faltasVisitante] = useState(Math.floor(((Math.random() * 15))))
+
+    const [ user, setUser ] = useState<any | null>(null);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         let intervalId: number;
@@ -28,6 +33,28 @@ export default function Scoreboard() {
 
     // Seconds calculation
     const seconds = Math.floor((time % 6000) / 100);
+
+    useEffect(() => {
+        if (localStorage.getItem("SavedToken") !== null) {
+            fetch("http://localhost:3000/auth/profile", {
+              headers: { Authorization: localStorage.getItem("SavedToken") || ""},
+            })
+              .then((res) => {
+                if (res.status >= 400) {
+                  setUser(null);
+                  navigate("/login");
+                  console.log(res.statusText)
+                  return;
+                }
+                return res.json();
+              })
+              .then((res) => {
+                setUser(res);
+              });
+          } else {
+            navigate("/login");
+          }
+    },[])
 
 
     return (

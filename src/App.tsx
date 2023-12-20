@@ -8,7 +8,6 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Header from "./components/Header";
 import UserContext from "./context/UserContext";
-import { useState } from "react";
 import { Container } from "react-bootstrap";
 import PreLogin from "./components/PreLogin";
 import CoachReferee from "./components/Coach-Referee";
@@ -20,11 +19,6 @@ import Test from "./components/Test";
 import Logout from "./components/Logout";
 import Test1 from "./components/Test1";
 import Footer from "./components/Footer";
-
-interface Tuser {
-  email: string;
-  password: string;
-}
 
 function App() {
 
@@ -54,7 +48,7 @@ function App() {
                 path="/manager/:matchID"
                 element={<RefereeScreenManagement></RefereeScreenManagement>}
               />
-              <Route path="/scoreboard" element={<Scoreboard></Scoreboard>} />
+              <Route path="/scoreboard/:matchID" element={<Scoreboard></Scoreboard>} />
               <Route path="/test" element={<Test></Test>} />
               <Route path="/test1" element={<Test1></Test1>} />
             </Routes>

@@ -61,11 +61,11 @@ function Login() {
   }
 
   return (
-    <Container>
+    <Container className="mt-5">
       <div className="login-container">
         <Card
-          className="mb-3 ms-3 me-3 custom-background responsive-card"
-          style={{ maxWidth: "600px", width: "100%" }}
+          className="ms-3 me-3 custom-background-login responsive-card"
+          style={{ maxWidth: "600px", width: "100%"}}
         >
           <Container>
             <Form>

@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import Calendar from "react-calendar";
-import MyCalendar from "../calendar/MyCalendar";
-import UserContext from "../../context/UserContext";
+import MyCalendar from "./MyCalendar";
+import UserContext from "./../context/UserContext";
 import { useNavigate } from "react-router-dom";
 
 interface TLeague {
@@ -45,11 +44,11 @@ export default function MainScreen() {
       .then((res) => matchesOfTheDay());
   }
 
-  const formatDate = (date: Date): string => {
+  const formatDate = (dateParam: Date): string => {
     // Format date as 'yyyy-mm-dd'
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
+    const year = dateParam.getFullYear();
+    const month = String(dateParam.getMonth() + 1).padStart(2, "0");
+    const day = String(dateParam.getDate()).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
   };
@@ -57,13 +56,35 @@ export default function MainScreen() {
   // mathDate:string
   function matchesOfTheDay() {
     fetch(
+      // `http://localhost:3000/matches/byLD/${selectedLeague}/${formatDate(new Date())}`
       `http://localhost:3000/matches/byLD/bdb6b2cb-a058-42f4-b5be-199b36a8819c/2023-12-14`
     )
       .then((res) => res.json())
-      .then((res) => {
-        setPartidosDia(res);
+      .then(async (res) => {
+        console.log(res);
+        const matchesParsed = await Promise.all(
+          res.map(async (partido: any) => {
+            let local: string = "";
+            let visitante: string = "";
+            await Promise.all([
+              fetch(`http://localhost:3000/teams/id/${partido.localid}`)
+                .then((response) => response.json())
+                .then((response) => (local = response.nombre)),
+  
+              fetch(`http://localhost:3000/teams/id/${partido.visitanteid}`)
+                .then((response) => response.json())
+                .then((response) => (visitante = response.nombre))
+            ]);
+  
+            return { ...partido, nombrelocal: local, nombrevisitante: visitante };
+          })
+        );
+  
+        setPartidosDia(matchesParsed);
+        console.log(partidosDia); // Move this line here
       });
   }
+  
 
   useEffect(() => {
     // if (localStorage.getItem("SavedToken") !== null) {
@@ -108,14 +129,19 @@ export default function MainScreen() {
         ))}
       </select>
       <MyCalendar setterFecha={setDate} fecha={date} fechasPartidos={[""]} />
+      
       <div>
-        {partidosDia !== null ? <>
+        {partidosDia !== null ? <>  
           {partidosDia.map(partido => (
             <div>
               <p>{partido.fecha}</p>
-              <p>{partido.localid}</p>
-              <p>{partido.visitanteid}</p>
+              <p>{partido.nombrelocal}</p>
+              <p>{partido.nombrevisitante}</p>
+              <p></p>
+              <p></p>
             </div>
+
+
           //   <Card style={{ width: "18rem" }}>
           //   <ListGroup variant="flush">
           //     <ListGroup.Item></ListGroup.Item>
@@ -125,17 +151,6 @@ export default function MainScreen() {
           // </Card>
           ))}
         </> : <></>}
-        <div>
-          <div>Estado: </div>
-          <div>
-            <div>Equipo 1</div>
-            <div> 17 </div>
-          </div>
-          <div>
-            <div>Equipo 2</div>
-            <div>25</div>
-          </div>
-        </div>
       </div>
     </>
   ) : (

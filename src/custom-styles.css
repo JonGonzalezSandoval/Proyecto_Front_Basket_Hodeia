@@ -1,0 +1,374 @@
+.main-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 80vh;
+  /* Altura mínima de la vista completa */
+}
+
+.col-size {
+  height: '960px';
+  width: '640px'
+}
+
+.image-desktop {
+  height: '960px';
+  width: '640px'
+}
+
+
+.full-height-image-tablet {
+  height: 100vh;
+  /* Altura completa de la pantalla */
+  width: 100vw;
+  object-fit: cover;
+  display: block;
+  filter: blur(7px);
+}
+
+
+.row-styles {
+  height: '100%';
+  background-color: #171515;
+}
+
+.row-styles-light {
+  height: '100%';
+  background-color: #ddd6d6;
+}
+
+/* En tu hoja de estilos CSS */
+@media (max-width: 576px) {
+  .button-responsive {
+    width: 200px;
+    /* O el ancho que prefieras */
+  }
+}
+
+
+
+.primary-color {
+  background-color: #FF6900;
+}
+
+.primary-color-faded {
+  background-color: #FF6900;
+  filter: saturate(80%);
+
+}
+
+.primary-color-faded-extra {
+  background-color: #f49a5a;
+  filter: saturate(40%);
+  filter: brightness(120%)
+}
+
+.secondary-color {
+  background-color: #D64700;
+}
+
+.tertiary-color {
+  background-color: #FFF5EC;
+}
+
+.black-color {
+  background-color: #121212;
+}
+
+.footer-color {
+  background-color: #2F3135;
+}
+
+.visitor-color {
+  background-color: #248700;
+}
+
+.visitor-color-nonbg {
+  color: #248700;
+}
+
+
+.local-color {
+  background-color: #960000;
+}
+
+.local-color-nonbg {
+  color: #960000;
+}
+
+.fouls-color {
+  background-color: #DB8400
+}
+
+.footer {
+  margin-top: auto;
+}
+
+.footer-image {
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+}
+
+.mb-3 {
+  margin-bottom: 1rem;
+}
+
+.custom-radio .form-check-input:checked {
+  background-color: #FF6900;
+  border-color: #FF6900;
+}
+
+.custom-background {
+  position: relative;
+  z-index: 0;
+}
+
+.custom-background::before {
+  content: '';
+  background-image: url('https://i.ibb.co/HCchk2q/marcel-schreiber-hav-Fg0-OSMc-unsplash.jpg');
+  background-size: cover;
+  background-position: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  opacity: 0.1;
+}
+
+.responsive-card {
+  max-width: 600px;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .responsive-card {
+    margin-top: 100px;
+  }
+}
+
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+}
+
+.login-label {
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+
+.center-text {
+  text-align: center;
+}
+
+.button-bold {
+  font-weight: bold;
+  padding: 7px 15px;
+  font-size: 0.8rem;
+  color: black;
+  border-color: #121212;
+}
+
+.button-bold-smaller {
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-top: 5px;
+  border-color: #121212;
+}
+
+.label-bold-margin {
+  font-weight: bold;
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
+
+.register-label {
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.register-input-label {
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.register-button {
+  font-weight: bold;
+}
+
+.custom-dropdown-toggle {
+  background-color: #FF6900;
+  border-color: #D64700;
+  padding: 10px 20px;
+  font-size: 1rem;
+}
+
+.dropdown-options-margin {
+  margin-right: 200000px;
+}
+
+.white-nav-link {
+  color: black;
+}
+
+.white-nav-link:active {
+  color: #FF6900;
+}
+
+.white-nav-link:hover {
+  color: #FF6900;
+}
+
+
+.responsive-card-body {
+  text-align: left;
+  margin-left: 0;
+  width: 25vw
+}
+
+
+/* .event-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-left: 3px;
+  border-radius: 50%;
+  background-color: black; /* Or any color you prefer /
+  margin-top: 2px; / Adjust margin as needed */
+/* } */
+
+/* .event-icon {
+  font-size: 13px; /* Adjust the size of the icon */
+/* margin-left: 3px; */
+/* color: orange; Change the color of the icon */
+/* }  */
+
+/* MyCalendar.module.css */
+
+
+.react-calendar {
+  width: 400px;
+  max-width: 100%;
+  background-color: #fff;
+  color: #222;
+  border-radius: 8px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.125em;
+}
+
+.react-calendar__navigation button {
+  color: #D64700;
+  min-width: 44px;
+  background: none;
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+  background-color: #f8f8fa;
+}
+
+.react-calendar__navigation button[disabled] {
+  background-color: #f0f0f0;
+}
+
+abbr[title] {
+  text-decoration: none;
+}
+
+/* .react-calendar__month-view__days__day--weekend {
+  color: #d10000;
+ } */
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+  background: #f8f8fa;
+  color: #f49a5a;
+  border-radius: 6px;
+}
+
+.react-calendar__tile--now {
+  background: #f49a5a;
+  border-radius: 6px;
+  font-weight: bold;
+  color: #121212;
+}
+
+.react-calendar__tile--now:enabled:hover,
+.react-calendar__tile--now:enabled:focus {
+  background: #6f48eb33;
+  border-radius: 6px;
+  font-weight: bold;
+  color: #121212;
+}
+
+.react-calendar__tile--hasActive:enabled:hover,
+.react-calendar__tile--hasActive:enabled:focus {
+  background: #f8f8fa;
+}
+
+.react-calendar__tile--active {
+  background: #FF6900;
+  border-radius: 6px;
+  font-weight: bold;
+  color: white;
+}
+
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus {
+  background: #FF6900;
+  color: white;
+}
+
+
+.myCustomBadge {
+  display: block;
+  width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 8vw;
+  background-color: #D64700;
+  color: #fff;
+  padding: 9px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .myCustomBadge {
+
+    font-size: smaller;
+    padding: 5px;
+    margin-top: 4vw;
+    width: auto;
+  }
+
+
+  .my-calendar .react-calendar {
+    transform: scale(0.8);
+    transform-origin: center;
+  }
+}
+
+
+.customSelect {
+  background-color: #FFF5EC;
+  /* Color de fondo personalizado */
+  color: #121212;
+  /* Color del texto */
+  border: 1px solid #121212
+    /* Borde del mismo color que el fondo */
+  ;
+  margin-top: 2vh;
+}

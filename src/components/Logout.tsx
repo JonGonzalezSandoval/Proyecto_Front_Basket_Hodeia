@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react";
-import UserContext from "../../context/UserContext";
+import UserContext from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 
 export default function Logout() {
@@ -10,6 +10,7 @@ export default function Logout() {
   function handleLogout() {
     setLoginUser(null);
     localStorage.removeItem("SavedToken");
+    localStorage.removeItem("Rol");
     navigate("/");
   }
 

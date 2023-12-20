@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import MatchTimer from "../matchTimer/MatchTimer";
+import MatchTimer from "./MatchTimer";
 import { useParams } from "react-router-dom";
 
 interface TPlayer {

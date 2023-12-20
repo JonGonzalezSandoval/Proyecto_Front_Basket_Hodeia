@@ -166,97 +166,56 @@ export default function Test() {
   return (
     <>
       {/* <Row className="justify-content-center mt-4"></Row> */}
-      <Row className="justify-content-center mt-4">
-        {partidosDia !== null &&
-          Array.from(
-            { length: Math.ceil(partidosDia.length / 2) },
-            (_, i) => i
-          ).map((index) => {
-            const partido1 = partidosDia[index * 2];
-            const partido2 = partidosDia[index * 2 + 1];
+      <Row className="justify-content-center mt-4" style={{height:'150px'}}>
+      {partidosDia && partidosDia.map((partido, index) => (
+        <Card key={index} style={{ width: "80%", marginBottom: "3vh" }}>
+          <Row>
+            {/* Equipo Local */}
+            <Col>
+              <ListGroup variant="flush">
+                <div className="d-flex justify-content-center align-items-center" style={{ height: "100%" }}>
+                  <p>{partido.nombrelocal}</p>
+                  <br />
+                </div>
+              </ListGroup>
+            </Col>
 
-            return (
-              <Card key={index} style={{ width: "80%", marginBottom: "3vh" }}>
-                <Row>
-                  {/* Entrenador 1 */}
-                  <Col>
-                    <ListGroup variant="flush">
-                      <div
-                        className="d-flex justify-content-center align-items-center"
-                        style={{ height: "100%" }}
-                      >
-                        <Card.Img
-                          style={{ width: "100px", marginTop: "4vh" }}
-                          src="https://i.ibb.co/tMYyr7j/usuario-orange.png"
-                          alt="usuario-orange"
-                        />
-                      </div>
-                      <ListGroup.Item style={{ width: "80%" }}>
-                        {partido1.nombrelocal}
-                      </ListGroup.Item>
-                    </ListGroup>
-                  </Col>
+            {/* Separador */}
+            <Col 
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "15%",
+                maxWidth: "15%",
+              }}
+            >
+              <h5>
+                <Badge style={{ justifyContent: "center" }} bg="danger">
+                  VS
+                </Badge>
+              </h5>
 
-                  {/* VS */}
-                  <Col
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      width: "15%",
-                      maxWidth: "15%",
-                    }}
-                  >
-                    <h5>
-                      <Badge style={{ justifyContent: "center" }} bg="danger">
-                        VS
-                      </Badge>
-                    </h5>
+              <h5>
+                <Badge style={{ justifyContent: "center" }} bg="secondary">
+                {partido.fecha}
+                </Badge>
+              </h5>
+            </Col>
 
-                    <h5>
-                      <Badge
-                        style={{ justifyContent: "center" }}
-                        bg="secondary"
-                      >
-                        {partido1.fecha}
-                      </Badge>
-                    </h5>
-                  </Col>
-
-                  {/* Entrenador 2 (si existe) */}
-                  {partido2 && (
-                    <Col>
-                      <ListGroup variant="flush">
-                        <div
-                          className="d-flex justify-content-center align-items-center"
-                          style={{ height: "100%" }}
-                        >
-                          <Card.Img
-                            style={{ width: "100px", marginTop: "4vh" }}
-                            src="https://i.ibb.co/tMYyr7j/usuario-orange.png"
-                            alt="usuario-orange"
-                          />
-                        </div>
-
-                        <ListGroup.Item
-                          style={{
-                            width: "80%",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "flex-end",
-                            height: "100%",
-                          }}
-                        >
-                          {partido1.nombrevisitante}
-                        </ListGroup.Item>
-                      </ListGroup>
-                    </Col>
-                  )}
-                </Row>
-              </Card>
-            );
-          })}
-      </Row>
+            {/* Equipo Visitante */}
+            <Col>
+              <ListGroup variant="flush">
+                <div className="d-flex justify-content-center align-items-center" style={{ height: "100%" }}>
+                  <p>{partido.nombrevisitante}</p>
+                  <br />
+                </div>
+              </ListGroup>
+            </Col>
+          </Row>
+        </Card>
+      ))}
+    </Row>
     </>
   );
 }

@@ -18,7 +18,7 @@ import Scoreboard from "./components/Scoreboard";
 import Test from "./components/Test";
 import Logout from "./components/Logout";
 import Test1 from "./components/Test1";
-import Footer from "./components/Footer";
+// import Footer from "./components/Footer";
 
 function App() {
 
@@ -53,7 +53,7 @@ function App() {
               <Route path="/test1" element={<Test1></Test1>} />
             </Routes>
           </Container>
-          <Footer></Footer>
+          {/* <Footer></Footer> */}
         </div>
       </BrowserRouter>
     </UserContext.Provider>

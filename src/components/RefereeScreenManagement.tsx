@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import MatchTimer from "./MatchTimer";
 import { useNavigate, useParams } from "react-router-dom";
+import { Badge, Col, Container, Row, Spinner } from "react-bootstrap";
+<link href="https://fonts.googleapis.com/css2?family=Graduate&display=swap" rel="stylesheet"></link>
+
 
 interface TPlayer {
   jugadorid: string;
@@ -44,7 +47,7 @@ export default function RefereeScreenManagement() {
   >([]);
 
   const [holdTimeout, setHoldTimeout] = useState<number | null>(null);
-  const [ user, setUser ] = useState<any | null>(null);
+  const [user, setUser] = useState<any | null>(null);
 
   const navigate = useNavigate();
 
@@ -71,13 +74,13 @@ export default function RefereeScreenManagement() {
   useEffect(() => {
     if (localStorage.getItem("SavedToken") !== null) {
       fetch("http://localhost:3000/auth/profile", {
-        headers: { Authorization: localStorage.getItem("SavedToken") || ""},
+        headers: { Authorization: localStorage.getItem("SavedToken") || "" },
       })
         .then((res) => {
           if (res.status >= 400) {
             setUser(null);
             navigate("/login");
-            console.log(res.statusText)
+            console.log(res.statusText);
             return;
           }
           return res.json();
@@ -210,9 +213,7 @@ export default function RefereeScreenManagement() {
   //   setPressStartTime(null);
   // };
 
-  function handlePointScored(
-    player: TPlayer, points: number
-  ) {
+  function handlePointScored(player: TPlayer, points: number) {
     const data = {
       method: "POST",
       headers: {
@@ -243,17 +244,20 @@ export default function RefereeScreenManagement() {
 
         if (indiceJugadorAActualizar !== -1) {
           const nuevoArrayDeJugadores = [...arrayDeJugadores];
-          nuevoArrayDeJugadores[indiceJugadorAActualizar].puntosPartido += points;
+          nuevoArrayDeJugadores[indiceJugadorAActualizar].puntosPartido +=
+            points;
 
-          local?setLocalTeamPlayers(nuevoArrayDeJugadores):setAwayTeamPlayers(nuevoArrayDeJugadores);
+          local
+            ? setLocalTeamPlayers(nuevoArrayDeJugadores)
+            : setAwayTeamPlayers(nuevoArrayDeJugadores);
         } else {
           console.log(
             `Jugador con jugadorid ${player.jugadorid} no encontrado`
           );
         }
       })
-      .then( res => {
-        if(localTeamPlayers != null){
+      .then((res) => {
+        if (localTeamPlayers != null) {
           console.log(localTeamPlayers);
         }
       })
@@ -271,12 +275,16 @@ export default function RefereeScreenManagement() {
     fetch("http://localhost:3000/fouls/new", data)
       .then((res) => res.json())
       .then((res) => {
-        console.log(res)
+        console.log(res);
         let arrayDeJugadores: TPlayer[] = [];
         let arrayDeJugadoresPista: TPlayer[] = [];
         let local = true;
-        
-        if (localTeamPlayers !== null && localFieldPlayers !== null && player.equipoid === localTeam?.id) {
+
+        if (
+          localTeamPlayers !== null &&
+          localFieldPlayers !== null &&
+          player.equipoid === localTeam?.id
+        ) {
           arrayDeJugadores = localTeamPlayers;
           arrayDeJugadoresPista = localFieldPlayers;
         } else if (awayTeamPlayers !== null && awayFieldPlayers !== null) {
@@ -293,31 +301,49 @@ export default function RefereeScreenManagement() {
           (jugador) => jugador.jugadorid === player.jugadorid
         );
 
-        console.log("Indice Jugador Banquillo" + indiceJugadorAActualizar)
-        console.log("Indice Jugador Campo" + indiceJugadorCampoAActualizar)
+        console.log("Indice Jugador Banquillo" + indiceJugadorAActualizar);
+        console.log("Indice Jugador Campo" + indiceJugadorCampoAActualizar);
 
-        if (indiceJugadorAActualizar !== -1 && indiceJugadorCampoAActualizar !== -1) {
+        if (
+          indiceJugadorAActualizar !== -1 &&
+          indiceJugadorCampoAActualizar !== -1
+        ) {
           const nuevoArrayDeJugadores = [...arrayDeJugadores];
-          console.log(nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido)
+          console.log(
+            nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido
+          );
           nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido += 1;
-          
+
           const nuevoArrayDeJugadoresPista = [...arrayDeJugadoresPista];
-          console.log(nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar].faltasPartido)
-          nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar].faltasPartido += 1;
+          console.log(
+            nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar]
+              .faltasPartido
+          );
+          nuevoArrayDeJugadoresPista[
+            indiceJugadorCampoAActualizar
+          ].faltasPartido += 1;
 
-
-          console.log(nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido)
-          console.log(nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar].faltasPartido)
-          local?setLocalTeamPlayers(nuevoArrayDeJugadores):setAwayTeamPlayers(nuevoArrayDeJugadores);
-          local?setLocalFieldPlayers(nuevoArrayDeJugadoresPista):setAwayFieldPlayers(nuevoArrayDeJugadoresPista);
+          console.log(
+            nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido
+          );
+          console.log(
+            nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar]
+              .faltasPartido
+          );
+          local
+            ? setLocalTeamPlayers(nuevoArrayDeJugadores)
+            : setAwayTeamPlayers(nuevoArrayDeJugadores);
+          local
+            ? setLocalFieldPlayers(nuevoArrayDeJugadoresPista)
+            : setAwayFieldPlayers(nuevoArrayDeJugadoresPista);
         } else {
           console.log(
             `Jugador con jugadorid ${player.jugadorid} no encontrado`
           );
         }
       })
-      .then( res => {
-        if(localTeamPlayers != null){
+      .then((res) => {
+        if (localTeamPlayers != null) {
           console.log(awayTeamPlayers);
         }
       })
@@ -335,12 +361,29 @@ export default function RefereeScreenManagement() {
       {localTeam !== null && awayTeam !== null ? (
         <>
           <MatchTimer />
-          <div>
-            <span>{localTeam.nombre}</span>
-          </div>
-          <div>
-            <span>{awayTeam.nombre}</span>
-          </div>
+
+          <Container className="mt-3">
+          <Row>
+          <Col md={4}>
+              <div>
+                <Badge bg="local-color" className="local-color" style={{ fontSize: '1.3rem', fontFamily: "'Graduate', 'serif'" }}>{localTeam.nombre}</Badge>
+              </div>
+            </Col>
+            <Col md={2}>
+              <Badge bg="secondary" style={{ fontSize: '1.3rem', fontFamily: "'Graduate', 'serif'" }}>100</Badge>
+              </Col>
+
+              <Col md={2}>
+              <Badge bg="secondary" style={{ fontSize: '1.3rem', fontFamily: "'Graduate', 'serif'" }}>100</Badge>
+              </Col>
+            <Col md={4}>
+              <div>
+                <Badge bg="visitor-color" className="visitor-color" style={{ fontSize: '1.3rem', fontFamily: "'Graduate', 'serif'" }}>{awayTeam.nombre}</Badge>
+              </div>
+            </Col>
+          </Row>
+          </Container>
+
           {localTeamPlayers !== null && awayTeamPlayers !== null ? (
             <>
               <div>
@@ -532,8 +575,9 @@ export default function RefereeScreenManagement() {
                             </button>
                           </li>
                           <li>
-                          <button onClick={() => handleFault(player)}>
-                              F {player.faltasPartido}</button>
+                            <button onClick={() => handleFault(player)}>
+                              F {player.faltasPartido}
+                            </button>
                           </li>
                         </ul>
                       </div>
@@ -549,13 +593,13 @@ export default function RefereeScreenManagement() {
             </>
           ) : (
             <div>
-              <span>Loading Player Info...</span>
+              <Spinner animation="border" className="spinner" />
             </div>
           )}
         </>
       ) : (
         <div>
-          <span>Loading a Match...</span>
+          <Spinner animation="border" className="spinner" />
         </div>
       )}
     </>

@@ -20,11 +20,6 @@ import Logout from "./components/Logout";
 import Test1 from "./components/Test1";
 import Footer from "./components/Footer";
 
-interface Tuser {
-  email: string;
-  password: string;
-}
-
 function App() {
 
   return (

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
+import { useNavigate } from "react-router";
 
 interface TLiga {
   id: string;
@@ -9,6 +10,9 @@ interface TLiga {
 
 export default function LeagueList() {
   const [ligas, setLigas] = useState<TLiga[] | null>(null);
+  const [ user, setUser ] = useState<any | null>(null);
+
+  const navigate = useNavigate();
 
   function getLigas(): void {
     fetch("http://localhost:3000/ligas/all")
@@ -17,6 +21,26 @@ export default function LeagueList() {
   }
 
   useEffect(() => {
+    if (localStorage.getItem("SavedToken") !== null) {
+      fetch("http://localhost:3000/auth/profile", {
+        headers: { Authorization: localStorage.getItem("SavedToken") || ""},
+      })
+        .then((res) => {
+          if (res.status >= 400) {
+            setUser(null);
+            navigate("/login");
+            console.log(res.statusText)
+            return;
+          }
+          return res.json();
+        })
+        .then((res) => {
+          setUser(res);
+        });
+    } else {
+      navigate("/login");
+    }
+
     getLigas();
   }, []);
 

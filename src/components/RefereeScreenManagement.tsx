@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import MatchTimer from "./MatchTimer";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface TPlayer {
   jugadorid: string;
@@ -44,6 +44,9 @@ export default function RefereeScreenManagement() {
   >([]);
 
   const [holdTimeout, setHoldTimeout] = useState<number | null>(null);
+  const [ user, setUser ] = useState<any | null>(null);
+
+  const navigate = useNavigate();
 
   const handleLocalCheckboxChange = (checkboxValue: TPlayer) => {
     // Toggle the checkbox value in the selectedLocalCheckboxes array
@@ -66,6 +69,26 @@ export default function RefereeScreenManagement() {
   };
 
   useEffect(() => {
+    if (localStorage.getItem("SavedToken") !== null) {
+      fetch("http://localhost:3000/auth/profile", {
+        headers: { Authorization: localStorage.getItem("SavedToken") || ""},
+      })
+        .then((res) => {
+          if (res.status >= 400) {
+            setUser(null);
+            navigate("/login");
+            console.log(res.statusText)
+            return;
+          }
+          return res.json();
+        })
+        .then((res) => {
+          setUser(res);
+        });
+    } else {
+      navigate("/login");
+    }
+
     handleLocalEvent();
     console.log(selectedLocalCheckboxes);
   }, [selectedLocalCheckboxes, setSelectedLocalCheckboxes]);

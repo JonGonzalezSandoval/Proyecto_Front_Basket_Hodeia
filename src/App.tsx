@@ -8,7 +8,6 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Header from "./components/Header";
 import UserContext from "./context/UserContext";
-import { useState } from "react";
 import { Container } from "react-bootstrap";
 import PreLogin from "./components/PreLogin";
 import CoachReferee from "./components/Coach-Referee";

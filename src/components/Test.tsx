@@ -1,96 +1,198 @@
-import { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  // faPersonDress,
-  // faPerson,
-  // faUserSecret,
-  faCircleCheck,
-  faCircleXmark,
-} from "@fortawesome/free-solid-svg-icons";
-import {
-  Badge,
-  Button,
-  Card,
-  Col,
-  Form,
-  InputGroup,
-  ListGroup,
-  Row,
-} from "react-bootstrap";
+import { useContext, useEffect, useState } from "react";
+import MyCalendar from "./MyCalendar";
+import UserContext from "./../context/UserContext";
+import { useNavigate } from "react-router-dom";
+import { Badge, Card, Col, ListGroup, Row } from "react-bootstrap";
 
-interface TCoach {
-  usuarioid: string;
+interface TLeague {
+  ligaid: string;
   nombre: string;
-  apellidos: string;
-  email: string;
   genero: string;
-  usuarioImg: null | string;
-  isActive: boolean;
 }
 
-interface TRegisterCoach {
-  nombre: string;
-  apellidos: string;
-  email: string;
-  genero: string;
-  password: string;
-  // usuarioImg: string;
-  rol: string;
-  isActive: boolean;
+interface TPartido {
+  arbitroid: string;
+  equipo_ganador: string | null;
+  equipo_perdedor: string | null;
+  fecha: string;
+  fechatemporada: number;
+  ligaid: string;
+  localid: string;
+  nombrelocal: string;
+  visitanteid: string;
+  nombrevisitante: string;
+  partidoid: string;
+  puntuacion_equipo_local: number;
+  puntuacion_equipo_visitante: number;
 }
-const EMAIL_REGEX: RegExp = /^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+[A-Za-z]+$/;
 
 export default function Test() {
-  const [coaches, setCoaches] = useState<TCoach[] | null>(null);
-  const [validEmail, setValidEmail] = useState<Boolean | null>(null);
-  const [newCoach, setNewCoach] = useState<TRegisterCoach>({
-    nombre: "",
-    apellidos: "",
-    email: "",
-    genero: "",
-    password: "Passw0rd!",
-    // usuarioImg: string,
-    rol: "d8d4b514-800a-4827-a92b-e4f3770ef76b",
-    isActive: false,
-  });
+  const [selectedLeague, setSelectedLeague] = useState<string | null>(null);
+  const [allLeagues, setAllLeagues] = useState<TLeague[] | null>(null);
+  const [date, setDate] = useState<Date>(new Date());
+  const [partidosEnTemporada, setPartidosEnTemporada] = useState<string[]>([]);
+  const [partidosDia, setPartidosDia] = useState<TPartido[] | null>(null);
+  const { setLoginUser } = useContext(UserContext);
+  const navigate = useNavigate();
 
-  function handleRegister(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!validEmail) {
-      console.log("Debes introducir todos los datos válidos");
-    } else if (newCoach.nombre === "") {
-      console.log("registrar");
-    }
-  }
-
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    // e.preventDefault();
-    if (e.target.name == "email") {
-      setValidEmail(EMAIL_REGEX.test(e.target.value));
-    }
-
-    console.log(e.target.name + ": " + e.target.value);
-
-    setNewCoach({
-      ...newCoach,
-      [e.target.name]: e.target.value,
-    });
-  }
-
-  function getCoaches(): void {
-    fetch("http://localhost:3000/users/role/entrenador")
+  function handleSelectedLeagueSeasonOnDate(): void {
+    fetch(`http://localhost:3000/matches/season/${selectedLeague}/1`)
       .then((res) => res.json())
-      .then((res) => setCoaches(res));
+      .then((res) => {
+        console.log(res);
+        setPartidosEnTemporada([]);
+      })
+      .then((res) => matchesOfTheDay());
   }
+
+  const formatDate = (dateParam: Date): string => {
+    // Format date as 'yyyy-mm-dd'
+    const year = dateParam.getFullYear();
+    const month = String(dateParam.getMonth() + 1).padStart(2, "0");
+    const day = String(dateParam.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
+  // mathDate:string
+  function matchesOfTheDay() {
+    fetch(
+      // `http://localhost:3000/matches/byLD/${selectedLeague}/${formatDate(new Date())}`
+      `http://localhost:3000/matches/byLD/bdb6b2cb-a058-42f4-b5be-199b36a8819c/2023-12-14`
+    )
+      .then((res) => res.json())
+      .then(async (res) => {
+        console.log(res);
+        const matchesParsed = await Promise.all(
+          res.map(async (partido: any) => {
+            let local: string = "";
+            let visitante: string = "";
+            await Promise.all([
+              fetch(`http://localhost:3000/teams/id/${partido.localid}`)
+                .then((response) => response.json())
+                .then((response) => (local = response.nombre)),
+  
+              fetch(`http://localhost:3000/teams/id/${partido.visitanteid}`)
+                .then((response) => response.json())
+                .then((response) => (visitante = response.nombre))
+            ]);
+  
+            return { ...partido, nombrelocal: local, nombrevisitante: visitante };
+          })
+        );
+  
+        setPartidosDia(matchesParsed);
+        console.log(partidosDia); // Move this line here
+      });
+  }
+  
 
   useEffect(() => {
-    getCoaches();
+    // if (localStorage.getItem("SavedToken") !== null) {
+    //   fetch("http://localhost:3000/api/auth/profile", {
+    //     headers: { Authorization: localStorage.getItem("SavedToken") || "" }
+    //   })
+    //     .then((res) => {
+    //       if (res.status === 401) {
+    //         setLoginUser(null);
+    //         navigate("/login");
+    //         return;
+    //       }
+    //       return res.json();
+    //     })
+    //     .then((res) => {
+    //       setLoginUser(res);
+    //     });
+    // } else {
+    //   navigate("/login");
+    // }
+
+    fetch("http://localhost:3000/ligas/all")
+      .then((res) => res.json())
+      .then((res) => {
+        setAllLeagues(res);
+        setSelectedLeague(res[0].ligaid);
+      });
   }, []);
 
-  return (
-    <>
-      {/* <Row className="justify-content-center mt-4"></Row> */}
-      <Row className="justify-content-center mt-4">
+  useEffect(() => {
+    console.log("Fecha " + date + " Liga " + selectedLeague);
+    if (selectedLeague != null) handleSelectedLeagueSeasonOnDate();
+  }, [date, setDate, selectedLeague, setSelectedLeague]);
+
+
+
+      return (
+        <Row className="justify-content-center mt-4">
+        {partidosDia !== null &&
+          // Crear un nuevo array con pares de partidos
+          Array.from({ length: Math.ceil(partidosDia.length / 2) }, (_, i) => i).map((index) => {
+            const partido1 = partidosDia[index * 2];
+            const partido2 = partidosDia[index * 2 + 1];
+      
+            return (
+              <Card key={index} style={{ width: "80%", marginBottom: "3vh" }}>
+                <Row>
+                  {/* Partido 1 */}
+                  <Col>
+                    <ListGroup variant="flush">
+                      <div
+                        className="d-flex justify-content-center align-items-center"
+                        style={{ height: "100%" }}
+                      >
+                       
+                        <p>{partido1.nombrelocal} vs {partido1.nombrevisitante}</p>
+                        <br></br>
+                        <p>{partido1.fecha}</p>
+                      </div>
+                    </ListGroup>
+                  </Col>
+      
+                  {/* VS - Separador, si hay un segundo partido */}
+                  {partido2 && (
+                    <Col
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        width: "15%",
+                        maxWidth: "15%",
+                      }}
+                    >
+                      <h5>
+                        <Badge style={{ justifyContent: "center" }} bg="danger">
+                          VS
+                        </Badge>
+                      </h5>
+                    </Col>
+                  )}
+      
+                  {/* Partido 2 (si existe) */}
+                  {partido2 && (
+                    <Col>
+                      <ListGroup variant="flush">
+                        <div
+                          className="d-flex justify-content-center align-items-center"
+                          style={{ height: "100%" }}
+                        >
+                      
+                          <p>{partido2.nombrelocal} vs {partido2.nombrevisitante}</p>
+                          <br></br>
+                          <p>{partido2.fecha}</p>
+                        </div>
+                      </ListGroup>
+                    </Col>
+                  )}
+                </Row>
+              </Card>
+            );
+          })}
+      </Row>
+      
+      );
+        }
+
+      {/* <Row className="justify-content-center mt-4">
         {coaches &&
           coaches.map((coach) => (
             <Card
@@ -126,6 +228,9 @@ export default function Test() {
                     maxWidth: "15%",
                   }}
                 >
+
+
+
                   <h5>
                     <Badge style={{ justifyContent: "center" }} bg="danger">
                       VS
@@ -162,7 +267,5 @@ export default function Test() {
               </Row>
             </Card>
           ))}
-      </Row>
-    </>
-  );
-}
+      </Row> */
+                    }

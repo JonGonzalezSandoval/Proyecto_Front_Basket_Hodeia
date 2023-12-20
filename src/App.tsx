@@ -1,4 +1,4 @@
-import 'bootstrap/dist/css/bootstrap.min.css'
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "react-calendar/dist/Calendar.css";
@@ -25,7 +25,7 @@ interface Tuser {
 }
 
 function App() {
-  const [loginUser, setLoginUser] = useState<Tuser | null>(null)
+  const [loginUser, setLoginUser] = useState<Tuser | null>(null);
 
   return (
     <UserContext.Provider value={{}}>

@@ -3,10 +3,8 @@ import { Row, Col, Container } from "react-bootstrap";
 
 
 export default function Footer() {
-  return (
-    //   <Container className="footer-color fixed-bottom">
-    
-        <Row className="footer-color footer fixed-bottom">
+  return (    
+        <Row className="footer-color footer">
           <Col className="text-end">
             <Container>
             <img

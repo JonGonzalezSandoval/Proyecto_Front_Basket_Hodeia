@@ -8,8 +8,6 @@ import { Link, useNavigate } from "react-router-dom";
 function Login() {
   const [user, setUser] = useState({ email: "", password: "" });
 
-  // const { setLoginUser } = useContext(UserContext);
-
   const navigate = useNavigate();
 
   function handleClick(e:React.MouseEvent<HTMLButtonElement, MouseEvent>) {
@@ -25,7 +23,6 @@ function Login() {
       body: JSON.stringify({ user }),
     };
 
-    console.log(data.body)
     fetch("http://localhost:3000/auth/login", data)
       .then((res) => {
         if (res.status < 400) {

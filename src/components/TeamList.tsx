@@ -1,9 +1,55 @@
+import { useEffect, useState } from "react";
 import { Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
 
-export default function TeamList() {
-  // function findTeams(){
+interface TTeams {
+  equipoid: string;
+  nombre: string;
+  liga: string;
+  ligaName: string;
+  ciudad: string;
+  genero: string;
+  equipoLogo?: string;
+  entrenadorid: string;
+  entrenadorName: string;
+}
 
-  // }
+export default function TeamList() {
+  const [teams, setTeams] = useState<TTeams[] | null>(null);
+
+  function getTeams(): void {
+    fetch("http://localhost:3000/teams/all")
+    .then((res) => res.json())
+    .then((teams) => {
+      const fetchPromises = teams.map((team: TTeams) => {
+        // Fetch trainer details
+        const trainerPromise = fetch(`http://localhost:3000/users/id/${team.entrenadorid}`)
+          .then((res) => res.json())
+          .then((trainerDetails) => {
+            team.entrenadorName = trainerDetails.nombre;
+          });
+
+        // Fetch league details
+        const leaguePromise = fetch(`http://localhost:3000/ligas/id/${team.liga}`)
+          .then((res) => res.json())
+          .then((leagueDetails) => {
+            team.ligaName = leagueDetails.nombre;
+          });
+
+        // Wait for both promises to complete for each team
+        return Promise.all([trainerPromise, leaguePromise]).then(() => team);
+      });
+
+      // Wait for all teams' details to be fetched
+      return Promise.all(fetchPromises);
+    })
+    .then((teamsWithDetails) => {
+      setTeams(teamsWithDetails);
+    });
+  }
+
+  useEffect(() => {
+    getTeams();
+  }, []);
 
   return (
     <>
@@ -94,50 +140,57 @@ export default function TeamList() {
 
       <br></br>
 
-      <Card>
-        <Row className="no-gutters">
-        <Col xs={12} md={2} className="mt-3 mb-3 ms-md-5 d-flex justify-content-center">
-            <Card.Img
-              style={{
-                height: "100%",
-                width: "150px", 
-                borderRadius: "50%",
-              }}
-              src="https://i.ibb.co/1n8mvmT/Bearded-Princesses.png"
-              alt="team-logo"
-            />
-          </Col>
-          <Col xs={12} md={8}>
-            <Card.Body>
-            <Row>
-                <Col xs={12} className="ms-3 text-xs-center">
-                  <Card.Title>Bearded Princesses</Card.Title>
-                </Col>
-              </Row>
-              <Row>
-                <Col className="ms-3">
-                  <Card.Text>Género: Masculino</Card.Text>
-                </Col>
-              </Row>
-              <Row>
-                <Col className="ms-3">
-                  <Card.Text>Liga: Los Patos Amarillos</Card.Text>
-                </Col>
-              </Row>
-              <Row>
-                <Col className="ms-3">
-                  <Card.Text>Lugar: Ámsterdam</Card.Text>
-                </Col>
-              </Row>
-              <Row>
-                <Col className="ms-3">
-                  <Card.Text>Entrenador: Matías Gómez</Card.Text>
-                </Col>
-              </Row>
-            </Card.Body>
-          </Col>
-        </Row>
-      </Card>
+      {teams &&
+        teams.map((team) => (
+          <Card key={team.equipoid}>
+            <Row className="no-gutters"> 
+              <Col
+                xs={12}
+                md={2}
+                className="mt-3 mb-3 ms-md-5 d-flex justify-content-center"
+              >
+                <Card.Img
+                  style={{
+                    height: "100%",
+                    width: "150px",
+                    borderRadius: "50%",
+                  }}
+                  src={team.equipoLogo}
+                  alt="team-logo"
+                />
+              </Col>
+              <Col xs={12} md={8}>
+                <Card.Body>
+                  <Row>
+                    <Col xs={12} className="ms-3 text-xs-center">
+                      <Card.Title>{team.nombre}</Card.Title>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col className="ms-3">
+                      <Card.Text>Género: {(team.genero=="M" ? "Masculino" : "Femenino")}</Card.Text>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col className="ms-3">
+                      <Card.Text>Liga: {team.ligaName}</Card.Text>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col className="ms-3">
+                      <Card.Text>Lugar: {team.ciudad}</Card.Text>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col className="ms-3">
+                      <Card.Text>Entrenador: {team.entrenadorName}</Card.Text>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Col>
+            </Row>
+          </Card>
+        ))}
     </>
   );
 }

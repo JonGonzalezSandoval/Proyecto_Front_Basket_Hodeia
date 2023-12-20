@@ -44,8 +44,6 @@
   }
 }
 
-
-
 .primary-color {
   background-color: #FF6900;
 }
@@ -85,6 +83,15 @@
 .visitor-color-nonbg {
   color: #248700;
 }
+
+.spinner {
+  color: #FF6900;
+  /* font-size: 3rem;  */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
 
 
 .local-color {
@@ -371,4 +378,11 @@ abbr[title] {
     /* Borde del mismo color que el fondo */
   ;
   margin-top: 2vh;
+}
+
+.small-select {
+  width: 350px; 
+  margin-left: 5vw;
+  background-color: #FFF5EC;
+  border-color: #121212;
 }

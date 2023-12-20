@@ -1,21 +1,11 @@
 import { useEffect, useState, useContext } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  // faPersonDress,
-  // faPerson,
-  // faUserSecret,
-  faCircleCheck,
-  faCircleXmark,
-} from "@fortawesome/free-solid-svg-icons";
 import {
   Badge,
-  Button,
   Card,
   Col,
-  Form,
-  InputGroup,
   ListGroup,
   Row,
+  Image
 } from "react-bootstrap";
 
 import MyCalendar from "./MyCalendar";
@@ -37,33 +27,15 @@ interface TPartido {
   ligaid: string;
   localid: string;
   nombrelocal: string;
+  logoLocal: string;
   visitanteid: string;
   nombrevisitante: string;
+  logoVisitante: string;
   partidoid: string;
   puntuacion_equipo_local: number;
   puntuacion_equipo_visitante: number;
 }
 
-interface TCoach {
-  usuarioid: string;
-  nombre: string;
-  apellidos: string;
-  email: string;
-  genero: string;
-  usuarioImg: null | string;
-  isActive: boolean;
-}
-
-interface TRegisterCoach {
-  nombre: string;
-  apellidos: string;
-  email: string;
-  genero: string;
-  password: string;
-  // usuarioImg: string;
-  rol: string;
-  isActive: boolean;
-}
 const EMAIL_REGEX: RegExp = /^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+[A-Za-z]+$/;
 
 export default function Test() {
@@ -166,97 +138,64 @@ export default function Test() {
   return (
     <>
       {/* <Row className="justify-content-center mt-4"></Row> */}
-      <Row className="justify-content-center mt-4">
-        {partidosDia !== null &&
-          Array.from(
-            { length: Math.ceil(partidosDia.length / 2) },
-            (_, i) => i
-          ).map((index) => {
-            const partido1 = partidosDia[index * 2];
-            const partido2 = partidosDia[index * 2 + 1];
+      <Row className="justify-content-center mt-4" style={{height:'150px'}}>
+      {partidosDia && partidosDia.map((partido, index) => (
+        <Card key={index} style={{ width: "80%", marginBottom: "3vh" }}>
+          <Row>
+            {/* Equipo Local */}
+            <Col>
+            <ListGroup>
+            <Image
+              src={`http://localhost:3000/${partido.logoLocal}`} // Asegúrate de que esta URL sea correcta
+              alt="team-logo"
+              fluid // Esta propiedad hace que la imagen sea responsive
+              style={{ maxWidth: '100px', margin: '10px' }} // Ajusta el estilo según sea necesario
+            />
+            </ListGroup>
+              <ListGroup variant="flush">
+                <div className="d-flex justify-content-center align-items-center" style={{ height: "100%" }}>
+                  <p>{partido.nombrelocal}</p>
+                  <br />
+                </div>
+              </ListGroup>
+            </Col>
 
-            return (
-              <Card key={index} style={{ width: "80%", marginBottom: "3vh" }}>
-                <Row>
-                  {/* Entrenador 1 */}
-                  <Col>
-                    <ListGroup variant="flush">
-                      <div
-                        className="d-flex justify-content-center align-items-center"
-                        style={{ height: "100%" }}
-                      >
-                        <Card.Img
-                          style={{ width: "100px", marginTop: "4vh" }}
-                          src="https://i.ibb.co/tMYyr7j/usuario-orange.png"
-                          alt="usuario-orange"
-                        />
-                      </div>
-                      <ListGroup.Item style={{ width: "80%" }}>
-                        {partido1.nombrelocal}
-                      </ListGroup.Item>
-                    </ListGroup>
-                  </Col>
+            {/* Separador */}
+            <Col 
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "15%",
+                maxWidth: "15%",
+              }}
+            >
+              <h5>
+                <Badge style={{ justifyContent: "center" }} bg="danger">
+                  VS
+                </Badge>
+              </h5>
 
-                  {/* VS */}
-                  <Col
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      width: "15%",
-                      maxWidth: "15%",
-                    }}
-                  >
-                    <h5>
-                      <Badge style={{ justifyContent: "center" }} bg="danger">
-                        VS
-                      </Badge>
-                    </h5>
+              <h5>
+                <Badge style={{ justifyContent: "center" }} bg="secondary">
+                {partido.fecha}
+                </Badge>
+              </h5>
+            </Col>
 
-                    <h5>
-                      <Badge
-                        style={{ justifyContent: "center" }}
-                        bg="secondary"
-                      >
-                        {partido1.fecha}
-                      </Badge>
-                    </h5>
-                  </Col>
-
-                  {/* Entrenador 2 (si existe) */}
-                  {partido2 && (
-                    <Col>
-                      <ListGroup variant="flush">
-                        <div
-                          className="d-flex justify-content-center align-items-center"
-                          style={{ height: "100%" }}
-                        >
-                          <Card.Img
-                            style={{ width: "100px", marginTop: "4vh" }}
-                            src="https://i.ibb.co/tMYyr7j/usuario-orange.png"
-                            alt="usuario-orange"
-                          />
-                        </div>
-
-                        <ListGroup.Item
-                          style={{
-                            width: "80%",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "flex-end",
-                            height: "100%",
-                          }}
-                        >
-                          {partido1.nombrevisitante}
-                        </ListGroup.Item>
-                      </ListGroup>
-                    </Col>
-                  )}
-                </Row>
-              </Card>
-            );
-          })}
-      </Row>
+            {/* Equipo Visitante */}
+            <Col>
+              <ListGroup variant="flush">
+                <div className="d-flex justify-content-center align-items-center" style={{ height: "100%" }}>
+                  <p>{partido.nombrevisitante}</p>
+                  <br />
+                </div>
+              </ListGroup>
+            </Col>
+          </Row>
+        </Card>
+      ))}
+    </Row>
     </>
   );
 }

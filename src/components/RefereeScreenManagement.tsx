@@ -252,6 +252,7 @@ export default function RefereeScreenManagement() {
         let arrayDeJugadores: TPlayer[] = [];
         let arrayDeJugadoresPista: TPlayer[] = [];
         let local = true;
+        
         if (localTeamPlayers !== null && localFieldPlayers !== null && player.equipoid === localTeam?.id) {
           arrayDeJugadores = localTeamPlayers;
           arrayDeJugadoresPista = localFieldPlayers;
@@ -264,19 +265,26 @@ export default function RefereeScreenManagement() {
         const indiceJugadorAActualizar = arrayDeJugadores.findIndex(
           (jugador) => jugador.jugadorid === player.jugadorid
         );
+
         const indiceJugadorCampoAActualizar = arrayDeJugadoresPista.findIndex(
           (jugador) => jugador.jugadorid === player.jugadorid
         );
 
+        console.log("Indice Jugador Banquillo" + indiceJugadorAActualizar)
+        console.log("Indice Jugador Campo" + indiceJugadorCampoAActualizar)
+
         if (indiceJugadorAActualizar !== -1 && indiceJugadorCampoAActualizar !== -1) {
           const nuevoArrayDeJugadores = [...arrayDeJugadores];
+          console.log(nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido)
           nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido += 1;
-
+          
           const nuevoArrayDeJugadoresPista = [...arrayDeJugadoresPista];
+          console.log(nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar].faltasPartido)
           nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar].faltasPartido += 1;
 
 
-
+          console.log(nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido)
+          console.log(nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar].faltasPartido)
           local?setLocalTeamPlayers(nuevoArrayDeJugadores):setAwayTeamPlayers(nuevoArrayDeJugadores);
           local?setLocalFieldPlayers(nuevoArrayDeJugadoresPista):setAwayFieldPlayers(nuevoArrayDeJugadoresPista);
         } else {

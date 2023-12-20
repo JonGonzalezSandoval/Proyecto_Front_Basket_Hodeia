@@ -40,8 +40,6 @@ function Login() {
         localStorage.setItem("SavedToken", "Bearer " + res.access_token);
         localStorage.removeItem("Rol");
         localStorage.setItem("Rol", res.rol);
-
-        // navigate("/home")
         fetch("http://localhost:3000/profile", {
             headers: { Authorization: localStorage.getItem("SavedToken") || ""},
         })

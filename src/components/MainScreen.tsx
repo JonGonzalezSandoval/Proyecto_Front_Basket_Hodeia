@@ -1,13 +1,23 @@
 import { useContext, useEffect, useState } from "react";
 import MyCalendar from "./MyCalendar";
 import UserContext from "./../context/UserContext";
-import { useNavigate } from "react-router-dom";
-import { Badge, Card, Col, ListGroup, Row, Spinner } from "react-bootstrap";
+import { useNavigate, Link} from "react-router-dom";
+import {
+  Badge,
+  Card,
+  Col,
+  ListGroup,
+  Row,
+  Spinner,
+ 
+} from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 
 
-// SPINNER PARA JON: 
-{/* <Spinner animation="border" className="spinner" /> */}
+// SPINNER PARA JON:
+{
+  /* <Spinner animation="border" className="spinner" /> */
+}
 
 interface TLeague {
   ligaid: string;
@@ -149,7 +159,7 @@ export default function MainScreen() {
         aria-label="Selecciona una liga"
         onChange={(e) => setSelectedLeague(e.target.value)}
         className="small-select"
-        style={{marginTop:'5vh'}}
+        style={{ marginTop: "5vh" }}
       >
         <option disabled selected value="">
           Selecciona una liga
@@ -203,7 +213,6 @@ export default function MainScreen() {
                     </ListGroup>
                     <p>{partido.nombrelocal}</p>
                   </Col>
-
                   {/* Separador */}
                   <Col
                     className="d-flex flex-column justify-content-center align-items-center"
@@ -221,18 +230,38 @@ export default function MainScreen() {
 
                   {/* Equipo Visitante */}
                   <Col className="d-flex flex-column justify-content-center align-items-center">
-                    <ListGroup variant="flush" className="align-items-center">
+                    <ListGroup variant="flush" className="align-items-center justify-content-center">
                       <Card.Img
-                        src={`http://localhost:3000/${partido.logoVisitante}`} // Asegúrate de que esta URL sea correcta
+                        src={`http://localhost:3000/${partido.logoVisitante}`} 
                         alt="team-logo"
                         style={{
                           maxWidth: "100px",
                           margin: "10px",
+
                           borderRadius: "50px",
                         }} // Ajusta el estilo según sea necesario
                       />
                       <p>{partido.nombrevisitante}</p>
                     </ListGroup>
+                  </Col>
+                 
+                  <Col
+                    className="d-flex justify-content-center align-items-center"
+                    style={{ minHeight: "0px" }}
+                  >
+                    <Link to="/manager/:matchID">
+                      {" "}
+                  
+                      <Card.Img
+                        src="https://i.ibb.co/Cb1jVks/silbato.png"
+                        alt="team-logo"
+                        style={{
+                          maxWidth: "50px",
+                          margin: "10px",
+                          borderRadius: "50px",
+                        }}
+                      />
+                    </Link>
                   </Col>
                 </Row>
               </Card>

@@ -46,6 +46,10 @@ export default function MainScreen() {
       .then(() => matchesOfTheDay());
   }
 
+  const createDatesForCalendar = (fechaParseo: string) => {
+
+  }
+
   const formatDate = (dateParam: Date): string => {
     // Format date as 'yyyy-mm-dd'
     const year = dateParam.getFullYear();

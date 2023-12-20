@@ -2,56 +2,51 @@ import React, { useState } from 'react';
 import io from 'socket.io-client';
 
 const RefereeScreen: React.FC = () => {
-  const [jugadorId, setJugadorId] = useState('');
+  //const [jugadorId, setJugadorId] = useState('');
   const [partidoId, setPartidoId] = useState('');
-  const [points, setPoints] = useState('');
+  const [scoreJugadorId, setScoreJugadorId] = useState('');
+  const [scorePartidoId, setScorePartidoId] = useState('');
+  const [scorePoints, setScorePoints] = useState('');
   const [foulJugadorId, setFoulJugadorId] = useState('');
   const [foulPartidoId, setFoulPartidoId] = useState('');
-  const [matchRoomId, setMatchRoomId] = useState('');
+  //const [matchRoomId, setMatchRoomId] = useState('');
 
-  const socket = io('http://localhost:3001'); // Connect to your Socket.IO server
+  const socket = io('http://localhost:3001'); // --> para conectar al servidor (io)
 
-  const handleMatchRoomJoin = (e: React.FormEvent) => {
+/*   const handleMatchRoomJoin = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // trying to connect to specifed match room here ??
+    // esto era para conectar con una sala en concreta
     if (matchRoomId.trim() !== '') {      
       socket.emit('joinMatchRoom', matchRoomId.trim());
       console.log(`joined room  for match ${matchRoomId}`)
     }
-
-    //setMatchRoomId('');
-  };
+  }; */
 
   const handleGameUpdate = () => {
+    socket.emit('gameUpdate', {socketId:socket.id, roomName: partidoId })
     console.log('gameupdate');
-    
-    socket.emit('gameUpdate', {nombre: 'Peio', apellido: 'murguia'})
   }
 
   const handlePointsSubmission = (e: React.FormEvent) => {
     e.preventDefault();
     
     // Emit points scored data to the server
-    socket.emit('pointsScored', {
-      jugadorId,
-      partidoId,
-      points: parseInt(points, 10), // Convert points to a number
-      partidoid: partidoId,
+    socket.emit('scoreUpdate', {
+      jugadorId: scoreJugadorId,
+      partidoId: scorePartidoId,
+      points: parseInt(scorePoints, 10),
     });
 
-    // Clear the form fields after submission
-    setJugadorId('');
-    setPartidoId('');
-    setPoints('');
+    setScoreJugadorId('');
+    setScorePartidoId('');
+    setScorePoints('');
   };
 
   const handleFoulSubmission = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // data to the server but don't know how to send it to the right room as well ?? (to**)
-    /* socket.to(`${partidoId}`).emit('foulupdate', */ 
-    socket.emit('foulupdate', {
+    socket.emit('foulUpdate', {
       jugadorId: foulJugadorId,
       partidoId: foulPartidoId,
     });
@@ -60,52 +55,62 @@ const RefereeScreen: React.FC = () => {
     setFoulPartidoId('');
   };
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // Send partidoid to server
+    socket.emit('joinMatchRoom', partidoId);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPartidoId(e.target.value); // Update partidoid state as the user types
+  };
+
   return (
     <div>
-      {/* Form for entering points scored */}
-      <form onSubmit={handleMatchRoomJoin}>
+      {/*para los puntos marcados*/}
+      <form onSubmit={handleSubmit}>
         <h2>Join Match Room</h2>
         <label>
           Enter Match Room ID:
           <input
             type="text"
-            value={matchRoomId}
-            onChange={(e) => setMatchRoomId(e.target.value)}
+            value={partidoId}
+            onChange={handleChange}
           />
         </label>
         <button type="submit">Join Room</button>
       </form>
-    <button onClick={handleGameUpdate}>Probemos cosas</button>
+    <button onClick={handleGameUpdate}>Let's try</button>
       <form onSubmit={handlePointsSubmission}>
         <h2>Enter Points Scored</h2>
         <label>
           Jugador ID:
           <input
             type="text"
-            value={jugadorId}
-            onChange={(e) => setJugadorId(e.target.value)}
+            value={scoreJugadorId}
+            onChange={(e) => setScoreJugadorId(e.target.value)}
           />
         </label>
         <label>
           Partido ID:
           <input
             type="text"
-            value={partidoId}
-            onChange={(e) => setPartidoId(e.target.value)}
+            value={scorePartidoId}
+            onChange={(e) => setScorePartidoId(e.target.value)}
           />
         </label>
         <label>
           Points (1, 2, or 3):
           <input
             type="number"
-            value={points}
-            onChange={(e) => setPoints(e.target.value)}
+            value={scorePoints}
+            onChange={(e) => setScorePoints(e.target.value)}
           />
         </label>
         <button type="submit">Submit Points</button>
       </form>
 
-      {/* Form for entering foul details */}
+      {/* Formulario para introducir los datos de la falta */}
       <form onSubmit={handleFoulSubmission}>
         <h2>Enter Foul Details</h2>
         <label>

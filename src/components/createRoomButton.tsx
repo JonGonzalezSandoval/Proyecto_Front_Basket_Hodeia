@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import io from 'socket.io-client';
-//import { useNavigate } from 'react-router-dom';
 
 const CreateRoomForm: React.FC = () => {
-  const [partidoid, setPartidoid] = useState<string>(''); // State to store the input value
+  const [partidoid, setPartidoid] = useState<string>(''); 
   //const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -13,12 +12,11 @@ const CreateRoomForm: React.FC = () => {
     const socket = io('http://localhost:3001', {
       // withCredentials: true,
       extraHeaders: {"Content-Type": "Authorization"}
-    }); // Connect to your Socket.IO server
+    }); // esto es para conectar al servidor
 
-    // Send the partidoid to the server to create the room
+    // Esto manda el partidoid al servidor para crear la sala
     socket.emit('joinMatchRoom', partidoid);
     console.log(`room created for match ${partidoid}`)
-    //navigate(`/referee/${partidoid}`)    // don't know how to go to the right room here for the referee..
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

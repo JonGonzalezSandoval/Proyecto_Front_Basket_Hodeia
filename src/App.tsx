@@ -23,6 +23,8 @@ import Footer from "./components/Footer";
 import CreateRoomForm from "./components/createRoomButton";
 import SocketTest from "./components/socketTest";
 import BasketballMatchChart from "./components/Charts/BasketballMatchChart";
+import RefereeScreen from "./components/refereeScreen";
+import GameViewer from "./components/userScreen";
 
 interface Tuser {
   email: string;
@@ -61,6 +63,8 @@ function App() {
               <Route path="/test" element={<Test></Test>} />
               <Route path="/test1" element={<Test1></Test1>} />
               <Route path= '/createRoom' element={<CreateRoomForm/>}/>
+              <Route path= '/referee' element={<RefereeScreen/>}/>
+        <Route path= '/user' element={<GameViewer/>}/>
         <Route path= '/socketTest' element={<SocketTest/>}/>
         <Route path='/matchChart/:matchID' element={<BasketballMatchChart/>}/>
 

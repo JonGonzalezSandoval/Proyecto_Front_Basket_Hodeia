@@ -17,7 +17,7 @@ const ScoresBarChart: React.FC = () => {
         value={matchID}
         onChange={handleInputChange}
       />
-      {matchID && <BasketballMatchChart matchID={matchID} />}
+      {matchID && <BasketballMatchChart />}
     </div>
   );
 };

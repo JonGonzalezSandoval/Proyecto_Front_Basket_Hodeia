@@ -1,21 +1,11 @@
 import { useEffect, useState } from "react";
+import Modal from 'react-bootstrap/Modal';
 import MatchTimer from "./MatchTimer";
 import io from 'socket.io-client';
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  Badge,
-  Button,
-  ButtonGroup,
-  ButtonToolbar,
-  Col,
-  Container,
-  Row,
-  Spinner,
-} from "react-bootstrap";
-<link
-  href="https://fonts.googleapis.com/css2?family=Graduate&display=swap"
-  rel="stylesheet"
-></link>;
+import { Badge, Button, ButtonGroup, ButtonToolbar, Col, Container, Row, Spinner } from "react-bootstrap";
+<link href="https://fonts.googleapis.com/css2?family=Graduate&display=swap" rel="stylesheet"></link>
+
 
 interface TPlayer {
   jugadorid: string;
@@ -38,6 +28,9 @@ export default function RefereeScreenManagement() {
   const { matchID } = useParams();
 
   const [timer, setTimer] = useState();
+
+  const [localModalShow, setLocalModalShow] = useState(false);
+  const [awayModalShow, setAwayModalShow] = useState(false);
 
   const [localTeam, setLocalTeam] = useState<TTeams | null>(null);
   const [awayTeam, setAwayTeam] = useState<TTeams | null>(null);
@@ -186,13 +179,13 @@ export default function RefereeScreenManagement() {
 
       setLocalFieldPlayers(newArray);
       setChangeLocal(null);
+      setLocalModalShow(false)
     }
   }
 
   function handlePressStartLocal(player: TPlayer) {
     setChangeLocal(player.jugadorid);
-    console.log(changeLocal);
-    console.log("changeLocal");
+    setLocalModalShow(true)
   }
   const [changeAway, setChangeAway] = useState<string | null>(null);
 
@@ -204,13 +197,14 @@ export default function RefereeScreenManagement() {
 
       setAwayFieldPlayers(newArray);
       setChangeAway(null);
+      setAwayModalShow(false)
     }
   }
 
   function handlePressStartAway(player: TPlayer) {
     setChangeAway(player.jugadorid);
-    console.log(changeAway);
-    console.log("changeaway");
+    setAwayModalShow(true)
+
 
     // // Set a timeout for one second
     // setTimeout(() => {
@@ -277,7 +271,7 @@ export default function RefereeScreenManagement() {
           console.log(localTeamPlayers);
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
   }
 
   function handleFault(player: TPlayer) {
@@ -363,10 +357,10 @@ export default function RefereeScreenManagement() {
           console.log(awayTeamPlayers);
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
   }
 
-  function handleFinish() {}
+  function handleFinish() { }
 
   useEffect(() => {
     getPlayers();
@@ -381,8 +375,7 @@ export default function RefereeScreenManagement() {
           <Container className="mt-3">
             <Row>
               <Col md={3}>
-                <div>
-                  <Badge
+              <Badge
                     bg="local-color"
                     className="local-color mb-3"
                     style={{
@@ -392,24 +385,20 @@ export default function RefereeScreenManagement() {
                   >
                     {localTeam.nombre}
                   </Badge>
-                </div>
                 <Row>
                   <Col>
                     {localTeamPlayers?.map((localPlayer) => (
-                        <div key={localPlayer.jugadorid} style={{ display: 'flex', justifyContent:'flex-start' }}>
+                      <div key={localPlayer.jugadorid} style={{ display: 'flex', justifyContent:'flex-start' }}> 
                         <input
                           type="checkbox"
                           style={{marginRight:'2vw'}}
                           id={`checkbox-${localPlayer.jugadorid}`}
-                          checked={selectedLocalCheckboxes.includes(
-                            localPlayer
-                          )}
-                          onChange={() =>
-                            handleLocalCheckboxChange(localPlayer)
-                          }
+                          checked={selectedLocalCheckboxes.includes(localPlayer)}
+                          onChange={() => handleLocalCheckboxChange(localPlayer)}
+                          disabled={selectedLocalCheckboxes.length === 5}
                         />
                         <label htmlFor={`checkbox-${localPlayer.jugadorid}`}>
-                          {localPlayer.dorsal}.
+                          {localPlayer.dorsal}
                           {" "}
                           {localPlayer.nombre}
                         </label>
@@ -418,85 +407,44 @@ export default function RefereeScreenManagement() {
                   </Col>
                 </Row>
               </Col>
-
               <Col md={3}>
-                <Badge
-                  bg="secondary"
-                  style={{
-                    fontSize: "1.3rem",
-                    fontFamily: "'Graduate', 'serif'",
-                  }}
-                >
-                  100
-                </Badge>
+                <Badge bg="secondary" style={{ fontSize: '1.3rem', fontFamily: "'Graduate', 'serif'" }}>100</Badge>
 
                 <Row>
                   <Col>
                     {localFieldPlayers?.map((player) => (
                       <div key={player.jugadorid}>
-                        <Row>
-                          <Col>
+                        <Row >
+                          <Col >
                             <Badge
-                              style={{
-                                height: "40px",
-                                width: "150px",
-                                marginBottom: "1vh",
-                                marginTop: "1vh",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                backgroundColor: "#880000",
-                                fontSize: "1em", // Ajusta el tamaño de la fuente según sea necesario
-                              }}
+                            style={{
+                              height: "40px",
+                              width: "150px",
+                              marginBottom: "1vh",
+                              marginTop: "1vh",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              backgroundColor: "#880000",
+                              fontSize: "1em", // Ajusta el tamaño de la fuente según sea necesario
+                            }}
                               onClick={() => handlePressStartLocal(player)}
+                              // onMouseUp={handlePressEnd}
                               onTouchStart={() => handlePressStartLocal(player)}
+                              // onTouchEnd={handlePressEnd}
                               bg="#880000"
-                            >
-                              Dorsal: {player.dorsal}
-                            </Badge>
-
-                            <ButtonToolbar
-                              aria-label="Toolbar with button groups"
-                              style={{ display: "flex", width: "100%" }}
-                            >
-                              <ButtonGroup
-                                className="me-2"
-                                aria-label="points"
-                                style={{ flex: 3 }}
                               >
-                                <Button
-                                  onClick={() => handlePointScored(player, 1)}
-                                  style={{ width: "100%" }}
-                                  className="primary-color-three border-black"
-                                >
-                                  1
-                                </Button>
-                                <Button
-                                  onClick={() => handlePointScored(player, 2)}
-                                  style={{ width: "100%" }}
-                                  className="primary-color-faded border-black"
-                                >
-                                  2
-                                </Button>
-                                <Button
-                                  onClick={() => handlePointScored(player, 3)}
-                                  style={{ width: "100%" }}
-                                  className="primary-color border-black"
-                                >
-                                  3
-                                </Button>
+                                Dorsal:{player.dorsal}</Badge>
+                            <ButtonToolbar aria-label="points btn group" style={{ display: "flex", width: "100%" }}>
+                              <ButtonGroup className="me-2" aria-label="points"   style={{ flex: 3 }}>
+                                <Button style={{ width: "100%" }}
+                                  className="primary-color-three border-black" onClick={() => handlePointScored(player, 1)}>1</Button> <Button  style={{ width: "100%" }}
+                                  className="primary-color-faded border-black" onClick={() => handlePointScored(player, 2)}>2</Button> <Button style={{ width: "100%" }}
+                                  className="primary-color border-black" onClick={() => handlePointScored(player, 3)}>3</Button>
                               </ButtonGroup>
-                              <ButtonGroup
-                                aria-label="fouls"
-                                style={{ flex: 1 }}
-                              >
-                                <Button
-                                  onClick={() => handleFault(player)}
-                                  style={{ width: "100%" }}
-                                  className="secondary-color border-black"
-                                >
-                                  F{player.faltasPartido}
-                                </Button>
+                              <ButtonGroup aria-label="fouls" style={{ flex: 1 }}>
+                                <Button style={{ width: "100%" }}
+                                  className="secondary-color border-black" onClick={() => handleFault(player)}>F{player.faltasPartido}</Button>
                               </ButtonGroup>
                             </ButtonToolbar>
                           </Col>
@@ -508,80 +456,42 @@ export default function RefereeScreenManagement() {
               </Col>
 
               <Col md={3}>
-                <Badge
-                  bg="secondary"
-                  style={{
-                    fontSize: "1.3rem",
-                    fontFamily: "'Graduate', 'serif'",
-                  }}
-                >
-                  100
-                </Badge>
+                <Badge bg="secondary" style={{ fontSize: '1.3rem', fontFamily: "'Graduate', 'serif'" }}>100</Badge>
                 <Row>
                   <Col>
                     {awayFieldPlayers?.map((player) => (
                       <div key={player.jugadorid}>
-                        <Row>
+                        <Row >
                           <Col>
-                          <Badge
-                              style={{
-                                height: "40px",
-                                width: "150px",
-                                marginBottom: "1vh",
-                                marginTop: "1vh",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                backgroundColor: "#880000",
-                                fontSize: "1em", // Ajusta el tamaño de la fuente según sea necesario
-                              }}
-                              onClick={() => handlePressStartLocal(player)}
-                              onTouchStart={() => handlePressStartLocal(player)}
-                              bg="#880000"
-                            >
-                              Dorsal: {player.dorsal}
-                            </Badge>
+                            <Badge
+                            style={{
+                              height: "40px",
+                              width: "150px",
+                              marginBottom: "1vh",
+                              marginTop: "1vh",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              backgroundColor: "#880000",
+                              fontSize: "1em", // Ajusta el tamaño de la fuente según sea necesario
+                            }}
 
-                            <ButtonToolbar
-                              aria-label="Toolbar with button groups"
-                              style={{ display: "flex", width: "100%" }}
-                            >
-                              <ButtonGroup
-                                className="me-2"
-                                aria-label="points"
-                                style={{ flex: 3 }}
-                              >
-                                <Button
-                                  onClick={() => handlePointScored(player, 1)}
-                                  className="primary-color-three border-black"
-                                >
-                                  1
-                                </Button>
-                                <Button
-                                  onClick={() => handlePointScored(player, 2)}
-                                  className="primary-color-faded border-black"
-                                >
-                                  2
-                                </Button>
-                                <Button
-                                  onClick={() => handlePointScored(player, 3)}
-                                  className="primary-color border-black"
-                                >
-                                  3
-                                </Button>
+                            bg="#880000"
+                              onClick={() => handlePressStartAway(player)}
+                              // onMouseUp={handlePressEnd}
+                              onTouchStart={() => handlePressStartAway(player)}
+                              // onTouchEnd={handlePressEnd}
+                            >Dorsal: {player.dorsal}</Badge>
+
+                            <ButtonToolbar aria-label="btn for points" style={{ display: "flex", width: "100%" }}>
+                              <ButtonGroup className="me-2" aria-label="points" style={{ flex: 3 }}>
+                                <Button className="primary-color-three border-black" onClick={() => handlePointScored(player, 1) }>1</Button> <Button className="primary-color-faded border-black" onClick={() => handlePointScored(player, 2)}>2</Button> <Button className="primary-color border-black" onClick={() => handlePointScored(player, 3)}>3</Button>
                               </ButtonGroup>
-                              <ButtonGroup
-                                aria-label="fouls"
-                                style={{ flex: 1 }}
-                              >
-                                <Button
-                                  onClick={() => handleFault(player)}
-                                  className="secondary-color border-black"
-                                >
-                                  F{player.faltasPartido}
-                                </Button>
+                              <ButtonGroup aria-label="fouls">
+                                <Button className="secondary-color border-black" onClick={() => handleFault(player)}>F{player.faltasPartido}</Button>
                               </ButtonGroup>
                             </ButtonToolbar>
+
                           </Col>
                         </Row>
                       </div>
@@ -589,19 +499,16 @@ export default function RefereeScreenManagement() {
                   </Col>
                 </Row>
               </Col>
-
               <Col md={3}>
                 <div>
-                  <Badge
+                <Badge
                     bg="visitor-color"
                     className="visitor-color mb-3"
                     style={{
                       fontSize: "1.3rem",
                       fontFamily: "'Graduate', 'serif'",
                     }}
-                  >
-                    {awayTeam.nombre}
-                  </Badge>
+                  >{awayTeam.nombre}</Badge>
                 </div>
                 <Row>
                   <Col>
@@ -612,11 +519,14 @@ export default function RefereeScreenManagement() {
                           style={{marginRight:'2vw'}}
                           id={`laway-checkbox-${player.jugadorid}`}
                           onChange={() => handleAwayCheckboxChange(player)}
+                          disabled={selectedAwayCheckboxes.length === 5}
                         />
-                        <label htmlFor={`away-checkbox-${player.jugadorid}`}>
+                        <label
+                          htmlFor={`away-checkbox-${player.jugadorid}`}
+                        >
                           <div key={player.jugadorid}>
                             <span>
-                              {player.dorsal}.
+                              {player.dorsal}
                               {" "}
                               {player.nombre}
                             </span>
@@ -624,19 +534,28 @@ export default function RefereeScreenManagement() {
                         </label>
                       </div>
                     ))}
+
                   </Col>
                 </Row>
               </Col>
             </Row>
           </Container>
 
-          {localTeamPlayers !== null && awayTeamPlayers !== null ? (
-            <>
-              <div>
-                {changeLocal != null ? (
-                  <div>
-                    {localTeamPlayers.map((player) => (
-                      <div key={player.jugadorid}>
+          <>
+            <Modal show={localModalShow} aria-labelledby="contained-modal-title-vcenter">
+              <Modal.Header>
+                <Modal.Title id="contained-modal-title-vcenter">
+                  Cambiar jugador de equipo local
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body className="grid-example">
+                <Container>
+
+                  {localTeamPlayers?.filter(player =>
+                    !localFieldPlayers?.some(localPlayer => localPlayer.jugadorid === player.jugadorid)
+                  ).map((player) => (
+                    <Row key={player.jugadorid}>
+                      <Col>
                         <input
                           type="checkbox"
                           id={`local-change-checkbox-${player.jugadorid}`}
@@ -645,25 +564,33 @@ export default function RefereeScreenManagement() {
                         <label
                           htmlFor={`local-change-checkbox-${player.jugadorid}`}
                         >
-                          <div key={player.jugadorid}>
-                            <span>
-                              {player.dorsal}
-                              {player.nombre}
-                            </span>
-                          </div>
+                          <Col>{player.dorsal}</Col>
+                          <Col>{player.nombre}</Col>
                         </label>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <></>
-                )}
-              </div>
-              <div>
-                {changeAway != null ? (
-                  <div>
-                    {awayTeamPlayers.map((player) => (
-                      <div key={player.jugadorid}>
+                      </Col>
+                    </Row>
+                  ))}
+                </Container>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button onClick={() => setLocalModalShow(false)}>Cerrar</Button>
+              </Modal.Footer>
+            </Modal>
+
+            <Modal show={awayModalShow} aria-labelledby="contained-modal-title-vcenter">
+              <Modal.Header>
+                <Modal.Title id="contained-modal-title-vcenter">
+                  Cambiar jugador de equipo visitante
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body className="grid-example">
+                <Container>
+
+                  {awayTeamPlayers?.filter(player =>
+                    !awayFieldPlayers?.some(awayPlayer => awayPlayer.jugadorid === player.jugadorid)
+                  ).map((player) => (
+                    <Row key={player.jugadorid}>
+                      <Col>
                         <input
                           type="checkbox"
                           id={`away-change-checkbox-${player.jugadorid}`}
@@ -672,26 +599,19 @@ export default function RefereeScreenManagement() {
                         <label
                           htmlFor={`away-change-checkbox-${player.jugadorid}`}
                         >
-                          <div key={player.jugadorid}>
-                            <span>
-                              {player.dorsal}
-                              {player.nombre}
-                            </span>
-                          </div>
+                          <Col>{player.dorsal}</Col>
+                          <Col>{player.nombre}</Col>
                         </label>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <></>
-                )}
-              </div>
-            </>
-          ) : (
-            <div>
-              <Spinner animation="border" className="spinner" />
-            </div>
-          )}
+                      </Col>
+                    </Row>
+                  ))}
+                </Container>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button onClick={() => setAwayModalShow(false)}>Cerrar</Button>
+              </Modal.Footer>
+            </Modal>
+          </>
         </>
       ) : (
         <div>

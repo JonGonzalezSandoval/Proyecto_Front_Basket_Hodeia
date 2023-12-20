@@ -571,7 +571,7 @@ export default function RefereeScreenManagement() {
                 </Container>
               </Modal.Body>
               <Modal.Footer>
-                <Button onClick={() => setLocalModalShow(false)}>Close</Button>
+                <Button onClick={() => setLocalModalShow(false)}>Cerrar</Button>
               </Modal.Footer>
             </Modal>
 
@@ -606,7 +606,7 @@ export default function RefereeScreenManagement() {
                 </Container>
               </Modal.Body>
               <Modal.Footer>
-                <Button onClick={() => setAwayModalShow(false)}>Close</Button>
+                <Button onClick={() => setAwayModalShow(false)}>Cerrar</Button>
               </Modal.Footer>
             </Modal>
           </>

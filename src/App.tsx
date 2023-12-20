@@ -54,7 +54,7 @@ function App() {
                 path="/manager/:matchID"
                 element={<RefereeScreenManagement></RefereeScreenManagement>}
               />
-              <Route path="/scoreboard" element={<Scoreboard></Scoreboard>} />
+              <Route path="/scoreboard/:matchID" element={<Scoreboard></Scoreboard>} />
               <Route path="/test" element={<Test></Test>} />
               <Route path="/test1" element={<Test1></Test1>} />
             </Routes>

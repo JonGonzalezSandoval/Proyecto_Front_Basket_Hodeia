@@ -51,7 +51,10 @@
 .primary-color-faded {
   background-color: #FF6900;
   filter: saturate(80%);
-
+}
+.primary-color-three {
+  background-color: #FF6900;
+  filter: saturate(60%);
 }
 
 .primary-color-faded-extra {
@@ -385,4 +388,21 @@ abbr[title] {
   margin-left: 5vw;
   background-color: #FFF5EC;
   border-color: #121212;
+}
+
+.border-black {
+  border: 2px solid #121212;
+  border-radius: '20px';
+}
+
+.border-right{
+  border-right: 2px solid #121212;
+}
+
+.border-left{
+  border-right: 2px solid #121212;
+}
+
+.custom-progress-bar-animated .progress-bar{
+  background-color: #D64700
 }

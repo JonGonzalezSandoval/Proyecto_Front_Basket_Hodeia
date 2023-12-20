@@ -2,6 +2,20 @@ import { useEffect, useState } from "react";
 import MatchTimer from "./MatchTimer";
 import io from 'socket.io-client';
 import { useNavigate, useParams } from "react-router-dom";
+import {
+  Badge,
+  Button,
+  ButtonGroup,
+  ButtonToolbar,
+  Col,
+  Container,
+  Row,
+  Spinner,
+} from "react-bootstrap";
+<link
+  href="https://fonts.googleapis.com/css2?family=Graduate&display=swap"
+  rel="stylesheet"
+></link>;
 
 interface TPlayer {
   jugadorid: string;
@@ -46,7 +60,7 @@ export default function RefereeScreenManagement() {
   >([]);
 
   const [holdTimeout, setHoldTimeout] = useState<number | null>(null);
-  const [ user, setUser ] = useState<any | null>(null);
+  const [user, setUser] = useState<any | null>(null);
 
   const navigate = useNavigate();
 
@@ -72,14 +86,14 @@ export default function RefereeScreenManagement() {
 
   useEffect(() => {
     if (localStorage.getItem("SavedToken") !== null) {
-      fetch("http://localhost:3000/auth/profile", {
-        headers: { Authorization: localStorage.getItem("SavedToken") || ""},
+      fetch("http://192.168.1.129:3000/auth/profile", {
+        headers: { Authorization: localStorage.getItem("SavedToken") || "" },
       })
         .then((res) => {
           if (res.status >= 400) {
             setUser(null);
             navigate("/login");
-            console.log(res.statusText)
+            console.log(res.statusText);
             return;
           }
           return res.json();
@@ -125,7 +139,7 @@ export default function RefereeScreenManagement() {
   }, [selectedAwayCheckboxes, setSelectedAwayCheckboxes]);
 
   function getPlayers() {
-    fetch(`http://localhost:3000/matches/teamsplayersdate/${matchID}`)
+    fetch(`http://192.168.1.129:3000/matches/teamsplayersdate/${matchID}`)
       .then((res) => res.json())
       .then((res) => {
         console.log(res);
@@ -178,6 +192,7 @@ export default function RefereeScreenManagement() {
   function handlePressStartLocal(player: TPlayer) {
     setChangeLocal(player.jugadorid);
     console.log(changeLocal);
+    console.log("changeLocal");
   }
   const [changeAway, setChangeAway] = useState<string | null>(null);
 
@@ -194,6 +209,8 @@ export default function RefereeScreenManagement() {
 
   function handlePressStartAway(player: TPlayer) {
     setChangeAway(player.jugadorid);
+    console.log(changeAway);
+    console.log("changeaway");
 
     // // Set a timeout for one second
     // setTimeout(() => {
@@ -212,9 +229,7 @@ export default function RefereeScreenManagement() {
   //   setPressStartTime(null);
   // };
 
-  function handlePointScored(
-    player: TPlayer, points: number
-  ) {
+  function handlePointScored(player: TPlayer, points: number) {
     const data = {
       method: "POST",
       headers: {
@@ -226,7 +241,7 @@ export default function RefereeScreenManagement() {
         partidoid: matchID,
       }),
     };
-    fetch("http://localhost:3000/scores/new", data)
+    fetch("http://192.168.1.129:3000/scores/new", data)
       .then((res) => res.json())
       .then((res) => {
         console.log(res);
@@ -245,17 +260,20 @@ export default function RefereeScreenManagement() {
 
         if (indiceJugadorAActualizar !== -1) {
           const nuevoArrayDeJugadores = [...arrayDeJugadores];
-          nuevoArrayDeJugadores[indiceJugadorAActualizar].puntosPartido += points;
+          nuevoArrayDeJugadores[indiceJugadorAActualizar].puntosPartido +=
+            points;
 
-          local?setLocalTeamPlayers(nuevoArrayDeJugadores):setAwayTeamPlayers(nuevoArrayDeJugadores);
+          local
+            ? setLocalTeamPlayers(nuevoArrayDeJugadores)
+            : setAwayTeamPlayers(nuevoArrayDeJugadores);
         } else {
           console.log(
             `Jugador con jugadorid ${player.jugadorid} no encontrado`
           );
         }
       })
-      .then( res => {
-        if(localTeamPlayers != null){
+      .then((res) => {
+        if (localTeamPlayers != null) {
           console.log(localTeamPlayers);
         }
       })
@@ -270,15 +288,19 @@ export default function RefereeScreenManagement() {
       },
       body: JSON.stringify({ jugadorid: player.jugadorid, partidoid: matchID }),
     };
-    fetch("http://localhost:3000/fouls/new", data)
+    fetch("http://192.168.1.129:3000/fouls/new", data)
       .then((res) => res.json())
       .then((res) => {
-        console.log(res)
+        console.log(res);
         let arrayDeJugadores: TPlayer[] = [];
         let arrayDeJugadoresPista: TPlayer[] = [];
         let local = true;
-        
-        if (localTeamPlayers !== null && localFieldPlayers !== null && player.equipoid === localTeam?.id) {
+
+        if (
+          localTeamPlayers !== null &&
+          localFieldPlayers !== null &&
+          player.equipoid === localTeam?.id
+        ) {
           arrayDeJugadores = localTeamPlayers;
           arrayDeJugadoresPista = localFieldPlayers;
         } else if (awayTeamPlayers !== null && awayFieldPlayers !== null) {
@@ -295,31 +317,49 @@ export default function RefereeScreenManagement() {
           (jugador) => jugador.jugadorid === player.jugadorid
         );
 
-        console.log("Indice Jugador Banquillo" + indiceJugadorAActualizar)
-        console.log("Indice Jugador Campo" + indiceJugadorCampoAActualizar)
+        console.log("Indice Jugador Banquillo" + indiceJugadorAActualizar);
+        console.log("Indice Jugador Campo" + indiceJugadorCampoAActualizar);
 
-        if (indiceJugadorAActualizar !== -1 && indiceJugadorCampoAActualizar !== -1) {
+        if (
+          indiceJugadorAActualizar !== -1 &&
+          indiceJugadorCampoAActualizar !== -1
+        ) {
           const nuevoArrayDeJugadores = [...arrayDeJugadores];
-          console.log(nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido)
+          console.log(
+            nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido
+          );
           nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido += 1;
-          
+
           const nuevoArrayDeJugadoresPista = [...arrayDeJugadoresPista];
-          console.log(nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar].faltasPartido)
-          nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar].faltasPartido += 1;
+          console.log(
+            nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar]
+              .faltasPartido
+          );
+          nuevoArrayDeJugadoresPista[
+            indiceJugadorCampoAActualizar
+          ].faltasPartido += 1;
 
-
-          console.log(nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido)
-          console.log(nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar].faltasPartido)
-          local?setLocalTeamPlayers(nuevoArrayDeJugadores):setAwayTeamPlayers(nuevoArrayDeJugadores);
-          local?setLocalFieldPlayers(nuevoArrayDeJugadoresPista):setAwayFieldPlayers(nuevoArrayDeJugadoresPista);
+          console.log(
+            nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido
+          );
+          console.log(
+            nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar]
+              .faltasPartido
+          );
+          local
+            ? setLocalTeamPlayers(nuevoArrayDeJugadores)
+            : setAwayTeamPlayers(nuevoArrayDeJugadores);
+          local
+            ? setLocalFieldPlayers(nuevoArrayDeJugadoresPista)
+            : setAwayFieldPlayers(nuevoArrayDeJugadoresPista);
         } else {
           console.log(
             `Jugador con jugadorid ${player.jugadorid} no encontrado`
           );
         }
       })
-      .then( res => {
-        if(localTeamPlayers != null){
+      .then((res) => {
+        if (localTeamPlayers != null) {
           console.log(awayTeamPlayers);
         }
       })
@@ -337,39 +377,265 @@ export default function RefereeScreenManagement() {
       {localTeam !== null && awayTeam !== null ? (
         <>
           <MatchTimer />
-          <div>
-            <span>{localTeam.nombre}</span>
-          </div>
-          <div>
-            <span>{awayTeam.nombre}</span>
-          </div>
+
+          <Container className="mt-3">
+            <Row>
+              <Col md={3}>
+                <div>
+                  <Badge
+                    bg="local-color"
+                    className="local-color mb-3"
+                    style={{
+                      fontSize: "1.3rem",
+                      fontFamily: "'Graduate', 'serif'",
+                    }}
+                  >
+                    {localTeam.nombre}
+                  </Badge>
+                </div>
+                <Row>
+                  <Col>
+                    {localTeamPlayers?.map((localPlayer) => (
+                        <div key={localPlayer.jugadorid} style={{ display: 'flex', justifyContent:'flex-start' }}>
+                        <input
+                          type="checkbox"
+                          style={{marginRight:'2vw'}}
+                          id={`checkbox-${localPlayer.jugadorid}`}
+                          checked={selectedLocalCheckboxes.includes(
+                            localPlayer
+                          )}
+                          onChange={() =>
+                            handleLocalCheckboxChange(localPlayer)
+                          }
+                        />
+                        <label htmlFor={`checkbox-${localPlayer.jugadorid}`}>
+                          {localPlayer.dorsal}.
+                          {" "}
+                          {localPlayer.nombre}
+                        </label>
+                      </div>
+                    ))}
+                  </Col>
+                </Row>
+              </Col>
+
+              <Col md={3}>
+                <Badge
+                  bg="secondary"
+                  style={{
+                    fontSize: "1.3rem",
+                    fontFamily: "'Graduate', 'serif'",
+                  }}
+                >
+                  100
+                </Badge>
+
+                <Row>
+                  <Col>
+                    {localFieldPlayers?.map((player) => (
+                      <div key={player.jugadorid}>
+                        <Row>
+                          <Col>
+                            <Badge
+                              style={{
+                                height: "40px",
+                                width: "150px",
+                                marginBottom: "1vh",
+                                marginTop: "1vh",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                backgroundColor: "#880000",
+                                fontSize: "1em", // Ajusta el tamaño de la fuente según sea necesario
+                              }}
+                              onClick={() => handlePressStartLocal(player)}
+                              onTouchStart={() => handlePressStartLocal(player)}
+                              bg="#880000"
+                            >
+                              Dorsal: {player.dorsal}
+                            </Badge>
+
+                            <ButtonToolbar
+                              aria-label="Toolbar with button groups"
+                              style={{ display: "flex", width: "100%" }}
+                            >
+                              <ButtonGroup
+                                className="me-2"
+                                aria-label="points"
+                                style={{ flex: 3 }}
+                              >
+                                <Button
+                                  onClick={() => handlePointScored(player, 1)}
+                                  style={{ width: "100%" }}
+                                  className="primary-color-three border-black"
+                                >
+                                  1
+                                </Button>
+                                <Button
+                                  onClick={() => handlePointScored(player, 2)}
+                                  style={{ width: "100%" }}
+                                  className="primary-color-faded border-black"
+                                >
+                                  2
+                                </Button>
+                                <Button
+                                  onClick={() => handlePointScored(player, 3)}
+                                  style={{ width: "100%" }}
+                                  className="primary-color border-black"
+                                >
+                                  3
+                                </Button>
+                              </ButtonGroup>
+                              <ButtonGroup
+                                aria-label="fouls"
+                                style={{ flex: 1 }}
+                              >
+                                <Button
+                                  onClick={() => handleFault(player)}
+                                  style={{ width: "100%" }}
+                                  className="secondary-color border-black"
+                                >
+                                  F{player.faltasPartido}
+                                </Button>
+                              </ButtonGroup>
+                            </ButtonToolbar>
+                          </Col>
+                        </Row>
+                      </div>
+                    ))}
+                  </Col>
+                </Row>
+              </Col>
+
+              <Col md={3}>
+                <Badge
+                  bg="secondary"
+                  style={{
+                    fontSize: "1.3rem",
+                    fontFamily: "'Graduate', 'serif'",
+                  }}
+                >
+                  100
+                </Badge>
+                <Row>
+                  <Col>
+                    {awayFieldPlayers?.map((player) => (
+                      <div key={player.jugadorid}>
+                        <Row>
+                          <Col>
+                          <Badge
+                              style={{
+                                height: "40px",
+                                width: "150px",
+                                marginBottom: "1vh",
+                                marginTop: "1vh",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                backgroundColor: "#880000",
+                                fontSize: "1em", // Ajusta el tamaño de la fuente según sea necesario
+                              }}
+                              onClick={() => handlePressStartLocal(player)}
+                              onTouchStart={() => handlePressStartLocal(player)}
+                              bg="#880000"
+                            >
+                              Dorsal: {player.dorsal}
+                            </Badge>
+
+                            <ButtonToolbar
+                              aria-label="Toolbar with button groups"
+                              style={{ display: "flex", width: "100%" }}
+                            >
+                              <ButtonGroup
+                                className="me-2"
+                                aria-label="points"
+                                style={{ flex: 3 }}
+                              >
+                                <Button
+                                  onClick={() => handlePointScored(player, 1)}
+                                  className="primary-color-three border-black"
+                                >
+                                  1
+                                </Button>
+                                <Button
+                                  onClick={() => handlePointScored(player, 2)}
+                                  className="primary-color-faded border-black"
+                                >
+                                  2
+                                </Button>
+                                <Button
+                                  onClick={() => handlePointScored(player, 3)}
+                                  className="primary-color border-black"
+                                >
+                                  3
+                                </Button>
+                              </ButtonGroup>
+                              <ButtonGroup
+                                aria-label="fouls"
+                                style={{ flex: 1 }}
+                              >
+                                <Button
+                                  onClick={() => handleFault(player)}
+                                  className="secondary-color border-black"
+                                >
+                                  F{player.faltasPartido}
+                                </Button>
+                              </ButtonGroup>
+                            </ButtonToolbar>
+                          </Col>
+                        </Row>
+                      </div>
+                    ))}
+                  </Col>
+                </Row>
+              </Col>
+
+              <Col md={3}>
+                <div>
+                  <Badge
+                    bg="visitor-color"
+                    className="visitor-color mb-3"
+                    style={{
+                      fontSize: "1.3rem",
+                      fontFamily: "'Graduate', 'serif'",
+                    }}
+                  >
+                    {awayTeam.nombre}
+                  </Badge>
+                </div>
+                <Row>
+                  <Col>
+                    {awayTeamPlayers?.map((player) => (
+                      <div key={player.jugadorid} style={{marginLeft:'5vw'}}>
+                        <input
+                          type="checkbox"
+                          style={{marginRight:'2vw'}}
+                          id={`laway-checkbox-${player.jugadorid}`}
+                          onChange={() => handleAwayCheckboxChange(player)}
+                        />
+                        <label htmlFor={`away-checkbox-${player.jugadorid}`}>
+                          <div key={player.jugadorid}>
+                            <span>
+                              {player.dorsal}.
+                              {" "}
+                              {player.nombre}
+                            </span>
+                          </div>
+                        </label>
+                      </div>
+                    ))}
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          </Container>
+
           {localTeamPlayers !== null && awayTeamPlayers !== null ? (
             <>
               <div>
-                {localTeamPlayers.map((player) => (
-                  <div key={player.jugadorid}>
-                    <input
-                      type="checkbox"
-                      id={`checkbox-${player.jugadorid}`}
-                      checked={selectedLocalCheckboxes.includes(player)}
-                      onChange={() => handleLocalCheckboxChange(player)}
-                    />
-                    <label htmlFor={`checkbox-${player.jugadorid}`}>
-                      <div>
-                        <ul>
-                          <li>{player.dorsal}</li>
-                          <li>{player.nombre}</li>
-                          <li>{player.puntosPartido}</li>
-                        </ul>
-                      </div>
-                    </label>
-                  </div>
-                ))}
-              </div>
-              <div>
                 {changeLocal != null ? (
                   <div>
-                    {awayTeamPlayers.map((player) => (
+                    {localTeamPlayers.map((player) => (
                       <div key={player.jugadorid}>
                         <input
                           type="checkbox"
@@ -392,81 +658,6 @@ export default function RefereeScreenManagement() {
                 ) : (
                   <></>
                 )}
-                {localFieldPlayers != null ? (
-                  <>
-                    {localFieldPlayers.map((player) => (
-                      <div key={player.jugadorid}>
-                        <ul>
-                          <li
-                            onClick={() => handlePressStartLocal(player)}
-                            // onMouseUp={handlePressEnd}
-                            onTouchStart={() => handlePressStartLocal(player)}
-                            // onTouchEnd={handlePressEnd}
-                            style={{
-                              padding: "10px",
-                              border: "1px solid #ccc",
-                              cursor: "pointer",
-                            }}
-                          >
-                            {player.dorsal}
-                          </li>
-                          <li>
-                            <button
-                              onClick={() => handlePointScored(player, 1)}
-                            >
-                              1
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              onClick={() => handlePointScored(player, 2)}
-                            >
-                              2
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              onClick={() => handlePointScored(player, 3)}
-                            >
-                              3
-                            </button>
-                          </li>
-                          <li>
-                            <button onClick={() => handleFault(player)}>
-                              F {player.faltasPartido}
-                            </button>
-                          </li>
-                        </ul>
-                      </div>
-                    ))}
-                  </>
-                ) : (
-                  <>
-                    <span>Selecciona los jugadores iniciales</span>
-                    <div></div>
-                  </>
-                )}
-              </div>
-              <div>
-                {awayTeamPlayers.map((player) => (
-                  <div key={player.jugadorid}>
-                    <input
-                      type="checkbox"
-                      id={`away-checkbox-${player.jugadorid}`}
-                      checked={selectedAwayCheckboxes.includes(player)}
-                      onChange={() => handleAwayCheckboxChange(player)}
-                    />
-                    <label htmlFor={`away-checkbox-${player.jugadorid}`}>
-                      <div key={player.jugadorid}>
-                        <ul>
-                          <li>{player.dorsal}</li>
-                          <li>{player.nombre}</li>
-                          <li>{player.puntosPartido}</li>
-                        </ul>
-                      </div>
-                    </label>
-                  </div>
-                ))}
               </div>
               <div>
                 {changeAway != null ? (
@@ -494,70 +685,17 @@ export default function RefereeScreenManagement() {
                 ) : (
                   <></>
                 )}
-                {awayFieldPlayers != null ? (
-                  <>
-                    {awayFieldPlayers.map((player) => (
-                      <div key={player.jugadorid}>
-                        <ul>
-                          <li
-                            onClick={() => handlePressStartAway(player)}
-                            // onMouseUp={handlePressEnd}
-                            onTouchStart={() => handlePressStartAway(player)}
-                            // onTouchEnd={handlePressEnd}
-                            style={{
-                              padding: "10px",
-                              border: "1px solid #ccc",
-                              cursor: "pointer",
-                            }}
-                          >
-                            {player.dorsal}
-                          </li>
-                          <li>
-                            <button
-                              onClick={() => handlePointScored(player, 1)}
-                            >
-                              1
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              onClick={() => handlePointScored(player, 2)}
-                            >
-                              2
-                            </button>
-                          </li>
-                          <li>
-                            <button
-                              onClick={() => handlePointScored(player, 3)}
-                            >
-                              3
-                            </button>
-                          </li>
-                          <li>
-                          <button onClick={() => handleFault(player)}>
-                              F {player.faltasPartido}</button>
-                          </li>
-                        </ul>
-                      </div>
-                    ))}
-                  </>
-                ) : (
-                  <>
-                    <span>Selecciona los jugadores iniciales</span>
-                    <div></div>
-                  </>
-                )}
               </div>
             </>
           ) : (
             <div>
-              <span>Loading Player Info...</span>
+              <Spinner animation="border" className="spinner" />
             </div>
           )}
         </>
       ) : (
         <div>
-          <span>Loading a Match...</span>
+          <Spinner animation="border" className="spinner" />
         </div>
       )}
     </>

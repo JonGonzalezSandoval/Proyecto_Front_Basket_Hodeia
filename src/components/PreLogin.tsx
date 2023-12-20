@@ -1,10 +1,4 @@
-import {
-  Card,
-  Button,
-  Row,
-  Col,
-  Image,
-} from "react-bootstrap";
+import { Card, Button, Row, Col, Image } from "react-bootstrap";
 <link
   href="https://fonts.googleapis.com/css2?family=Graduate&display=swap"
   rel="stylesheet"
@@ -47,14 +41,14 @@ export default function PreLogin() {
             style={{ width: "350px", fontSize: "1rem" }}
             type="submit"
           >
-            Iniciar sesión
+            <Link to="/login">Iniciar sesión</Link>
           </Button>
 
           <Button
             className="secondary-color mb-3 button-bold-smaller my-2 text-center"
             style={{ width: "350px", fontSize: "1rem" }}
           >
-            Regístrate aquí
+            <Link to="/register">Regístrate aquí</Link>
           </Button>
         </Col>
       </Row>
@@ -116,7 +110,7 @@ export default function PreLogin() {
               className="secondary-color mb-3 button-bold-smaller my-2 text-center d-block d-md-none"
               style={{ fontSize: "1rem" }}
             >
-              Regístrate aquí
+              <Link to="/register">Regístrate aquí</Link>
             </Button>
 
             {/* Botones para dispositivos tablet */}
@@ -125,7 +119,7 @@ export default function PreLogin() {
               style={{ fontSize: "2rem", width: "300px" }}
               type="submit"
             >
-              Iniciar sesión
+              <Link to="/login">Iniciar sesión</Link>
             </Button>
 
             <Button

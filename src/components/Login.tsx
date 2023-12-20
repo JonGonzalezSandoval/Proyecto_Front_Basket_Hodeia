@@ -13,8 +13,6 @@ function Login() {
   function handleClick(e:React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
 
-    
-
     let data = {
       method: "POST",
       headers: {

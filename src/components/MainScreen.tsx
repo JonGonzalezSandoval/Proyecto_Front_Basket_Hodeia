@@ -43,7 +43,7 @@ export default function MainScreen() {
         console.log(res);
         setPartidosEnTemporada([]);
       })
-      .then((res) => matchesOfTheDay());
+      .then(() => matchesOfTheDay());
   }
 
   const formatDate = (dateParam: Date): string => {

@@ -1,4 +1,4 @@
-export default function TeamList(){
+/* export default function TeamList(){
     
     function findTeams(){
         
@@ -7,4 +7,4 @@ export default function TeamList(){
     return(
         <></>
     )
-}
+} */

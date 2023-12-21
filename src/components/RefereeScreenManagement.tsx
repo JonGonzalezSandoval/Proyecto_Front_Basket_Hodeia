@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Modal from 'react-bootstrap/Modal';
 import MatchTimer from "./MatchTimer";
+import io from 'socket.io-client';
 import { useNavigate, useParams } from "react-router-dom";
 import { Badge, Button, ButtonGroup, ButtonToolbar, Col, Container, Row, Spinner } from "react-bootstrap";
 <link href="https://fonts.googleapis.com/css2?family=Graduate&display=swap" rel="stylesheet"></link>
@@ -21,6 +22,7 @@ interface TTeams {
   logo: string | null;
   id: string;
 }
+const socket = io('http://localhost:3001');
 
 export default function RefereeScreenManagement() {
   const { matchID } = useParams();
@@ -77,7 +79,7 @@ export default function RefereeScreenManagement() {
 
   useEffect(() => {
     if (localStorage.getItem("SavedToken") !== null) {
-      fetch("http://192.168.1.129:3000/auth/profile", {
+      fetch("http://localhost:3000/auth/profile", {
         headers: { Authorization: localStorage.getItem("SavedToken") || "" },
       })
         .then((res) => {
@@ -130,7 +132,7 @@ export default function RefereeScreenManagement() {
   }, [selectedAwayCheckboxes, setSelectedAwayCheckboxes]);
 
   function getPlayers() {
-    fetch(`http://192.168.1.129:3000/matches/teamsplayersdate/${matchID}`)
+    fetch(`http://localhost:3000/matches/teamsplayersdate/${matchID}`)
       .then((res) => res.json())
       .then((res) => {
         console.log(res);
@@ -233,7 +235,7 @@ export default function RefereeScreenManagement() {
         partidoid: matchID,
       }),
     };
-    fetch("http://192.168.1.129:3000/scores/new", data)
+    fetch("http://localhost:3000/scores/new", data)
       .then((res) => res.json())
       .then((res) => {
         console.log(res);
@@ -280,7 +282,7 @@ export default function RefereeScreenManagement() {
       },
       body: JSON.stringify({ jugadorid: player.jugadorid, partidoid: matchID }),
     };
-    fetch("http://192.168.1.129:3000/fouls/new", data)
+    fetch("http://localhost:3000/fouls/new", data)
       .then((res) => res.json())
       .then((res) => {
         console.log(res);
@@ -368,7 +370,7 @@ export default function RefereeScreenManagement() {
     <>
       {localTeam !== null && awayTeam !== null ? (
         <>
-          <MatchTimer />
+          <MatchTimer partidoId={matchID} />
 
           <Container className="mt-3">
             <Row>

@@ -18,8 +18,6 @@ import Scoreboard from "./components/Scoreboard";
 
 import Logout from "./components/Logout";
 
-// import Footer from "./components/Footer";
-
 function App() {
 
   return (

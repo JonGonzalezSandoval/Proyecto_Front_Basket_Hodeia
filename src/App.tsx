@@ -15,8 +15,14 @@ import LeagueList from "./components/LeagueList";
 import TeamList from "./components/TeamList";
 import PlayersList from "./components/PlayersList";
 import Scoreboard from "./components/Scoreboard";
-
 import Logout from "./components/Logout";
+import Footer from "./components/Footer";
+import CreateRoomForm from "./components/createRoomButton";
+import SocketTest from "./components/socketTest";
+import BasketballMatchChart from "./components/Charts/BasketballMatchChart";
+import RefereeScreen from "./components/refereeScreen";
+import GameViewer from "./components/userScreen";
+
 
 function App() {
 
@@ -47,7 +53,12 @@ function App() {
                 element={<RefereeScreenManagement></RefereeScreenManagement>}
               />
               <Route path="/scoreboard/:matchID" element={<Scoreboard></Scoreboard>} />
-        
+              <Route path= '/createRoom' element={<CreateRoomForm/>}/>
+              <Route path= '/referee' element={<RefereeScreen/>}/>
+        <Route path= '/user' element={<GameViewer/>}/>
+        <Route path= '/socketTest' element={<SocketTest/>}/>
+        <Route path='/matchChart/:matchID' element={<BasketballMatchChart/>}/>
+
             </Routes>
           </Container>
           {/* <Footer></Footer> */}

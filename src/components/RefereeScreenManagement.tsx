@@ -32,19 +32,19 @@ interface TTeams {
   nombre: string;
   logo: string | null;
   id: string;
+  score: number;
 }
-const socket = io('http://localhost:3001');
 
+const socket = io('http://localhost:3001');
 export default function RefereeScreenManagement() {
   const { matchID } = useParams();
-
   const [timer, setTimer] = useState();
 
   const [localModalShow, setLocalModalShow] = useState(false);
   const [awayModalShow, setAwayModalShow] = useState(false);
 
-  const [localTeam, setLocalTeam] = useState<TTeams | null>(null);
-  const [awayTeam, setAwayTeam] = useState<TTeams | null>(null);
+  const [localTeam, setLocalTeam] = useState<any>();
+  const [awayTeam, setAwayTeam] = useState<any>();
 
   const [localTeamPlayers, setLocalTeamPlayers] = useState<TPlayer[] | null>(
     null
@@ -142,6 +142,12 @@ export default function RefereeScreenManagement() {
     console.log(selectedAwayCheckboxes);
   }, [selectedAwayCheckboxes, setSelectedAwayCheckboxes]);
 
+  useEffect(()=>{
+    if(selectedAwayCheckboxes.length === selectedLocalCheckboxes.length){
+      socket.emit("startingPlayers",{selectedAwayCheckboxes, selectedLocalCheckboxes, matchID})
+    }
+  },[selectedAwayCheckboxes, selectedLocalCheckboxes])
+
   function getPlayers() {
     fetch(`http://localhost:3000/matches/teamsplayersdate/${matchID}`)
       .then((res) => res.json())
@@ -152,11 +158,13 @@ export default function RefereeScreenManagement() {
           nombre: res.localTeamDetails.localid.nombre,
           logo: res.localTeamDetails.localid.equipoLogo,
           id: res.localTeamDetails.localid.equipoid,
+          score: res.localTeamDetails.puntuacion_equipo_local
         });
         setAwayTeam({
           nombre: res.visitorTeamDetails.visitanteid.nombre,
           logo: res.visitorTeamDetails.visitanteid.equipoLogo,
           id: res.visitorTeamDetails.visitanteid.equipoid,
+          score: res.visitorTeamDetails.puntuacion_equipo_visitante
         });
 
         const localPlayers = res.localTeamDetails.localid.players.map(
@@ -187,12 +195,16 @@ export default function RefereeScreenManagement() {
       const newArray: TPlayer[] = localFieldPlayers.map((playerOnTheField) =>
         playerOnTheField.jugadorid === changeLocal ? player : playerOnTheField
       );
-
+      
       setLocalFieldPlayers(newArray);
       setChangeLocal(null);
       setLocalModalShow(false);
+
+      socket.emit("substitutionUpdate", {players: newArray, equipoid: newArray[0].equipoid, partidoid: matchID})
     }
   }
+
+  
 
   function handlePressStartLocal(player: TPlayer) {
     setChangeLocal(player.jugadorid);
@@ -234,145 +246,134 @@ export default function RefereeScreenManagement() {
   // };
 
   function handlePointScored(player: TPlayer, points: number) {
-    const data = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        jugadorid: player.jugadorid,
-        puntos: points,
-        partidoid: matchID,
-      }),
-    };
-    fetch("http://localhost:3000/scores/new", data)
-      .then((res) => res.json())
-      .then((res) => {
-        console.log(res);
-        let arrayDeJugadores: TPlayer[] = [];
-        let local = true;
-        if (localTeamPlayers !== null && player.equipoid === localTeam?.id) {
-          arrayDeJugadores = localTeamPlayers;
-        } else if (awayTeamPlayers !== null) {
-          arrayDeJugadores = awayTeamPlayers;
-          local = false;
-        }
+    console.log(player, points);
+    
+    socket.emit("scoreUpdateTeams", {
+      jugadorid: player.jugadorid,
+      puntos: points,
+      partidoid: matchID,
+    })
 
-        const indiceJugadorAActualizar = arrayDeJugadores.findIndex(
-          (jugador) => jugador.jugadorid === player.jugadorid
-        );
+    socket.on("scoreUpdateTeams", (data) =>{
+      console.log(data);
+      if(data.equipoToUpdate === localTeam?.id) {
+        localTeam.score += data.puntos;
+        setLocalTeam({...localTeam})
+      } else if(data.equipoToUpdate === awayTeam?.id) {
+        awayTeam.score += data.puntos
+        setAwayTeam({...awayTeam})
+      }
+      socket.off("scoreUpdateTeams")
+    })
+    
+    let arrayDeJugadores: TPlayer[] = [];
+    let local = true;
+    if (localTeamPlayers !== null && player.equipoid === localTeam?.id) {
+      arrayDeJugadores = localTeamPlayers;
+    } else if (awayTeamPlayers !== null) {
+      arrayDeJugadores = awayTeamPlayers;
+      local = false;
+    }
 
-        if (indiceJugadorAActualizar !== -1) {
-          const nuevoArrayDeJugadores = [...arrayDeJugadores];
-          nuevoArrayDeJugadores[indiceJugadorAActualizar].puntosPartido +=
-            points;
+    const indiceJugadorAActualizar = arrayDeJugadores.findIndex(
+      (jugador) => jugador.jugadorid === player.jugadorid
+    );
 
-          local
-            ? setLocalTeamPlayers(nuevoArrayDeJugadores)
-            : setAwayTeamPlayers(nuevoArrayDeJugadores);
-        } else {
-          console.log(
-            `Jugador con jugadorid ${player.jugadorid} no encontrado`
-          );
-        }
-      })
-      .then((res) => {
-        if (localTeamPlayers != null) {
-          console.log(localTeamPlayers);
-        }
-      })
-      .catch((error) => {});
+    if (indiceJugadorAActualizar !== -1) {
+      const nuevoArrayDeJugadores = [...arrayDeJugadores];
+      nuevoArrayDeJugadores[indiceJugadorAActualizar].puntosPartido +=
+        points;
+
+      local
+        ? setLocalTeamPlayers(nuevoArrayDeJugadores)
+        : setAwayTeamPlayers(nuevoArrayDeJugadores);
+    } else {
+      console.log(
+        `Jugador con jugadorid ${player.jugadorid} no encontrado`
+      );
+    }
   }
 
   function handleFault(player: TPlayer) {
-    const data = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ jugadorid: player.jugadorid, partidoid: matchID }),
-    };
-    fetch("http://localhost:3000/fouls/new", data)
-      .then((res) => res.json())
-      .then((res) => {
-        console.log(res);
-        let arrayDeJugadores: TPlayer[] = [];
-        let arrayDeJugadoresPista: TPlayer[] = [];
-        let local = true;
+    
+    socket.emit('foulUpdate', {
+      jugadorId: player.jugadorid,
+      partidoId: matchID,
+      equipoId: player.equipoid
+    });
 
-        if (
-          localTeamPlayers !== null &&
-          localFieldPlayers !== null &&
-          player.equipoid === localTeam?.id
-        ) {
-          arrayDeJugadores = localTeamPlayers;
-          arrayDeJugadoresPista = localFieldPlayers;
-        } else if (awayTeamPlayers !== null && awayFieldPlayers !== null) {
-          arrayDeJugadores = awayTeamPlayers;
-          arrayDeJugadoresPista = awayFieldPlayers;
-          local = false;
-        }
+    let arrayDeJugadores: TPlayer[] = [];
+    let arrayDeJugadoresPista: TPlayer[] = [];
+    let local = true;
 
-        const indiceJugadorAActualizar = arrayDeJugadores.findIndex(
-          (jugador) => jugador.jugadorid === player.jugadorid
-        );
+    if (
+      localTeamPlayers !== null &&
+      localFieldPlayers !== null &&
+      player.equipoid === localTeam?.id
+    ) {
+      arrayDeJugadores = localTeamPlayers;
+      arrayDeJugadoresPista = localFieldPlayers;
+    } else if (awayTeamPlayers !== null && awayFieldPlayers !== null) {
+      arrayDeJugadores = awayTeamPlayers;
+      arrayDeJugadoresPista = awayFieldPlayers;
+      local = false;
+    }
 
-        const indiceJugadorCampoAActualizar = arrayDeJugadoresPista.findIndex(
-          (jugador) => jugador.jugadorid === player.jugadorid
-        );
+    const indiceJugadorAActualizar = arrayDeJugadores.findIndex(
+      (jugador) => jugador.jugadorid === player.jugadorid
+    );
 
-        console.log("Indice Jugador Banquillo" + indiceJugadorAActualizar);
-        console.log("Indice Jugador Campo" + indiceJugadorCampoAActualizar);
+    const indiceJugadorCampoAActualizar = arrayDeJugadoresPista.findIndex(
+      (jugador) => jugador.jugadorid === player.jugadorid
+    );
 
-        if (
-          indiceJugadorAActualizar !== -1 &&
-          indiceJugadorCampoAActualizar !== -1
-        ) {
-          const nuevoArrayDeJugadores = [...arrayDeJugadores];
-          console.log(
-            nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido
-          );
-          // nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido += 1;
+    console.log("Indice Jugador Banquillo" + indiceJugadorAActualizar);
+    console.log("Indice Jugador Campo" + indiceJugadorCampoAActualizar);
 
-          const nuevoArrayDeJugadoresPista = [...arrayDeJugadoresPista];
-          console.log(
-            nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar]
-              .faltasPartido
-          );
-          nuevoArrayDeJugadoresPista[
-            indiceJugadorCampoAActualizar
-          ].faltasPartido += 1;
+    if (
+      indiceJugadorAActualizar !== -1 &&
+      indiceJugadorCampoAActualizar !== -1
+    ) {
+      const nuevoArrayDeJugadores = [...arrayDeJugadores];
+      console.log(
+        nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido
+      );
+      // nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido += 1;
 
-          console.log(
-            nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido
-          );
-          console.log(
-            nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar]
-              .faltasPartido
-          );
-          local
-            ? setLocalTeamPlayers(nuevoArrayDeJugadores)
-            : setAwayTeamPlayers(nuevoArrayDeJugadores);
-          local
-            ? setLocalFieldPlayers(nuevoArrayDeJugadoresPista)
-            : setAwayFieldPlayers(nuevoArrayDeJugadoresPista);
-        } else {
-          console.log(
-            `Jugador con jugadorid ${player.jugadorid} no encontrado`
-          );
-        }
-      })
-      .then((res) => {
-        if (localTeamPlayers != null) {
-          console.log(awayTeamPlayers);
-        }
-      })
-      .catch((error) => {});
+      const nuevoArrayDeJugadoresPista = [...arrayDeJugadoresPista];
+      console.log(
+        nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar]
+          .faltasPartido
+      );
+      nuevoArrayDeJugadoresPista[
+        indiceJugadorCampoAActualizar
+      ].faltasPartido += 1;
+
+      console.log(
+        nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido
+      );
+      console.log(
+        nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar]
+          .faltasPartido
+      );
+      local
+        ? setLocalTeamPlayers(nuevoArrayDeJugadores)
+        : setAwayTeamPlayers(nuevoArrayDeJugadores);
+      local
+        ? setLocalFieldPlayers(nuevoArrayDeJugadoresPista)
+        : setAwayFieldPlayers(nuevoArrayDeJugadoresPista);
+    } else {
+      console.log(
+        `Jugador con jugadorid ${player.jugadorid} no encontrado`
+      );
+    }
+
   }
 
   function handleFinish() {}
 
   useEffect(() => {
+    socket.emit('joinMatchRoom', matchID);
     getPlayers();
   }, []);
 
@@ -393,7 +394,7 @@ export default function RefereeScreenManagement() {
                     fontFamily: "'Graduate', 'serif'",
                   }}
                 >
-                  {localTeam.nombre}
+                  {localTeam?.nombre}
                 </Badge>
                 <Row>
                   <Col>
@@ -438,7 +439,7 @@ export default function RefereeScreenManagement() {
                     height: "50px", // Establece una altura fija para el Badge
                   }}
                 >
-                  100
+                  {localTeam?.score}
                 </Badge>
 
                 <Row>
@@ -531,7 +532,7 @@ export default function RefereeScreenManagement() {
                     height: "50px", // Establece una altura fija para el Badge
                   }}
                 >
-                  100
+                  {awayTeam?.score}
                 </Badge>
 
                 <Row>
@@ -618,7 +619,7 @@ export default function RefereeScreenManagement() {
                       fontFamily: "'Graduate', 'serif'",
                     }}
                   >
-                    {awayTeam.nombre}
+                    {awayTeam?.nombre}
                   </Badge>
                 </div>
                 <Row>

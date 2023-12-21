@@ -15,6 +15,7 @@ const GameViewer = () => {
   useEffect(() => {
     socket.on('connect', () => {
       console.log('Connected to server!');
+      fetch(`http://localhost:3000/matches/id/${partidoId}`)
     });
 
     socket.on('gameUpdate', (data) => {
@@ -55,6 +56,11 @@ const GameViewer = () => {
       socket.off('connect');
     };
   }, []);
+
+  useEffect(()=>{
+    console.log(visitanteScore, localScore);
+    
+  },[localScore, visitanteScore])
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

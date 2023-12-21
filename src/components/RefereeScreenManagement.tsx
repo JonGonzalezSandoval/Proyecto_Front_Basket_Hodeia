@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import MatchTimer from "./MatchTimer";
+import io from 'socket.io-client';
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Badge,
@@ -32,6 +33,7 @@ interface TTeams {
   logo: string | null;
   id: string;
 }
+const socket = io('http://localhost:3001');
 
 export default function RefereeScreenManagement() {
   const { matchID } = useParams();
@@ -378,7 +380,7 @@ export default function RefereeScreenManagement() {
     <>
       {localTeam !== null && awayTeam !== null ? (
         <>
-          <MatchTimer />
+          <MatchTimer partidoId={matchID} />
 
           <Container className="mt-3">
             <Row>

@@ -36,6 +36,9 @@ export default function LeagueList() {
         })
         .then((res) => {
           setUser(res);
+          if(res.rol !== "bb907068-b7cc-4b9c-be47-f3b6c668d5c4"){
+            navigate("/home")
+          }
         });
     } else {
       navigate("/login");

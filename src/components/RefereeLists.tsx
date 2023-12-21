@@ -55,7 +55,6 @@ export default function RefereeLists() {
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     // e.preventDefault();
-    console.log(e.target.name + ": " + e.target.value);
 
     setNewReferee({
       ...newReferee,

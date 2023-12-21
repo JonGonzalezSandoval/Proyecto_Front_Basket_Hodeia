@@ -53,7 +53,7 @@ export default function CoachLists() {
     if (!validEmail) {
       console.log("Debes introducir todos los datos válidos");
     } else if (newCoach.nombre === "") {
-      console.log("registrar");
+      //TODO COSA DE HACER REGISTRO
     }
   }
 
@@ -62,8 +62,6 @@ export default function CoachLists() {
     if (e.target.name == "email") {
       setValidEmail(EMAIL_REGEX.test(e.target.value));
     }
-    
-    console.log(e.target.name + ": " + e.target.value);
 
     setNewCoach({
       ...newCoach,
@@ -107,7 +105,7 @@ export default function CoachLists() {
       <Card>
         <Card.Header as="h5">Crear entrenador/a</Card.Header>
         <Card.Body>
-          <Form onSubmit={handleRegister}>
+          <Form onSubmit={handleRegister} >
             <InputGroup className="mb-3">
               <InputGroup.Text id="nombre">Nombre</InputGroup.Text>
               <Form.Control

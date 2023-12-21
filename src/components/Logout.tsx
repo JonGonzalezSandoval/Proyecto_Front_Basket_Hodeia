@@ -8,8 +8,6 @@ export default function Logout() {
   function handleLogout() {
     localStorage.removeItem("SavedToken");
     localStorage.removeItem("Rol");
-    console.log(localStorage.getItem("SavedToken"))
-    
     navigate("/");
   }
 

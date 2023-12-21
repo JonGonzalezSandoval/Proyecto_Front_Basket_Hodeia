@@ -57,8 +57,6 @@ export default function PlayersList() {
       setValidEmail(EMAIL_REGEX.test(e.target.value));
     }
 
-    console.log(e.target.name + ": " + e.target.value);
-
     setNewCoach({
       ...newCoach,
       [e.target.name]: e.target.value,
@@ -87,6 +85,9 @@ export default function PlayersList() {
         })
         .then((res) => {
           setUser(res);
+          if(res.rol !== "d8d4b514-800a-4827-a92b-e4f3770ef76b"){
+            navigate("/home")
+          }
         });
     } else {
       navigate("/login");

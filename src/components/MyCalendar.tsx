@@ -46,8 +46,6 @@ const MyCalendar:React.FC<MyCalendarProps> = ({setterFecha, fecha, fechasPartido
     return `${year}-${month}-${day}`;
   };
 
-  // console.log(events)
-
   return (
     <Container className="my-calendar" style={{ justifyContent: "center", marginTop: "3vw" }}>
       <Row>

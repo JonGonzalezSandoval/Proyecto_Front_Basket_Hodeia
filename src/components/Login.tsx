@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Button, Card, Container } from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import { Link, useNavigate } from "react-router-dom";
+import UserContext from "../context/UserContext";
 
 function Login() {
   const [user, setUser] = useState({ email: "", password: "" });
+  const {setLoginUser} = useContext(UserContext);
 
   const navigate = useNavigate();
 
@@ -24,13 +26,12 @@ function Login() {
     fetch("http://localhost:3000/auth/login", data)
       .then((res) => {
         if (res.status < 400) {
-          console.log(res);
+          console.log(res.statusText);
           return res.json();
         }
         if (res.status == 401) throw new Error("Unauthorized");
       })
       .then((res) => {
-        console.log(res);
         localStorage.removeItem("SavedToken");
         localStorage.setItem("SavedToken", "Bearer " + res.access_token);
         localStorage.removeItem("Rol");
@@ -40,7 +41,7 @@ function Login() {
         })
           .then((res) => res.json())
           .then((res) => {
-            console.log(res);
+            setLoginUser(res)
             navigate("/home");
           });
       })

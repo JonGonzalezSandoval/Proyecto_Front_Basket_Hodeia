@@ -1,17 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import MyCalendar from "./MyCalendar";
 import UserContext from "./../context/UserContext";
-import { useNavigate, Link} from "react-router-dom";
-import {
-  Badge,
-  Card,
-  Col,
-  ListGroup,
-  Row,
-  Spinner,
-} from "react-bootstrap";
+import { useNavigate, Link } from "react-router-dom";
+import { Badge, Card, Col, ListGroup, Row, Spinner } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
-
 
 // SPINNER PARA JON:
 {
@@ -42,18 +34,20 @@ interface TPartido {
   puntuacion_equipo_visitante: number;
 }
 
-interface TUser{
-
-}
+interface TUser {}
 
 export default function MainScreen() {
-  const [ user, setUser ] = useState<any | null>(null);
+  const [user, setUser] = useState<any | null>(null);
   const [selectedLeague, setSelectedLeague] = useState<string | null>(null);
   const [allLeagues, setAllLeagues] = useState<TLeague[] | null>(null);
   const [date, setDate] = useState<Date>(new Date());
-  const [partidosEnTemporada, setPartidosEnTemporada] = useState<TPartido[]>([]);
+  const [partidosEnTemporada, setPartidosEnTemporada] = useState<TPartido[]>(
+    []
+  );
   const [partidosDia, setPartidosDia] = useState<TPartido[] | null>(null);
-  const [fechasPartidosParaCalendario, setFechasPartidosParaCalendario] = useState<Date[]>([new Date(2020,0,11)])
+  const [fechasPartidosParaCalendario, setFechasPartidosParaCalendario] =
+    useState<Date[]>([new Date(2020, 0, 11)]);
+  const { loginUser, setLoginUser } = useContext(UserContext);
 
   const navigate = useNavigate();
 
@@ -61,29 +55,27 @@ export default function MainScreen() {
     fetch(`http://localhost:3000/matches/season/${selectedLeague}/1`)
       .then((res) => res.json())
       .then((res) => {
-        console.log(res);
         setPartidosEnTemporada(res);
       })
       .then(() => {
-        matchesOfTheDay()
-        fechasPartidos()
+        matchesOfTheDay();
+        fechasPartidos();
       });
   }
 
-  function fechasPartidos(){
-    const listaFechas = partidosEnTemporada.map( (partido: TPartido) => {
-      return createDatesForCalendar(partido.fecha)
-    })
+  function fechasPartidos() {
+    const listaFechas = partidosEnTemporada.map((partido: TPartido) => {
+      return createDatesForCalendar(partido.fecha);
+    });
 
-    setFechasPartidosParaCalendario(listaFechas)
-
+    setFechasPartidosParaCalendario(listaFechas);
   }
 
   const createDatesForCalendar = (fechaParseo: string): Date => {
-    const [anio, mes, dia] = fechaParseo.split('-').map(Number);
+    const [anio, mes, dia] = fechaParseo.split("-").map(Number);
 
-    return new Date(anio, (mes - 1), dia)
-  }
+    return new Date(anio, mes - 1, dia);
+  };
 
   const formatDate = (dateParam: Date): string => {
     // Format date as 'yyyy-mm-dd'
@@ -96,14 +88,13 @@ export default function MainScreen() {
 
   // mathDate:string
   function matchesOfTheDay() {
-    console.log(formatDate(date))
+    console.log(formatDate(date));
     //componente carga true
     fetch(
       `http://localhost:3000/matches/byLD/${selectedLeague}/${formatDate(date)}`
     )
       .then((res) => res.json())
       .then(async (res) => {
-        console.log(res);
         const matchesParsed = await Promise.all(
           res.map(async (partido: any) => {
             let local: string = "";
@@ -138,26 +129,25 @@ export default function MainScreen() {
         );
 
         setPartidosDia(matchesParsed);
-        console.log(partidosDia); // Move this line here
       });
   }
 
   useEffect(() => {
     if (localStorage.getItem("SavedToken") !== null) {
       fetch("http://localhost:3000/auth/profile", {
-        headers: { Authorization: localStorage.getItem("SavedToken") || ""},
+        headers: { Authorization: localStorage.getItem("SavedToken") || "" },
       })
         .then((res) => {
           if (res.status >= 400) {
             setUser(null);
             navigate("/login");
-            console.log(res.statusText)
             return;
           }
           return res.json();
         })
         .then((res) => {
           setUser(res);
+          setLoginUser(res);
         });
     } else {
       navigate("/login");
@@ -172,14 +162,10 @@ export default function MainScreen() {
   }, []);
 
   useEffect(() => {
-    console.log("Fecha " + date + " Liga " + selectedLeague);
     if (selectedLeague != null) handleSelectedLeagueSeasonOnDate();
   }, [date, setDate, selectedLeague, setSelectedLeague]);
 
 
-
-  console.log(user)
-  
   return allLeagues != null ? (
     <>
       <Form.Select
@@ -220,73 +206,95 @@ export default function MainScreen() {
                   boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)",
                 }}
               >
-                <Row>
-                  {/* Equipo Local */}
-                  <Col className="d-flex flex-column justify-content-center align-items-center">
-                    <ListGroup className="align-items-center">
-                      <Card.Img
-                        src={`http://localhost:3000/${partido.logoLocal}`} // Asegúrate de que esta URL sea correcta
-                        alt="team-logo"
-                        style={{
-                          maxWidth: "100px",
-                          margin: "10px",
-                          borderRadius: "50px",
-                        }} // Ajusta el estilo según sea necesario
-                      />
-                    </ListGroup>
-                    <p style={{fontWeight:"bold"}}>{partido.nombrelocal}</p>
-                  </Col>
-                  {/* Separador */}
-                  <Col
-                    className="d-flex flex-column justify-content-center align-items-center"
-                    style={{ width: "15%", maxWidth: "15%" }}
-                  >
-                    <h5>
-                      <Badge
-                        style={{ boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)" }}
-                        bg="danger"
+                <Link
+                  to={
+                    loginUser.rol !== "96a31bcc-ceb7-4fa7-87bd-0138864ac3f3"
+                      ? `/scoreboard/${partido.partidoid}`
+                      : `/manager/${partido.partidoid}`
+                  }
+                  style={{ textDecoration: "none" }}
+                >
+                  <Row>
+                    {/* Equipo Local */}
+                    <Col className="d-flex flex-column justify-content-center align-items-center">
+                      <ListGroup className="align-items-center">
+                        <Card.Img
+                          src={`http://localhost:3000/${partido.logoLocal}`} // Asegúrate de que esta URL sea correcta
+                          alt="team-logo"
+                          style={{
+                            maxWidth: "100px",
+                            margin: "10px",
+                            borderRadius: "50px",
+                          }} // Ajusta el estilo según sea necesario
+                        />
+                      </ListGroup>
+                      <p style={{ fontWeight: "bold" }}>
+                        {partido.nombrelocal}
+                      </p>
+                    </Col>
+                    {/* Separador */}
+
+                    <Col
+                      className="d-flex flex-column justify-content-center align-items-center"
+                      style={{ width: "15%", maxWidth: "15%" }}
+                    >
+                      <h5>
+                        <Badge
+                          style={{
+                            boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)",
+                          }}
+                          bg="danger"
+                        >
+                          VS
+                        </Badge>
+                      </h5>
+                    </Col>
+
+                    {/* Equipo Visitante */}
+                    <Col className="d-flex flex-column justify-content-center align-items-center">
+                      <ListGroup
+                        variant="flush"
+                        className="align-items-center justify-content-center"
                       >
-                        VS
-                      </Badge>
-                    </h5>
-                  </Col>
+                        <Card.Img
+                          src={`http://localhost:3000/${partido.logoVisitante}`}
+                          alt="team-logo"
+                          style={{
+                            maxWidth: "100px",
+                            margin: "10px",
 
-                  {/* Equipo Visitante */}
-                  <Col className="d-flex flex-column justify-content-center align-items-center">
-                    <ListGroup variant="flush" className="align-items-center justify-content-center">
-                      <Card.Img
-                        src={`http://localhost:3000/${partido.logoVisitante}`} 
-                        alt="team-logo"
-                        style={{
-                          maxWidth: "100px",
-                          margin: "10px",
+                            borderRadius: "50px",
+                          }} // Ajusta el estilo según sea necesario
+                        />
+                        <p style={{ fontWeight: "bold" }}>
+                          {partido.nombrevisitante}
+                        </p>
+                      </ListGroup>
+                    </Col>
 
-                          borderRadius: "50px",
-                        }} // Ajusta el estilo según sea necesario
-                      />
-                      <p style={{fontWeight:"bold"}}>{partido.nombrevisitante}</p>
-                    </ListGroup>
-                  </Col>
-                 
-                  <Col
-                    className="d-flex justify-content-center align-items-center"
-                    style={{ minHeight: "0px" }}
-                  >
-                    <Link to={`/manager/${partido.partidoid}`}>
-               
-                  
-                      <Card.Img
-                        src="https://i.ibb.co/Cb1jVks/silbato.png"
-                        alt="team-logo"
-                        style={{
-                          maxWidth: "50px",
-                          margin: "10px",
-                          borderRadius: "50px",
-                        }}
-                      />
-                    </Link>
-                  </Col>
-                </Row>
+                    {loginUser.rol ===
+                    "96a31bcc-ceb7-4fa7-87bd-0138864ac3f3" ? (
+                      <Col
+                        className="d-flex justify-content-center align-items-center"
+                        style={{ minHeight: "0px" }}
+                      >
+                        <Link to={`/manager/${partido.partidoid}`}>
+                          <Card.Img
+                            src="https://i.ibb.co/Cb1jVks/silbato.png"
+                            alt="team-logo"
+                            style={{
+                              maxWidth: "50px",
+                              margin: "10px",
+                              borderRadius: "50px",
+                            }}
+                          />
+                        </Link>
+                      </Col>
+                    ) : (
+                      <></>
+                    )}
+                  </Row>
+                </Link>
               </Card>
             ))}
         </Row>

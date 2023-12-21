@@ -87,6 +87,21 @@
   color: #248700;
 }
 
+.primary-color-input{
+  background-color: #ACA7CB;
+}
+
+.secondary-color-input{
+  background-color: #ACA9BB;
+}
+
+.tertiary-color-input{
+  background-color: #BCBCBC;
+}
+
+.fouls-color-input{
+  background-color: #474554;
+}
 .spinner {
   color: #FF6900;
   /* font-size: 3rem;  */

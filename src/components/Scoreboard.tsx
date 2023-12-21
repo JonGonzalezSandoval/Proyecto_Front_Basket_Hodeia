@@ -26,26 +26,28 @@ export default function Scoreboard() {
   const [localTeam, setLocalTeam] = useState<any>();
   const [awayTeam, setAwayTeam] = useState<any>();
   const [teamsCharged, setTeamsCharged] = useState<boolean>(false);
-
+  
   async function getMatch() {
     console.log(matchID);
     const response = await fetch(`http://localhost:3000/matches/teamsplayersdate/${matchID}`)
     const res = await response.json();
-
-        setLocalTeam({
-          nombre: res.localTeamDetails.localid.nombre,
-          logo: res.localTeamDetails.localid.equipoLogo,
-          id: res.localTeamDetails.localid.equipoid,
-          score: res.localTeamDetails.puntuacion_equipo_local
-        });
-        setAwayTeam({
-          nombre: res.visitorTeamDetails.visitanteid.nombre,
-          logo: res.visitorTeamDetails.visitanteid.equipoLogo,
-          id: res.visitorTeamDetails.visitanteid.equipoid,
-          score: res.visitorTeamDetails.puntuacion_equipo_visitante
-        });
-      //setTeamsCharged(true);
+    
+    setLocalTeam({
+      nombre: res.localTeamDetails.localid.nombre,
+      logo: res.localTeamDetails.localid.equipoLogo,
+      id: res.localTeamDetails.localid.equipoid,
+      score: res.localTeamDetails.puntuacion_equipo_local
+    });
+    setAwayTeam({
+      nombre: res.visitorTeamDetails.visitanteid.nombre,
+      logo: res.visitorTeamDetails.visitanteid.equipoLogo,
+      id: res.visitorTeamDetails.visitanteid.equipoid,
+      score: res.visitorTeamDetails.puntuacion_equipo_visitante
+    });
+    //setTeamsCharged(true);
+    
   }
+  
 
   
   useEffect(()=>{
@@ -53,36 +55,37 @@ export default function Scoreboard() {
       fetch("http://localhost:3000/auth/profile", {
         headers: { Authorization: localStorage.getItem("SavedToken") || "" },
       })
-        .then((res) => {
-          if (res.status >= 400) {
-            setUser(null);
-            navigate("/login");
-            console.log(res.statusText);
-            return;
-          }
-          return res.json();
-        })
-        .then((res) => {
-          setUser(res);
-        });
+      .then((res) => {
+        if (res.status >= 400) {
+          setUser(null);
+          navigate("/login");
+          console.log(res.statusText);
+          return;
+        }
+        return res.json();
+      })
+      .then((res) => {
+        setUser(res);
+      });
     } else {
       navigate("/login");
     }
-
+    getMatch();
+    
     socket.on("connect", () => {
       console.log("Connected to server!");
     });
-
+    
     socket.on("scoreUpdateTeams", (data) => {
       console.log(data);
       console.log(awayTeam);
-      console.log();
       
       
-      if(awayTeam?.id === data.equipoToUpdate){        
+      if(awayTeam.id === data.equipoToUpdate){        
         // const tempTeam = {...awayTeam};
         console.log(awayTeam);
         awayTeam.score += data.puntos;
+        console.log(awayTeam);
         
         
         setAwayTeam({...awayTeam});
@@ -90,6 +93,7 @@ export default function Scoreboard() {
         console.log('localteamscoreupdate');
         console.log(localTeam);
         localTeam.score += data.puntos;
+        console.log(localTeam);
         
         
         setLocalTeam({...localTeam}); 
@@ -125,15 +129,6 @@ export default function Scoreboard() {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    let intervalId: number;
-    if (isRunning) {
-      // setting time from 0 to 1 every 10 milisecond using javascript setInterval method
-      intervalId = setInterval(() => setTime(time + 1), 10);
-    }
-    return () => clearInterval(intervalId);
-  }, [isRunning, time]);
-
   // Minutes calculation
   // const minutes = Math.floor((time % 360000) / 6000);
 
@@ -142,8 +137,8 @@ export default function Scoreboard() {
 
   useEffect(() => {
     socket.emit('joinMatchRoom', matchID );
-    getMatch();
   }, []);
+
 
   return (
     <>

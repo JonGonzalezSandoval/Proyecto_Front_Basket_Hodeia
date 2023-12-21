@@ -11,6 +11,10 @@ interface TLiga {
 export default function LeagueList() {
   const [ligas, setLigas] = useState<TLiga[] | null>(null);
   const [ user, setUser ] = useState<any | null>(null);
+  const [nuevaLiga, setNuevaLiga] = useState<any | null>({
+    nombre: "",
+    
+  });
 
   const navigate = useNavigate();
 

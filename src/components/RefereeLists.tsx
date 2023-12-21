@@ -40,7 +40,6 @@ export default function RefereeLists() {
     email: "",
     genero: "",
     password: "Passw0rd!",
-    // usuarioImg: string,
     rol: "96a31bcc-ceb7-4fa7-87bd-0138864ac3f3",
     isActive: true,
   });

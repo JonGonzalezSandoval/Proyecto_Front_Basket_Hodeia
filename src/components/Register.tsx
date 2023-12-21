@@ -95,7 +95,8 @@ export default function Register() {
     <>
       <Card className="mt-3 mb-3 ms-3 me-3 custom-background">
         <Container>
-          <Form onSubmit={(e) => handleRegister(e)}>
+          <Form onSubmit={(e) => handleRegister(e)}
+            autoComplete="off">
             <Form.Group controlId="formHoopdeia.register">
               <div className="register-label">
                 <Form.Label>Registro</Form.Label>
@@ -238,7 +239,7 @@ export default function Register() {
               </Row>
               <br />
               {validPassword != null && !validPassword ? (
-                <span>Contraseña inválida</span>
+                <span>Contraseña inválida (Tiene que contener un número, letra minuscula, letra mayuscula y un caracter especial)</span>
               ) : (
                 <span>Contraseña válida</span>
               )}

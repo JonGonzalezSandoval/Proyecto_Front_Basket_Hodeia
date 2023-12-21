@@ -69,7 +69,7 @@ function Login() {
           style={{ maxWidth: "600px", width: "100%"}}
         >
           <Container>
-            <Form>
+            <Form autoComplete="off">
               <Form.Group
                 as={Row}
                 className="mb-3"

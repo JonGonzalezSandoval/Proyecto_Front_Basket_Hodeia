@@ -234,7 +234,7 @@ export default function MainScreen() {
                         }} // Ajusta el estilo según sea necesario
                       />
                     </ListGroup>
-                    <p>{partido.nombrelocal}</p>
+                    <p style={{fontWeight:"bold"}}>{partido.nombrelocal}</p>
                   </Col>
                   {/* Separador */}
                   <Col
@@ -264,7 +264,7 @@ export default function MainScreen() {
                           borderRadius: "50px",
                         }} // Ajusta el estilo según sea necesario
                       />
-                      <p>{partido.nombrevisitante}</p>
+                      <p style={{fontWeight:"bold"}}>{partido.nombrevisitante}</p>
                     </ListGroup>
                   </Col>
                  

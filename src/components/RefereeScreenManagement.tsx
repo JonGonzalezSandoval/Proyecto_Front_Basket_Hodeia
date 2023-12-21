@@ -88,7 +88,7 @@ export default function RefereeScreenManagement() {
 
   useEffect(() => {
     if (localStorage.getItem("SavedToken") !== null) {
-      fetch("http://192.168.1.129:3000/auth/profile", {
+      fetch("http://localhost:3000/auth/profile", {
         headers: { Authorization: localStorage.getItem("SavedToken") || "" },
       })
         .then((res) => {
@@ -141,7 +141,7 @@ export default function RefereeScreenManagement() {
   }, [selectedAwayCheckboxes, setSelectedAwayCheckboxes]);
 
   function getPlayers() {
-    fetch(`http://192.168.1.129:3000/matches/teamsplayersdate/${matchID}`)
+    fetch(`http://localhost:3000/matches/teamsplayersdate/${matchID}`)
       .then((res) => res.json())
       .then((res) => {
         console.log(res);
@@ -243,7 +243,7 @@ export default function RefereeScreenManagement() {
         partidoid: matchID,
       }),
     };
-    fetch("http://192.168.1.129:3000/scores/new", data)
+    fetch("http://localhost:3000/scores/new", data)
       .then((res) => res.json())
       .then((res) => {
         console.log(res);
@@ -290,7 +290,7 @@ export default function RefereeScreenManagement() {
       },
       body: JSON.stringify({ jugadorid: player.jugadorid, partidoid: matchID }),
     };
-    fetch("http://192.168.1.129:3000/fouls/new", data)
+    fetch("http://localhost:3000/fouls/new", data)
       .then((res) => res.json())
       .then((res) => {
         console.log(res);
@@ -454,14 +454,14 @@ export default function RefereeScreenManagement() {
                                 display: "flex",
                                 justifyContent: "center",
                                 alignItems: "center",
-                                backgroundColor: "#AE2100",
+                                backgroundColor: "#474554",
                                 fontSize: "1em", // Ajusta el tamaño de la fuente según sea necesario
                               }}
                               onClick={() => handlePressStartLocal(player)}
                               // onMouseUp={handlePressEnd}
                               onTouchStart={() => handlePressStartLocal(player)}
                               // onTouchEnd={handlePressEnd}
-                              bg="#AE2100"
+                              bg="#474554"
                             >
                               D: {player.dorsal}
                             </Badge>
@@ -475,23 +475,22 @@ export default function RefereeScreenManagement() {
                                 style={{ flex: 3 }}
                               >
                                 <Button
-                                  style={{ width: "100%" }}
-                                  className="primary-color-three border-black"
+                                  style={{color:"#121212", fontWeight:"bold", width: "100%" }}
+                                  className="primary-color-input border-black"
                                   onClick={() => handlePointScored(player, 1)}
                                 >
                                   1
                                 </Button>{" "}
                                 <Button
-                                  style={{ width: "100%" }}
-                                  className="primary-color-faded border-black"
+                                  style={{color:"#121212", fontWeight:"bold", width: "100%" }}
+                                  className="secondary-color-input border-black"
                                   onClick={() => handlePointScored(player, 2)}
                                 >
                                   2
                                 </Button>{" "}
                                 <Button
-                                  style={{ width: "100%" }}
-                                  className="primary-color border-black"
-                                  onClick={() => handlePointScored(player, 3)}
+                                  className="tertiary-color-input border-black" 
+                                  style={{color:"#121212", fontWeight:"bold",  width: "100%"}}                                  onClick={() => handlePointScored(player, 3)}
                                 >
                                   3
                                 </Button>
@@ -501,8 +500,8 @@ export default function RefereeScreenManagement() {
                                 style={{ flex: 1 }}
                               >
                                 <Button
-                                  style={{ width: "100%" }}
-                                  className="secondary-color border-black"
+                                  style={{ width: "100%"}}
+                                  className="fouls-color-input border-black"
                                   onClick={() => handleFault(player)}
                                 >
                                   F{player.faltasPartido}
@@ -548,10 +547,10 @@ export default function RefereeScreenManagement() {
                                 display: "flex",
                                 justifyContent: "center",
                                 alignItems: "center",
-                                backgroundColor: "#AE2100",
+                                backgroundColor: "#474554",
                                 fontSize: "1em", // Ajusta el tamaño de la fuente según sea necesario
                               }}
-                              bg="#AE2100"
+                              bg="#474554" 
                               onClick={() => handlePressStartAway(player)}
                               // onMouseUp={handlePressEnd}
                               onTouchStart={() => handlePressStartAway(player)}
@@ -570,19 +569,22 @@ export default function RefereeScreenManagement() {
                                 style={{ flex: 3 }}
                               >
                                 <Button
-                                  className="primary-color-three border-black"
+                                  className="tertiary-color-input border-black"
+                                  style={{color:"#121212", fontWeight:"bold"}}
                                   onClick={() => handlePointScored(player, 1)}
                                 >
                                   1
                                 </Button>{" "}
                                 <Button
-                                  className="primary-color-faded border-black"
+                                  className="secondary-color-input border-black"
+                                  style={{color:"#121212", fontWeight:"bold"}}
                                   onClick={() => handlePointScored(player, 2)}
                                 >
                                   2
                                 </Button>{" "}
                                 <Button
-                                  className="primary-color border-black"
+                                  className="tertiary-color-input border-black"
+                                  style={{color:"#121212", fontWeight:"bold"}}
                                   onClick={() => handlePointScored(player, 3)}
                                 >
                                   3
@@ -590,7 +592,7 @@ export default function RefereeScreenManagement() {
                               </ButtonGroup>
                               <ButtonGroup aria-label="fouls">
                                 <Button
-                                  className="secondary-color border-black"
+                                  className="fouls-color-input border-black"
                                   onClick={() => handleFault(player)}
                                 >
                                   F{player.faltasPartido}

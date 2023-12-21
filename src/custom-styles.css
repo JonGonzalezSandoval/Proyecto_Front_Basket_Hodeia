@@ -51,7 +51,10 @@
 .primary-color-faded {
   background-color: #FF6900;
   filter: saturate(80%);
-
+}
+.primary-color-three {
+  background-color: #FF6900;
+  filter: saturate(60%);
 }
 
 .primary-color-faded-extra {
@@ -84,6 +87,21 @@
   color: #248700;
 }
 
+.primary-color-input{
+  background-color: #ACA7CB;
+}
+
+.secondary-color-input{
+  background-color: #ACA9BB;
+}
+
+.tertiary-color-input{
+  background-color: #BCBCBC;
+}
+
+.fouls-color-input{
+  background-color: #474554;
+}
 .spinner {
   color: #FF6900;
   /* font-size: 3rem;  */
@@ -129,6 +147,24 @@
   z-index: 0;
 }
 
+.custom-background-login {
+  position: relative;
+  z-index: 0;
+}
+
+.custom-background-login::before {
+  content: '';
+  background-image: url('https://i.ibb.co/bXT2pQ1/markus-spiske-Bfphc-Cvhl6-E-unsplash.jpg');
+  background-size: cover;
+  background-position: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  opacity: 0.1;
+}
 .custom-background::before {
   content: '';
   background-image: url('https://i.ibb.co/HCchk2q/marcel-schreiber-hav-Fg0-OSMc-unsplash.jpg');
@@ -385,4 +421,21 @@ abbr[title] {
   margin-left: 5vw;
   background-color: #FFF5EC;
   border-color: #121212;
+}
+
+.border-black {
+  border: 2px solid #121212;
+  border-radius: '20px';
+}
+
+.border-right{
+  border-right: 2px solid #121212;
+}
+
+.border-left{
+  border-right: 2px solid #121212;
+}
+
+.custom-progress-bar-animated .progress-bar{
+  background-color: #D64700
 }

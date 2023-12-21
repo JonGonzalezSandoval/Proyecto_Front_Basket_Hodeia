@@ -8,7 +8,6 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Header from "./components/Header";
 import UserContext from "./context/UserContext";
-import { useState } from "react";
 import { Container } from "react-bootstrap";
 import PreLogin from "./components/PreLogin";
 import CoachReferee from "./components/Coach-Referee";
@@ -16,9 +15,7 @@ import LeagueList from "./components/LeagueList";
 import TeamList from "./components/TeamList";
 import PlayersList from "./components/PlayersList";
 import Scoreboard from "./components/Scoreboard";
-import Test from "./components/Test";
 import Logout from "./components/Logout";
-import Test1 from "./components/Test1";
 import Footer from "./components/Footer";
 import CreateRoomForm from "./components/createRoomButton";
 import SocketTest from "./components/socketTest";
@@ -26,10 +23,6 @@ import BasketballMatchChart from "./components/Charts/BasketballMatchChart";
 import RefereeScreen from "./components/refereeScreen";
 import GameViewer from "./components/userScreen";
 
-interface Tuser {
-  email: string;
-  password: string;
-}
 
 function App() {
 
@@ -70,7 +63,7 @@ function App() {
 
             </Routes>
           </Container>
-          <Footer></Footer>
+          {/* <Footer></Footer> */}
         </div>
       </BrowserRouter>
     </UserContext.Provider>

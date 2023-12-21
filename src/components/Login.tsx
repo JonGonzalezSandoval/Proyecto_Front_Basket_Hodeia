@@ -1,4 +1,4 @@
-import {  useState } from "react";
+import { useState } from "react";
 import { Button, Card, Container } from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
@@ -10,7 +10,7 @@ function Login() {
 
   const navigate = useNavigate();
 
-  function handleClick(e:React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+  function handleClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
 
     let data = {
@@ -24,19 +24,19 @@ function Login() {
     fetch("http://localhost:3000/auth/login", data)
       .then((res) => {
         if (res.status < 400) {
-          console.log(res)
+          console.log(res);
           return res.json();
         }
         if (res.status == 401) throw new Error("Unauthorized");
       })
       .then((res) => {
-        console.log(res)
+        console.log(res);
         localStorage.removeItem("SavedToken");
         localStorage.setItem("SavedToken", "Bearer " + res.access_token);
         localStorage.removeItem("Rol");
         localStorage.setItem("Rol", res.rol);
         fetch("http://localhost:3000/profile", {
-            headers: { Authorization: localStorage.getItem("SavedToken") || ""},
+          headers: { Authorization: localStorage.getItem("SavedToken") || "" },
         })
           .then((res) => res.json())
           .then((res) => {
@@ -55,18 +55,17 @@ function Login() {
   }
 
   function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
-    let userTemp:any = { ...user };
-    userTemp[e.target.name]  = e.target.value;
+    let userTemp: any = { ...user };
+    userTemp[e.target.name] = e.target.value;
     setUser(userTemp);
   }
 
-
   return (
-    <Container>
+    <Container className="mt-5">
       <div className="login-container">
         <Card
-          className="mb-3 ms-3 me-3 custom-background responsive-card"
-          style={{ maxWidth: "600px", width: "100%" }}
+          className="ms-3 me-3 custom-background-login responsive-card"
+          style={{ maxWidth: "600px", width: "100%"}}
         >
           <Container>
             <Form>
@@ -88,7 +87,12 @@ function Login() {
                     Introduce tu email
                   </Form.Label>
                   <Col sm="12">
-                    <Form.Control  onChange={handleInput} type="text" placeholder="email@example.com" name="email"/>
+                    <Form.Control
+                      onChange={handleInput}
+                      type="text"
+                      placeholder="email@example.com"
+                      name="email"
+                    />
                   </Col>
                 </Form.Group>
 
@@ -101,7 +105,12 @@ function Login() {
                     Introduce tu contraseña
                   </Form.Label>
                   <Col sm="12">
-                    <Form.Control  onChange={handleInput} type="password" placeholder="Contraseña" name="password"/>
+                    <Form.Control
+                      onChange={handleInput}
+                      type="password"
+                      placeholder="Contraseña"
+                      name="password"
+                    />
                   </Col>
                 </Form.Group>
 
@@ -126,9 +135,11 @@ function Login() {
                       </Form.Label>
                     </div>
                     <div>
-                      <Button className="secondary-color mb-3 button-bold-smaller">
-                        <Link to="/register">Regístrate aquí</Link>
-                      </Button>
+                      <Link to="/register" style={{ textDecoration: "none" }}>
+                        <Button className="secondary-color mb-3 button-bold-smaller">
+                          Regístrate aquí
+                        </Button>
+                      </Link>
                     </div>
                   </div>
                 </Form.Group>

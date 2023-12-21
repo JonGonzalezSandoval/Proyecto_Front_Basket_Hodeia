@@ -176,6 +176,10 @@ export default function MainScreen() {
     if (selectedLeague != null) handleSelectedLeagueSeasonOnDate();
   }, [date, setDate, selectedLeague, setSelectedLeague]);
 
+
+
+  console.log(user)
+  
   return allLeagues != null ? (
     <>
       <Form.Select
@@ -230,7 +234,7 @@ export default function MainScreen() {
                         }} // Ajusta el estilo según sea necesario
                       />
                     </ListGroup>
-                    <p>{partido.nombrelocal}</p>
+                    <p style={{fontWeight:"bold"}}>{partido.nombrelocal}</p>
                   </Col>
                   {/* Separador */}
                   <Col
@@ -260,7 +264,7 @@ export default function MainScreen() {
                           borderRadius: "50px",
                         }} // Ajusta el estilo según sea necesario
                       />
-                      <p>{partido.nombrevisitante}</p>
+                      <p style={{fontWeight:"bold"}}>{partido.nombrevisitante}</p>
                     </ListGroup>
                   </Col>
                  
@@ -268,8 +272,8 @@ export default function MainScreen() {
                     className="d-flex justify-content-center align-items-center"
                     style={{ minHeight: "0px" }}
                   >
-                    <Link to="/manager/:matchID">
-                      {" "}
+                    <Link to={`/manager/${partido.partidoid}`}>
+               
                   
                       <Card.Img
                         src="https://i.ibb.co/Cb1jVks/silbato.png"

@@ -13,15 +13,6 @@ const RefereeScreen: React.FC = () => {
 
   const socket = io('http://localhost:3001'); // --> para conectar al servidor (io)
 
-/*   const handleMatchRoomJoin = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // esto era para conectar con una sala en concreta
-    if (matchRoomId.trim() !== '') {      
-      socket.emit('joinMatchRoom', matchRoomId.trim());
-      console.log(`joined room  for match ${matchRoomId}`)
-    }
-  }; */
 
   const handleGameUpdate = () => {
     socket.emit('gameUpdate', {socketId:socket.id, roomName: partidoId })

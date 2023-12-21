@@ -4,6 +4,7 @@ import "../custom-styles.css";
 import DropdownOptions from "./DropdownOptions";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 
 
 export default function Header() {
@@ -16,12 +17,14 @@ export default function Header() {
     <Container style={{ display: 'flex', justifyContent: 'left', height: '150px' }}>
       {location.pathname === "/" || location.pathname === "/login" || location.pathname === "/register"?<></>:<DropdownOptions />}
       <Navbar.Brand href="#home" style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
-        <img
+        <Link to={"/home"} >
+        <img 
           src="https://i.ibb.co/fSdYX6k/logo-negro.png"
           height="130"
           className="d-inline-block align-top"
           alt="Hoopdeia logo"
         />
+        </Link>
       </Navbar.Brand>
     </Container>
   </Navbar>

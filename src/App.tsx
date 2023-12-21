@@ -53,8 +53,6 @@ function App() {
                 element={<RefereeScreenManagement></RefereeScreenManagement>}
               />
               <Route path="/scoreboard/:matchID" element={<Scoreboard></Scoreboard>} />
-              <Route path="/test" element={<Test></Test>} />
-              <Route path="/test1" element={<Test1></Test1>} />
               <Route path= '/createRoom' element={<CreateRoomForm/>}/>
               <Route path= '/referee' element={<RefereeScreen/>}/>
         <Route path= '/user' element={<GameViewer/>}/>

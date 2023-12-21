@@ -15,16 +15,14 @@ import LeagueList from "./components/LeagueList";
 import TeamList from "./components/TeamList";
 import PlayersList from "./components/PlayersList";
 import Scoreboard from "./components/Scoreboard";
-import Test from "./components/Test";
+
 import Logout from "./components/Logout";
-import Test1 from "./components/Test1";
-import Footer from "./components/Footer";
 import { useState } from "react";
-// import Footer from "./components/Footer";
 
 function App() {
 
   const [loginUser, setLoginUser] = useState(null)
+
 
   return (
     <UserContext.Provider value={{loginUser, setLoginUser}}>
@@ -53,13 +51,11 @@ function App() {
                 element={<RefereeScreenManagement></RefereeScreenManagement>}
               />
               <Route path="/scoreboard/:matchID" element={<Scoreboard></Scoreboard>} />
-              <Route path="/test" element={<Test></Test>} />
-              <Route path="/test1" element={<Test1></Test1>} />
+        
             </Routes>
           </Container>
           {/* <Footer></Footer> */}
         </div>
-          <Footer></Footer>
       </BrowserRouter>
     </UserContext.Provider>
   );

@@ -33,10 +33,11 @@ interface TTeams {
   logo: string | null;
   id: string;
 }
-const socket = io('http://localhost:3001');
 
+const socket = io('http://localhost:3001');
 export default function RefereeScreenManagement() {
   const { matchID } = useParams();
+  const [timer, setTimer] = useState();
 
   const [localModalShow, setLocalModalShow] = useState(false);
   const [awayModalShow, setAwayModalShow] = useState(false);
@@ -232,145 +233,121 @@ export default function RefereeScreenManagement() {
   // };
 
   function handlePointScored(player: TPlayer, points: number) {
-    const data = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        jugadorid: player.jugadorid,
-        puntos: points,
-        partidoid: matchID,
-      }),
-    };
-    fetch("http://localhost:3000/scores/new", data)
-      .then((res) => res.json())
-      .then((res) => {
-        console.log(res);
-        let arrayDeJugadores: TPlayer[] = [];
-        let local = true;
-        if (localTeamPlayers !== null && player.equipoid === localTeam?.id) {
-          arrayDeJugadores = localTeamPlayers;
-        } else if (awayTeamPlayers !== null) {
-          arrayDeJugadores = awayTeamPlayers;
-          local = false;
-        }
+    console.log(player, points);
+    
+    socket.emit("scoreUpdateTeams", {
+      jugadorid: player.jugadorid,
+      puntos: points,
+      partidoid: matchID,
+    })
+    
+    let arrayDeJugadores: TPlayer[] = [];
+    let local = true;
+    if (localTeamPlayers !== null && player.equipoid === localTeam?.id) {
+      arrayDeJugadores = localTeamPlayers;
+    } else if (awayTeamPlayers !== null) {
+      arrayDeJugadores = awayTeamPlayers;
+      local = false;
+    }
 
-        const indiceJugadorAActualizar = arrayDeJugadores.findIndex(
-          (jugador) => jugador.jugadorid === player.jugadorid
-        );
+    const indiceJugadorAActualizar = arrayDeJugadores.findIndex(
+      (jugador) => jugador.jugadorid === player.jugadorid
+    );
 
-        if (indiceJugadorAActualizar !== -1) {
-          const nuevoArrayDeJugadores = [...arrayDeJugadores];
-          nuevoArrayDeJugadores[indiceJugadorAActualizar].puntosPartido +=
-            points;
+    if (indiceJugadorAActualizar !== -1) {
+      const nuevoArrayDeJugadores = [...arrayDeJugadores];
+      nuevoArrayDeJugadores[indiceJugadorAActualizar].puntosPartido +=
+        points;
 
-          local
-            ? setLocalTeamPlayers(nuevoArrayDeJugadores)
-            : setAwayTeamPlayers(nuevoArrayDeJugadores);
-        } else {
-          console.log(
-            `Jugador con jugadorid ${player.jugadorid} no encontrado`
-          );
-        }
-      })
-      .then((res) => {
-        if (localTeamPlayers != null) {
-          console.log(localTeamPlayers);
-        }
-      })
-      .catch((error) => {});
+      local
+        ? setLocalTeamPlayers(nuevoArrayDeJugadores)
+        : setAwayTeamPlayers(nuevoArrayDeJugadores);
+    } else {
+      console.log(
+        `Jugador con jugadorid ${player.jugadorid} no encontrado`
+      );
+    }
   }
 
   function handleFault(player: TPlayer) {
-    const data = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ jugadorid: player.jugadorid, partidoid: matchID }),
-    };
-    fetch("http://localhost:3000/fouls/new", data)
-      .then((res) => res.json())
-      .then((res) => {
-        console.log(res);
-        let arrayDeJugadores: TPlayer[] = [];
-        let arrayDeJugadoresPista: TPlayer[] = [];
-        let local = true;
+    
+    socket.emit('foulUpdate', {
+      jugadorId: player.jugadorid,
+      partidoId: matchID,
+    });
 
-        if (
-          localTeamPlayers !== null &&
-          localFieldPlayers !== null &&
-          player.equipoid === localTeam?.id
-        ) {
-          arrayDeJugadores = localTeamPlayers;
-          arrayDeJugadoresPista = localFieldPlayers;
-        } else if (awayTeamPlayers !== null && awayFieldPlayers !== null) {
-          arrayDeJugadores = awayTeamPlayers;
-          arrayDeJugadoresPista = awayFieldPlayers;
-          local = false;
-        }
+    let arrayDeJugadores: TPlayer[] = [];
+    let arrayDeJugadoresPista: TPlayer[] = [];
+    let local = true;
 
-        const indiceJugadorAActualizar = arrayDeJugadores.findIndex(
-          (jugador) => jugador.jugadorid === player.jugadorid
-        );
+    if (
+      localTeamPlayers !== null &&
+      localFieldPlayers !== null &&
+      player.equipoid === localTeam?.id
+    ) {
+      arrayDeJugadores = localTeamPlayers;
+      arrayDeJugadoresPista = localFieldPlayers;
+    } else if (awayTeamPlayers !== null && awayFieldPlayers !== null) {
+      arrayDeJugadores = awayTeamPlayers;
+      arrayDeJugadoresPista = awayFieldPlayers;
+      local = false;
+    }
 
-        const indiceJugadorCampoAActualizar = arrayDeJugadoresPista.findIndex(
-          (jugador) => jugador.jugadorid === player.jugadorid
-        );
+    const indiceJugadorAActualizar = arrayDeJugadores.findIndex(
+      (jugador) => jugador.jugadorid === player.jugadorid
+    );
 
-        console.log("Indice Jugador Banquillo" + indiceJugadorAActualizar);
-        console.log("Indice Jugador Campo" + indiceJugadorCampoAActualizar);
+    const indiceJugadorCampoAActualizar = arrayDeJugadoresPista.findIndex(
+      (jugador) => jugador.jugadorid === player.jugadorid
+    );
 
-        if (
-          indiceJugadorAActualizar !== -1 &&
-          indiceJugadorCampoAActualizar !== -1
-        ) {
-          const nuevoArrayDeJugadores = [...arrayDeJugadores];
-          console.log(
-            nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido
-          );
-          nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido += 1;
+    console.log("Indice Jugador Banquillo" + indiceJugadorAActualizar);
+    console.log("Indice Jugador Campo" + indiceJugadorCampoAActualizar);
 
-          const nuevoArrayDeJugadoresPista = [...arrayDeJugadoresPista];
-          console.log(
-            nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar]
-              .faltasPartido
-          );
-          nuevoArrayDeJugadoresPista[
-            indiceJugadorCampoAActualizar
-          ].faltasPartido += 1;
+    if (
+      indiceJugadorAActualizar !== -1 &&
+      indiceJugadorCampoAActualizar !== -1
+    ) {
+      const nuevoArrayDeJugadores = [...arrayDeJugadores];
+      console.log(
+        nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido
+      );
+      // nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido += 1;
 
-          console.log(
-            nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido
-          );
-          console.log(
-            nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar]
-              .faltasPartido
-          );
-          local
-            ? setLocalTeamPlayers(nuevoArrayDeJugadores)
-            : setAwayTeamPlayers(nuevoArrayDeJugadores);
-          local
-            ? setLocalFieldPlayers(nuevoArrayDeJugadoresPista)
-            : setAwayFieldPlayers(nuevoArrayDeJugadoresPista);
-        } else {
-          console.log(
-            `Jugador con jugadorid ${player.jugadorid} no encontrado`
-          );
-        }
-      })
-      .then((res) => {
-        if (localTeamPlayers != null) {
-          console.log(awayTeamPlayers);
-        }
-      })
-      .catch((error) => {});
+      const nuevoArrayDeJugadoresPista = [...arrayDeJugadoresPista];
+      console.log(
+        nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar]
+          .faltasPartido
+      );
+      nuevoArrayDeJugadoresPista[
+        indiceJugadorCampoAActualizar
+      ].faltasPartido += 1;
+
+      console.log(
+        nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido
+      );
+      console.log(
+        nuevoArrayDeJugadoresPista[indiceJugadorCampoAActualizar]
+          .faltasPartido
+      );
+      local
+        ? setLocalTeamPlayers(nuevoArrayDeJugadores)
+        : setAwayTeamPlayers(nuevoArrayDeJugadores);
+      local
+        ? setLocalFieldPlayers(nuevoArrayDeJugadoresPista)
+        : setAwayFieldPlayers(nuevoArrayDeJugadoresPista);
+    } else {
+      console.log(
+        `Jugador con jugadorid ${player.jugadorid} no encontrado`
+      );
+    }
+
   }
 
   function handleFinish() {}
 
   useEffect(() => {
+    socket.emit('joinMatchRoom', matchID);
     getPlayers();
   }, []);
 

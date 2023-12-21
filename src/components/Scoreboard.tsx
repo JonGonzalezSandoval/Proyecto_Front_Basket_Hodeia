@@ -15,34 +15,100 @@ interface TTeams {
   nombre: string;
   logo: string | null;
   id: string;
+  score: number;
+  // fouls: number;
 }
 
 const socket = io("http://localhost:3001");
 
 export default function Scoreboard() {
   const { matchID } = useParams();
-  const [localTeam, setLocalTeam] = useState<TTeams | null>(null);
-  const [awayTeam, setAwayTeam] = useState<TTeams | null>(null);
+  const [localTeam, setLocalTeam] = useState<any>();
+  const [awayTeam, setAwayTeam] = useState<any>();
+  const [teamsCharged, setTeamsCharged] = useState<boolean>(false);
 
-  function getMatch() {
+  async function getMatch() {
     console.log(matchID);
-    fetch(`http://localhost:3000/matches/teamsplayersdate/${matchID}`)
-      .then((res) => res.json())
-      .then((res) => {
-        console.log(res);
+    const response = await fetch(`http://localhost:3000/matches/teamsplayersdate/${matchID}`)
+    const res = await response.json();
 
         setLocalTeam({
           nombre: res.localTeamDetails.localid.nombre,
           logo: res.localTeamDetails.localid.equipoLogo,
           id: res.localTeamDetails.localid.equipoid,
+          score: res.localTeamDetails.puntuacion_equipo_local
         });
         setAwayTeam({
           nombre: res.visitorTeamDetails.visitanteid.nombre,
           logo: res.visitorTeamDetails.visitanteid.equipoLogo,
           id: res.visitorTeamDetails.visitanteid.equipoid,
+          score: res.visitorTeamDetails.puntuacion_equipo_visitante
         });
-      });
+      //setTeamsCharged(true);
   }
+
+  
+  useEffect(()=>{
+    if (localStorage.getItem("SavedToken") !== null) {
+      fetch("http://localhost:3000/auth/profile", {
+        headers: { Authorization: localStorage.getItem("SavedToken") || "" },
+      })
+        .then((res) => {
+          if (res.status >= 400) {
+            setUser(null);
+            navigate("/login");
+            console.log(res.statusText);
+            return;
+          }
+          return res.json();
+        })
+        .then((res) => {
+          setUser(res);
+        });
+    } else {
+      navigate("/login");
+    }
+
+    socket.on("connect", () => {
+      console.log("Connected to server!");
+    });
+
+    socket.on("scoreUpdateTeams", (data) => {
+      console.log(data);
+      console.log(awayTeam);
+      console.log();
+      
+      
+      if(awayTeam?.id === data.equipoToUpdate){        
+        // const tempTeam = {...awayTeam};
+        console.log(awayTeam);
+        awayTeam.score += data.puntos;
+        
+        
+        setAwayTeam({...awayTeam});
+      } else {
+        console.log('localteamscoreupdate');
+        console.log(localTeam);
+        localTeam.score += data.puntos;
+        
+        
+        setLocalTeam({...localTeam}); 
+      }
+      
+    })
+
+    socket.on("timerUpdate", (data) => {
+      setMinutes(data.minutes)
+      setSeconds(data.seconds)
+      setCuartos(data.cuartos)
+    });
+
+    socket.connect();
+    return () => {
+      socket.off("connect");
+    };
+  
+  },[])
 
   const [time, setTime] = useState(70000);
   const [isRunning, setIsRunning] = useState(true);
@@ -75,41 +141,8 @@ export default function Scoreboard() {
   // const seconds = Math.floor((time % 6000) / 100);
 
   useEffect(() => {
-    if (localStorage.getItem("SavedToken") !== null) {
-      fetch("http://localhost:3000/auth/profile", {
-        headers: { Authorization: localStorage.getItem("SavedToken") || "" },
-      })
-        .then((res) => {
-          if (res.status >= 400) {
-            setUser(null);
-            navigate("/login");
-            console.log(res.statusText);
-            return;
-          }
-          return res.json();
-        })
-        .then((res) => {
-          setUser(res);
-          socket.emit('joinMatchRoom', matchID );
-        });
-    } else {
-      navigate("/login");
-    }
-
-    socket.on("connect", () => {
-      console.log("Connected to server!");
-    });
-
-    socket.on("timerUpdate", (data) => {
-      setMinutes(data.minutes)
-      setSeconds(data.seconds)
-      setCuartos(data.cuartos)
-    });
-
-    socket.connect();
-    return () => {
-      socket.off("connect");
-    };
+    socket.emit('joinMatchRoom', matchID );
+    getMatch();
   }, []);
 
   return (
@@ -242,7 +275,7 @@ export default function Scoreboard() {
                   fontFamily: "'Graduate', 'serif'",
                 }}
               >
-                {localScore}
+                {localTeam?.score}
               </Badge>
             </h2>
           </Col>
@@ -257,7 +290,7 @@ export default function Scoreboard() {
                   fontFamily: "'Graduate', 'serif'",
                 }}
               >
-                {visitorScore}
+                {awayTeam?.score}
               </Badge>
             </h2>
           </Col>

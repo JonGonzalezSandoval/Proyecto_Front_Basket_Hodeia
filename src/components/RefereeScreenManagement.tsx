@@ -332,7 +332,7 @@ export default function RefereeScreenManagement() {
           console.log(
             nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido
           );
-          nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido += 1;
+          // nuevoArrayDeJugadores[indiceJugadorAActualizar].faltasPartido += 1;
 
           const nuevoArrayDeJugadoresPista = [...arrayDeJugadoresPista];
           console.log(

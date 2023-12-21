@@ -5,6 +5,8 @@ import { useParams } from "react-router-dom";
 import PlayerStatistics from "./PlayersStatistics";
 import io from "socket.io-client";
 import { useNavigate } from "react-router";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 <link
   href="https://fonts.googleapis.com/css2?family=Graduate&display=swap"
   rel="stylesheet"
@@ -27,6 +29,15 @@ export default function Scoreboard() {
   const [localPlayers, setLocalPlayers] = useState<any>()
   const [awayPlayers, setAwayPlayers] = useState<any>()
   const [teamsCharged, setTeamsCharged] = useState<boolean>(false);
+  const [time, setTime] = useState(70000);
+  const [isRunning, setIsRunning] = useState(true);
+
+  const [user, setUser] = useState<any | null>(null);
+  const [minutes, setMinutes] = useState<number>(10);
+  const [seconds, setSeconds] = useState<number>(0);
+  const [cuartos, setCuartos] = useState<number>(1);
+
+  const navigate = useNavigate();
 
   async function getMatch() {
     console.log('getmatch');
@@ -110,18 +121,57 @@ export default function Scoreboard() {
             
         setLocalTeam({...localTeam}); 
       }
-         
+      toast.success(`${data.player} scores ${data.puntos} points!`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        });
     })
 
     socket.on("substitutionUpdate", (data) => {
       console.log(data);
+      let outPlayer = ""
+      let inPlayer = ""
 
       if(data.equipoid === awayTeam?.id) {
-        setAwayPlayers([...data.players])
+        let newPlayers = data.players.filter((player: any, i: number) => {
+          if(player.jugadorid === awayPlayers[i].jugadorid){
+            return player;
+          } else {
+            outPlayer = `${player.nombre} ${player.apellido}`
+            inPlayer = `${awayPlayers[i].nombre} ${awayPlayers[i].apellido}`
+            return data.players[i];
+          }
+        })
+        setAwayPlayers([...newPlayers])
       } else if(data.equipoid === localTeam?.id){
-        setLocalPlayers([...data.players])
+        let newPlayers = data.players.filter((player: any, i: number) => {
+          if(player.jugadorid === localPlayers[i].jugadorid){
+            return player;
+          } else {
+            outPlayer = `${player.nombre} ${player.apellido}`
+            inPlayer = `${localPlayers[i].nombre} ${localPlayers[i].apellido}`
+            return data.players[i];
+          }
+        })
+          setLocalPlayers([...newPlayers])
       }
       
+      toast(`Sale ${inPlayer}, entra ${outPlayer}`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        });
     })
 
     socket.on("foulUpdate", (data) => {
@@ -142,6 +192,17 @@ export default function Scoreboard() {
         
         setLocalTeam({...localTeam}); 
       }
+
+      toast.error(`${data.player} commits foul!`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        });
     })
 
     return () => {
@@ -150,21 +211,6 @@ export default function Scoreboard() {
       socket.off("substitutionUpdate")
     }
   },[localTeam, awayTeam, localPlayers, awayPlayers])
-
-  const [time, setTime] = useState(70000);
-  const [isRunning, setIsRunning] = useState(true);
-  const [localScore] = useState(Math.floor(Math.random() * 100));
-  const [visitorScore] = useState(Math.floor(Math.random() * 100));
-
-  const [faltasLocal] = useState(Math.floor(Math.random() * 15));
-  const [faltasVisitante] = useState(Math.floor(Math.random() * 15));
-
-  const [user, setUser] = useState<any | null>(null);
-  const [minutes, setMinutes] = useState<number>(10);
-  const [seconds, setSeconds] = useState<number>(0);
-  const [cuartos, setCuartos] = useState<number>(1);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     let intervalId: number;
@@ -188,6 +234,7 @@ export default function Scoreboard() {
 
   return (
     <>
+    <ToastContainer />
       <Container className="text-center my-1">
         <Row>
           <Col>

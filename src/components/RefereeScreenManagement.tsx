@@ -221,6 +221,8 @@ export default function RefereeScreenManagement() {
       setAwayFieldPlayers(newArray);
       setChangeAway(null);
       setAwayModalShow(false);
+
+      socket.emit("substitutionUpdate", {players: newArray, equipoid: newArray[0].equipoid, partidoid: matchID})
     }
   }
 

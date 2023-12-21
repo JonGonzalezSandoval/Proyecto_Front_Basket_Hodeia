@@ -19,12 +19,15 @@ import Test from "./components/Test";
 import Logout from "./components/Logout";
 import Test1 from "./components/Test1";
 import Footer from "./components/Footer";
+import { useState } from "react";
 // import Footer from "./components/Footer";
 
 function App() {
 
+  const [loginUser, setLoginUser] = useState(null)
+
   return (
-    <UserContext.Provider value={{}}>
+    <UserContext.Provider value={{loginUser, setLoginUser}}>
       <BrowserRouter>
         <Header></Header>
         <div className="main-container">

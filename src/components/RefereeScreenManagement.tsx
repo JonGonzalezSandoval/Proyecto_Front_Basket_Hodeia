@@ -27,8 +27,6 @@ const socket = io('http://localhost:3001');
 export default function RefereeScreenManagement() {
   const { matchID } = useParams();
 
-  const [timer, setTimer] = useState();
-
   const [localModalShow, setLocalModalShow] = useState(false);
   const [awayModalShow, setAwayModalShow] = useState(false);
 

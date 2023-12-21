@@ -1,5 +1,4 @@
 // import { Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
-
 import { useEffect, useState } from "react";
 import { Badge, Card, Col, Container, ListGroup, Row } from "react-bootstrap";
 import { useParams } from "react-router-dom";
@@ -25,9 +24,13 @@ export default function Scoreboard() {
   const { matchID } = useParams();
   const [localTeam, setLocalTeam] = useState<any>();
   const [awayTeam, setAwayTeam] = useState<any>();
+  const [localPlayers, setLocalPlayers] = useState<any>()
+  const [awayPlayers, setAwayPlayers] = useState<any>()
   const [teamsCharged, setTeamsCharged] = useState<boolean>(false);
 
   async function getMatch() {
+    console.log('getmatch');
+    
     console.log(matchID);
     const response = await fetch(`http://localhost:3000/matches/teamsplayersdate/${matchID}`)
     const res = await response.json();
@@ -36,13 +39,15 @@ export default function Scoreboard() {
           nombre: res.localTeamDetails.localid.nombre,
           logo: res.localTeamDetails.localid.equipoLogo,
           id: res.localTeamDetails.localid.equipoid,
-          score: res.localTeamDetails.puntuacion_equipo_local
+          score: res.localTeamDetails.puntuacion_equipo_local,
+          fouls: 0
         });
         setAwayTeam({
           nombre: res.visitorTeamDetails.visitanteid.nombre,
           logo: res.visitorTeamDetails.visitanteid.equipoLogo,
           id: res.visitorTeamDetails.visitanteid.equipoid,
-          score: res.visitorTeamDetails.puntuacion_equipo_visitante
+          score: res.visitorTeamDetails.puntuacion_equipo_visitante,
+          fouls: 0
         });
       //setTeamsCharged(true);
   }
@@ -73,42 +78,78 @@ export default function Scoreboard() {
       console.log("Connected to server!");
     });
 
-    socket.on("scoreUpdateTeams", (data) => {
-      console.log(data);
-      console.log(awayTeam);
-      console.log();
-      
-      
-      if(awayTeam?.id === data.equipoToUpdate){        
-        // const tempTeam = {...awayTeam};
-        console.log(awayTeam);
-        awayTeam.score += data.puntos;
-        
-        
-        setAwayTeam({...awayTeam});
-      } else {
-        console.log('localteamscoreupdate');
-        console.log(localTeam);
-        localTeam.score += data.puntos;
-        
-        
-        setLocalTeam({...localTeam}); 
-      }
-      
-    })
-
     socket.on("timerUpdate", (data) => {
       setMinutes(data.minutes)
       setSeconds(data.seconds)
       setCuartos(data.cuartos)
     });
 
+    socket.on("startingPlayers", (data) => {
+      setLocalPlayers(data.selectedLocalCheckboxes);
+      setAwayPlayers(data.selectedAwayCheckboxes);
+    })
+
     socket.connect();
     return () => {
       socket.off("connect");
+      socket.off("substitutionUpdate")
+      socket.off("startingPlayers")
     };
   
   },[])
+
+  useEffect(()=> {
+    socket.on("scoreUpdateTeams", (data) => {   
+
+      if(awayTeam?.id === data.equipoToUpdate){        //equipoToUpdate
+        awayTeam.score += data.puntos;
+               
+        setAwayTeam({...awayTeam});
+      } else if(localTeam?.id === data.equipoToUpdate){
+        localTeam.score += data.puntos;
+            
+        setLocalTeam({...localTeam}); 
+      }
+         
+    })
+
+    socket.on("substitutionUpdate", (data) => {
+      console.log(data);
+
+      if(data.equipoid === awayTeam?.id) {
+        setAwayPlayers([...data.players])
+      } else if(data.equipoid === localTeam?.id){
+        setLocalPlayers([...data.players])
+      }
+      
+    })
+
+    socket.on("foulUpdate", (data) => {
+      console.log(data);
+
+      if(awayTeam?.id === data.equipoId){        //equipoToUpdate
+        // const tempTeam = {...awayTeam};
+        console.log(awayTeam);
+        awayTeam.fouls += 1;
+        
+        
+        setAwayTeam({...awayTeam});
+      } else if(localTeam?.id === data.equipoId){
+        console.log('localteamscoreupdate');
+        console.log(localTeam);
+        localTeam.fouls += 1;
+        
+        
+        setLocalTeam({...localTeam}); 
+      }
+    })
+
+    return () => {
+      socket.off("scoreUpdateTeams")
+      socket.off("foulUpdate")
+      socket.off("substitutionUpdate")
+    }
+  },[localTeam, awayTeam, localPlayers, awayPlayers])
 
   const [time, setTime] = useState(70000);
   const [isRunning, setIsRunning] = useState(true);
@@ -307,7 +348,7 @@ export default function Scoreboard() {
                   fontFamily: "'Graduate', 'serif'",
                 }}
               >
-                {faltasLocal.toString()}
+                {localTeam?.fouls}
               </Badge>
             </h2>
           </Col>
@@ -322,12 +363,35 @@ export default function Scoreboard() {
                   fontFamily: "'Graduate', 'serif'",
                 }}
               >
-                {faltasVisitante.toString()}
+                {awayTeam?.fouls}
               </Badge>
             </h2>
           </Col>
         </Row>
-        {/* <PlayerStatistics></PlayerStatistics> */}
+        <Row>
+          <Col>
+          <h2
+          className="local-color-nonbg"
+          style={{ fontFamily: "'Graduate', 'serif'", marginTop: "5vh", marginBottom: "3vh" }}
+          >Local Players</h2>
+                {localPlayers?.length === 5 ?
+                localPlayers.map((player: any) => (
+                  <h5 key={player.id}>{player.nombre} {player.apellido}</h5>
+                ))
+              :''}
+          </Col>
+          <Col>
+          <h2
+           className="visitor-color-nonbg"
+           style={{ color: "#28a745", fontFamily: "'Graduate', 'serif'", marginTop: "5vh", marginBottom: "3vh" }}
+          >Away Players</h2>
+                {awayPlayers?.length === 5 ?
+                awayPlayers.map((player: any) => (
+                  <h5 key={player.id}>{player.nombre} {player.apellido}</h5>
+                ))
+              :''}
+          </Col>
+        </Row>
       </Container>
     </>
   );

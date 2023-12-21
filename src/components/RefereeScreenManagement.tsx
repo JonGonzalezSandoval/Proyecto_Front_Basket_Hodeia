@@ -32,6 +32,7 @@ interface TTeams {
   nombre: string;
   logo: string | null;
   id: string;
+  score: number;
 }
 
 const socket = io('http://localhost:3001');
@@ -42,8 +43,8 @@ export default function RefereeScreenManagement() {
   const [localModalShow, setLocalModalShow] = useState(false);
   const [awayModalShow, setAwayModalShow] = useState(false);
 
-  const [localTeam, setLocalTeam] = useState<TTeams | null>(null);
-  const [awayTeam, setAwayTeam] = useState<TTeams | null>(null);
+  const [localTeam, setLocalTeam] = useState<any>();
+  const [awayTeam, setAwayTeam] = useState<any>();
 
   const [localTeamPlayers, setLocalTeamPlayers] = useState<TPlayer[] | null>(
     null
@@ -141,6 +142,12 @@ export default function RefereeScreenManagement() {
     console.log(selectedAwayCheckboxes);
   }, [selectedAwayCheckboxes, setSelectedAwayCheckboxes]);
 
+  useEffect(()=>{
+    if(selectedAwayCheckboxes.length === selectedLocalCheckboxes.length){
+      socket.emit("startingPlayers",{selectedAwayCheckboxes, selectedLocalCheckboxes, matchID})
+    }
+  },[selectedAwayCheckboxes, selectedLocalCheckboxes])
+
   function getPlayers() {
     fetch(`http://localhost:3000/matches/teamsplayersdate/${matchID}`)
       .then((res) => res.json())
@@ -151,11 +158,13 @@ export default function RefereeScreenManagement() {
           nombre: res.localTeamDetails.localid.nombre,
           logo: res.localTeamDetails.localid.equipoLogo,
           id: res.localTeamDetails.localid.equipoid,
+          score: res.localTeamDetails.puntuacion_equipo_local
         });
         setAwayTeam({
           nombre: res.visitorTeamDetails.visitanteid.nombre,
           logo: res.visitorTeamDetails.visitanteid.equipoLogo,
           id: res.visitorTeamDetails.visitanteid.equipoid,
+          score: res.visitorTeamDetails.puntuacion_equipo_visitante
         });
 
         const localPlayers = res.localTeamDetails.localid.players.map(
@@ -186,12 +195,16 @@ export default function RefereeScreenManagement() {
       const newArray: TPlayer[] = localFieldPlayers.map((playerOnTheField) =>
         playerOnTheField.jugadorid === changeLocal ? player : playerOnTheField
       );
-
+      
       setLocalFieldPlayers(newArray);
       setChangeLocal(null);
       setLocalModalShow(false);
+
+      socket.emit("substitutionUpdate", {players: newArray, equipoid: newArray[0].equipoid, partidoid: matchID})
     }
   }
+
+  
 
   function handlePressStartLocal(player: TPlayer) {
     setChangeLocal(player.jugadorid);
@@ -240,6 +253,18 @@ export default function RefereeScreenManagement() {
       puntos: points,
       partidoid: matchID,
     })
+
+    socket.on("scoreUpdateTeams", (data) =>{
+      console.log(data);
+      if(data.equipoToUpdate === localTeam?.id) {
+        localTeam.score += data.puntos;
+        setLocalTeam({...localTeam})
+      } else if(data.equipoToUpdate === awayTeam?.id) {
+        awayTeam.score += data.puntos
+        setAwayTeam({...awayTeam})
+      }
+      socket.off("scoreUpdateTeams")
+    })
     
     let arrayDeJugadores: TPlayer[] = [];
     let local = true;
@@ -274,6 +299,7 @@ export default function RefereeScreenManagement() {
     socket.emit('foulUpdate', {
       jugadorId: player.jugadorid,
       partidoId: matchID,
+      equipoId: player.equipoid
     });
 
     let arrayDeJugadores: TPlayer[] = [];
@@ -368,7 +394,7 @@ export default function RefereeScreenManagement() {
                     fontFamily: "'Graduate', 'serif'",
                   }}
                 >
-                  {localTeam.nombre}
+                  {localTeam?.nombre}
                 </Badge>
                 <Row>
                   <Col>
@@ -413,7 +439,7 @@ export default function RefereeScreenManagement() {
                     height: "50px", // Establece una altura fija para el Badge
                   }}
                 >
-                  100
+                  {localTeam?.score}
                 </Badge>
 
                 <Row>
@@ -506,7 +532,7 @@ export default function RefereeScreenManagement() {
                     height: "50px", // Establece una altura fija para el Badge
                   }}
                 >
-                  100
+                  {awayTeam?.score}
                 </Badge>
 
                 <Row>
@@ -593,7 +619,7 @@ export default function RefereeScreenManagement() {
                       fontFamily: "'Graduate', 'serif'",
                     }}
                   >
-                    {awayTeam.nombre}
+                    {awayTeam?.nombre}
                   </Badge>
                 </div>
                 <Row>
